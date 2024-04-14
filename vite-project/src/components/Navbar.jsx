@@ -3,21 +3,24 @@ import SignupPage from "./Modals/SignUp";
 import CartButton from "./CartButton"; // Import the new CartButton component
 import ModeToggle from "./ModeToggle";
 import { Link } from "react-router-dom";
+import SignUp from "./Modals/SignUp";
+import Login from "./Modals/Login";
 
 function Navbar() {
-  const [showSignupModal, setShowSignupModal] = useState(false);
+  const [showSignupModal, setShowSignupModal] = useState("");
 
   const openSignupModal = () => {
-    setShowSignupModal(true);
+    setShowSignupModal("signup");
   };
 
   const closeSignupModal = () => {
-    setShowSignupModal(false);
+    setShowSignupModal("");
   };
 
   return (
     <>
-      {showSignupModal && <SignupPage closeSignupModal={closeSignupModal} />}
+      {showSignupModal === "signup" && <SignUp setShowSignupModal={setShowSignupModal} closeSignupModal={closeSignupModal} />}
+      {showSignupModal === "login" && <Login setShowSignupModal={setShowSignupModal} closeSignupModal={closeSignupModal} />}
       <div>
         <div className="navbar bg-base-100 border-b border-gray-300 shadow-lg fixed top-0 w-full z-10">
           <div className="flex-1">

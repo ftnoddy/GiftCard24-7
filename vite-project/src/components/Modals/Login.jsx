@@ -4,7 +4,7 @@ import ModalLayout from "../Layouts/ModalLayout";
 import { Link } from "react-router-dom";
 import { X } from "lucide-react";
 
-const Login = ({ closeLoginModal }) => {
+const Login = ({ closeSignupModal, setShowSignupModal }) => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -30,7 +30,7 @@ const Login = ({ closeLoginModal }) => {
           <div className="flex justify-between items-center">
             <h2 className="text-2xl font-bold mb-4">Login</h2>
             <button
-              onClick={closeLoginModal}
+              onClick={closeSignupModal}
               className="w-8 h-8 bg-red-500 flex justify-center items-center rounded-full"
             >
               <X className="text-white" />
@@ -78,9 +78,9 @@ const Login = ({ closeLoginModal }) => {
               >
                 Login
               </button>
-              <Link to="/signup" className="text-blue-500 hover:underline mt-2">
-                Don't have an account? Sign up
-              </Link>
+              <div className="flex mt-4 gap-1 text-blue-500">
+              Don't have an account?<span onClick={() => setShowSignupModal("signup")} className="cursor-pointer hover:underline">Sign up</span>
+              </div>
             </div>
           </form>
         </div>
