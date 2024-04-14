@@ -1,11 +1,24 @@
-const express = require('express');
-const { json } = require('express'); // Destructuring to extract `json` function
-const products = require('./Data/Productes'); // Assuming `Productes` is a typo and should be `Products`
+import dotenv from "dotenv";
+import express from "express";
+import connectDB from "./config/db.js";
+import cookieParser from "cookie-parser";
+import cors from "cors"
+
+
+dotenv.config();
+connectDB()
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
-app.use(json());
+//Body parser Middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+//Cookie parser Middleware
+app.use(cookieParser());
+app.use(cors());
+
 
 // Routes
 app.get('/', (req, res) => {
