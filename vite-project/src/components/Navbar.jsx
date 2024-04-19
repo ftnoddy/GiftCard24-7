@@ -94,6 +94,12 @@ const logoutModel = () =>{
                 <li>
                   <a onClick={openKycModal}>Complete Kyc</a>
                 </li>
+                <Link to = "/profile">
+                <li>
+                  <a>Profile</a>
+                </li>
+                </Link>
+
               </ul>
             </div>
             <Link to={"/cart"}>

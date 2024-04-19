@@ -3,6 +3,7 @@ import MainLayout from "../Layouts/MainLayout";
 import ModalLayout from "../Layouts/ModalLayout";
 import { X } from "lucide-react";
 import axios from 'axios';
+import { toast } from "react-toastify";
 
 const Login = ({ closeSignupModal, setShowSignupModal }) => {
   const [formData, setFormData] = useState({
@@ -25,12 +26,15 @@ const Login = ({ closeSignupModal, setShowSignupModal }) => {
       
       // Check if login was successful
       if (response.status === 200) {
+        closeSignupModal()
         // Login successful
         console.log('Login successful');
+        toast.success('Login successful');
         // You can redirect to another page or perform any other action here
       } else {
         // Login failed
         console.error('Login failed');
+        toast.success('Login failed');
       }
     } catch (error) {
       // Network error or other errors

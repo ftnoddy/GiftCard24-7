@@ -13,6 +13,8 @@ import AboutScreen from "./Screens/AboutScreen.jsx";
 import SignleProductScreen from "./Screens/SignleProductScreen.jsx";
 // import CartitemScreen from "./Screens/CartitemScreen.jsx";
 import CartScreen from "./Screens/CartScreen.jsx";
+import ProfileScreen from "./Screens/ProfileScreen.jsx";
+
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -22,6 +24,7 @@ const router = createBrowserRouter(
       {/* <Route path="/cartitem" element={<CartitemScreen />} /> */}
       <Route path="/cart" element={<CartScreen />} />
       <Route path="/product/:id" element={<SignleProductScreen />} />
+      <Route path="/profile" element = {<ProfileScreen userName={"noddy"} />} />
     </Route>
   )
 );

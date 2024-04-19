@@ -30,7 +30,21 @@ app.get("/", (req, res) => {
 app.use(notFound);
 app.use(errorHandler);
 
+if (process.env.NODE_ENV === 'production'){
+  app.use(express.static(path.join(__dirname,'/vite-project/build')));
+
+  app.get('*',(req,res) =>
+res.sendFile(path.resolve(__dirname, '/vite-project', 'build', 'index.html')))
+}
+else{
+
+  app.get("/", (req, res) => {
+    res.send("Welcome to the backend server!");
+  });
+  
+}
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
+
