@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import MainLayout from "../Layouts/MainLayout";
 import ModalLayout from "../Layouts/ModalLayout";
-import { Link } from "react-router-dom";
 import { X } from "lucide-react";
+import axios from 'axios';
 
 const Login = ({ closeSignupModal, setShowSignupModal }) => {
   const [formData, setFormData] = useState({
@@ -17,10 +17,25 @@ const Login = ({ closeSignupModal, setShowSignupModal }) => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission here, e.g., validation, API call, etc.
-    console.log(formData);
+    
+    try {
+      const response = await axios.post('http://localhost:5000/api/users/login', formData);
+      
+      // Check if login was successful
+      if (response.status === 200) {
+        // Login successful
+        console.log('Login successful');
+        // You can redirect to another page or perform any other action here
+      } else {
+        // Login failed
+        console.error('Login failed');
+      }
+    } catch (error) {
+      // Network error or other errors
+      console.error('Error:', error);
+    }
   };
 
   return (
@@ -79,7 +94,8 @@ const Login = ({ closeSignupModal, setShowSignupModal }) => {
                 Login
               </button>
               <div className="flex mt-4 gap-1 text-blue-500">
-              Don't have an account?<span onClick={() => setShowSignupModal("signup")} className="cursor-pointer hover:underline">Sign up</span>
+                Don't have an account?
+                <span onClick={() => setShowSignupModal("signup")} className="cursor-pointer hover:underline">Sign up</span>
               </div>
             </div>
           </form>

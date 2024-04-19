@@ -1,16 +1,25 @@
 import React, { useState } from "react";
 import MainLayout from "../Layouts/MainLayout";
 import ModalLayout from "../Layouts/ModalLayout";
-import { Link } from "react-router-dom";
+// import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import { X } from "lucide-react";
+import axios from 'axios';
+import { toast } from "react-toastify";
 
-const SignUp = ({closeSignupModal, setShowSignupModal}) => {
+const SignUp = ({ closeSignupModal, setShowSignupModal }) => {
+  // const history = useHistory();
+  // const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
     confirmPassword: "",
   });
+
+  const [signupSuccess, setSignupSuccess] = useState(false);
+  const navigate = useNavigate();
+   // Use useNavigate to get the navigate function
 
   const handleChange = (e) => {
     setFormData({
@@ -19,10 +28,30 @@ const SignUp = ({closeSignupModal, setShowSignupModal}) => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission here, e.g., validation, API call, etc.
-    console.log(formData);
+
+    try {
+      const response = await axios.post('http://localhost:5000/api/users', formData);
+    
+      // Check if the signup was successful
+      if (response.status === 201) { // Changed to 201 for successful creation
+        // Signup successful
+        console.log('Signup successful');
+        toast.success('Signup successful'); // Show success toast message
+        setTimeout(() => {
+          navigate('/'); // Use navigate to redirect to the home page
+        }, 2000);
+      } else {
+        // Signup failed
+        console.error('Signup failed');
+        toast.error('Signup failed'); // Show error toast message
+      }
+    } catch (error) {
+      // Network error or other errors
+      console.error('Error:', error);
+      toast.error('Signup failed'); // Show error toast message
+    }
   };
 
 

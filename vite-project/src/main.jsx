@@ -11,12 +11,16 @@ import {
 import HomeScreen from "./Screens/HomeScreen.jsx";
 import AboutScreen from "./Screens/AboutScreen.jsx";
 import SignleProductScreen from "./Screens/SignleProductScreen.jsx";
+// import CartitemScreen from "./Screens/CartitemScreen.jsx";
+import CartScreen from "./Screens/CartScreen.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<App />}>
       <Route path="/" index={true} element={<HomeScreen />} />
       <Route path="/about" element={<AboutScreen />} />
+      {/* <Route path="/cartitem" element={<CartitemScreen />} /> */}
+      <Route path="/cart" element={<CartScreen />} />
       <Route path="/product/:id" element={<SignleProductScreen />} />
     </Route>
   )

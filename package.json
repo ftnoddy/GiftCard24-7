@@ -13,6 +13,12 @@
   "author": "Noddy",
   "license": "MIT",
   "dependencies": {
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
+    "@mui/icons-material": "^5.15.15",
+    "@mui/styled-engine": "^5.15.14",
+    "@reduxjs/toolkit": "^2.2.3",
+    "axios": "^1.6.8",
     "bcryptjs": "^2.4.3",
     "colors": "^1.4.0",
     "cookie-parser": "^1.4.6",
@@ -21,7 +27,15 @@
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.5.0",
-    "mongoose": "^8.3.1"
+    "mongoose": "^8.3.1",
+    "nodemailer": "^6.9.13",
+    "notistack": "^3.0.1",
+    "otp-generator": "^4.0.1",
+    "razorpay": "^2.9.2",
+    "react-feather": "^2.0.10",
+    "react-router-dom": "^6.22.3",
+    "react-toastify": "^10.0.5",
+    "use-history": "^1.4.1"
   },
   "devDependencies": {
     "concurrently": "^8.2.2",
