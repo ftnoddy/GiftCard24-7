@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import SignUp from "./Modals/SignUp";
 import Login from "./Modals/Login";
 import KycVerification from "./Modals/KycVerification"; // Import the KycVerification component
+import { toast } from "react-toastify";
 
 function Navbar() {
   const cart = useSelector((state) => state.cart);
@@ -15,6 +16,10 @@ function Navbar() {
   const openSignupModal = () => {
     setShowSignupModal("signup");
   };
+
+const logoutModel = () =>{
+  toast.success("success")
+}
 
   const closeSignupModal = () => {
     setShowSignupModal("");
@@ -83,7 +88,7 @@ function Navbar() {
                 <li>
                   <a onClick={openSignupModal}>Sign Up</a>
                 </li>
-                <li>
+                <li onClick ={logoutModel} >
                   <a>Logout</a>
                 </li>
                 <li>

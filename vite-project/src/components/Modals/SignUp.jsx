@@ -18,6 +18,7 @@ const SignUp = ({ closeSignupModal, setShowSignupModal }) => {
   });
 
   const [signupSuccess, setSignupSuccess] = useState(false);
+
   const navigate = useNavigate();
    // Use useNavigate to get the navigate function
 
@@ -34,9 +35,12 @@ const SignUp = ({ closeSignupModal, setShowSignupModal }) => {
     try {
       const response = await axios.post('http://localhost:5000/api/users', formData);
     
+    
       // Check if the signup was successful
       if (response.status === 201) { // Changed to 201 for successful creation
         // Signup successful
+       closeSignupModal()
+        console.log("responce",response);
         console.log('Signup successful');
         toast.success('Signup successful'); // Show success toast message
         setTimeout(() => {
