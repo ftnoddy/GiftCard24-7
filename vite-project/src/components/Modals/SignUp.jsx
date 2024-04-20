@@ -33,7 +33,7 @@ const SignUp = ({ closeSignupModal, setShowSignupModal }) => {
     e.preventDefault();
 
     try {
-      const response = await axios.post('http://localhost:5000/api/users', formData);
+      const response = await axios.post('http://localhost:5002/api/users', formData);
     
     
       // Check if the signup was successful
