@@ -14,6 +14,7 @@ import SignleProductScreen from "./Screens/SignleProductScreen.jsx";
 // import CartitemScreen from "./Screens/CartitemScreen.jsx";
 import CartScreen from "./Screens/CartScreen.jsx";
 import ProfileScreen from "./Screens/ProfileScreen.jsx";
+import PaymentMethodScreen from "./Screens/PaymentMethodScreen.jsx";
 
 
 const router = createBrowserRouter(
@@ -25,6 +26,8 @@ const router = createBrowserRouter(
       <Route path="/cart" element={<CartScreen />} />
       <Route path="/product/:id" element={<SignleProductScreen />} />
       <Route path="/profile" element = {<ProfileScreen userName={"noddy"} />} />
+      <Route path="/payment-method" element={<PaymentMethodScreen/>} />
+
     </Route>
   )
 );

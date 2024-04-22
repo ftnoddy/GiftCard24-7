@@ -6,8 +6,11 @@ import { useNavigate } from "react-router-dom"; // Import useNavigate
 import { X } from "lucide-react";
 import axios from 'axios';
 import { toast } from "react-toastify";
+import { setCredentials } from "../../Redux/Slices/authSlice";
+import { useDispatch } from 'react-redux';
 
 const SignUp = ({ closeSignupModal, setShowSignupModal }) => {
+  const dispatch = useDispatch();
   // const history = useHistory();
   // const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -46,6 +49,8 @@ const SignUp = ({ closeSignupModal, setShowSignupModal }) => {
         setTimeout(() => {
           navigate('/'); // Use navigate to redirect to the home page
         }, 2000);
+        dispatch(setCredentials(response.data)); 
+
       } else {
         // Signup failed
         console.error('Signup failed');

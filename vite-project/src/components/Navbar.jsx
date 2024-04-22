@@ -9,17 +9,18 @@ import KycVerification from "./Modals/KycVerification"; // Import the KycVerific
 import { toast } from "react-toastify";
 
 function Navbar() {
+  const userName = useSelector((state) => state.auth.userInfo.name);
   const cart = useSelector((state) => state.cart);
   const [showSignupModal, setShowSignupModal] = useState("");
-  const [showKycModal, setShowKycModal] = useState(false); // State to control KYC modal visibility
+  const [showKycModal, setShowKycModal] = useState(false);
 
   const openSignupModal = () => {
     setShowSignupModal("signup");
   };
 
-const logoutModel = () =>{
-  toast.success("success")
-}
+  const logoutModel = () => {
+    toast.success("success");
+  };
 
   const closeSignupModal = () => {
     setShowSignupModal("");
@@ -52,7 +53,12 @@ const logoutModel = () =>{
       <div>
         <div className="navbar bg-base-100 border-b border-gray-300 shadow-lg fixed top-0 w-full z-10">
           <div className="flex-1">
-            <a className="btn btn-ghost text-xl">daisyUI</a>
+            {/* Replace anchor tag with image tag for the logo */}
+            <img
+              src="https://api.asm.skype.com/v1/objects/0-sa-d9-352eeffed2071b2609778285d7e8da5a/views/imgpsh_fullsize_anim" // Replace with the URL of your logo image
+              alt="Your Logo" // Add an appropriate alt text for accessibility
+              className="h-12" // Adjust height as needed
+            />
           </div>
 
           <div className="flex-none">
@@ -74,11 +80,8 @@ const logoutModel = () =>{
                 role="button"
                 className="btn btn-ghost btn-circle avatar"
               >
-                <div className="w-10 rounded-full">
-                  <img
-                    alt="Tailwind CSS Navbar component"
-                    src="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
-                  />
+                <div className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center text-xl font-semibold text-purple-700">
+                  {userName ? userName.slice(0, 2).toUpperCase() : null}
                 </div>
               </div>
               <ul
@@ -88,31 +91,30 @@ const logoutModel = () =>{
                 <li>
                   <a onClick={openSignupModal}>Sign Up</a>
                 </li>
-                <li onClick ={logoutModel} >
+                <li onClick={logoutModel}>
                   <a>Logout</a>
                 </li>
                 <li>
                   <a onClick={openKycModal}>Complete Kyc</a>
                 </li>
-                <Link to = "/profile">
-                <li>
-                  <a>Profile</a>
-                </li>
+                <Link to="/profile">
+                  <li>
+                    <a>Profile</a>
+                  </li>
                 </Link>
-
               </ul>
             </div>
             <Link to={"/cart"}>
-            <div className="relative">
-              <ShoppingBasket className="text-2xl cursor-pointer hover:text-purple-600 transition transform duration-200" />
+              <div className="relative">
+                <ShoppingBasket className="text-2xl cursor-pointer hover:text-purple-600 transition transform duration-200" />
 
-              {cart.length > 0 && (
-                <div className="absolute bg-purple-600 text-xs w-5 h-5 flex justify-center items-center animate-bounce -top-1 -right-2 rounded-full top- text-white">
-                  {cart.length}
-                </div>
-              )}
-            </div>
-          </Link>
+                {cart.length > 0 && (
+                  <div className="absolute bg-purple-600 text-xs w-5 h-5 flex justify-center items-center animate-bounce -top-1 -right-2 rounded-full top- text-white">
+                    {cart.length}
+                  </div>
+                )}
+              </div>
+            </Link>
           </div>
         </div>
       </div>

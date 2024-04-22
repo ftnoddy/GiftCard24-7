@@ -4,12 +4,16 @@ import ModalLayout from "../Layouts/ModalLayout";
 import { X } from "lucide-react";
 import axios from 'axios';
 import { toast } from "react-toastify";
-
+import { setCredentials } from "../../Redux/Slices/authSlice";
+import { useDispatch } from 'react-redux';
+import { useNavigate } from "react-router-dom";
 const Login = ({ closeSignupModal, setShowSignupModal }) => {
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({
@@ -30,8 +34,10 @@ const Login = ({ closeSignupModal, setShowSignupModal }) => {
         // Login successful
         console.log('Login successful');
         toast.success('Login successful');
+        dispatch(setCredentials(response.data)); 
         // You can redirect to another page or perform any other action here
-      } else {
+      } 
+      else {
         // Login failed
         console.error('Login failed');
         toast.success('Login failed');

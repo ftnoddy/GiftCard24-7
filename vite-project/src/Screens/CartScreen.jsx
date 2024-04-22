@@ -1,12 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import CartitemScreen from "./CartitemScreen";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from 'react-router-dom';
 
 const CartScreen = () => {
   const [totalAmount, setTotalAmount] = useState(0);
   const [itemNames, setItemNames] = useState([]);
   const cart = useSelector((state) => state.cart);
+  const navigate = useNavigate();
+
+  const handleCheckout = () => {
+    // Navigate to PaymentMethodScreen and pass totalAmount as state
+    navigate('/payment-method', { state: { totalAmount } });
+  };
 
   useEffect(() => {
     // Calculate total amount
@@ -52,9 +58,11 @@ const CartScreen = () => {
                   </span>{" "}
                   : ${totalAmount}
                 </p>
-                <button className="bg-purple-700 hover:bg-purple-50 rounded-lg text-white transition duration-300 ease-linear mt-5 border-2 border-purple-600 font-bold hover:text-purple-700 p-3">
+                {/* <Link to={{ pathname: "/payment-method", state: { totalAmount: totalAmount } }}> */}
+                <button onClick={handleCheckout} className="bg-purple-700 hover:bg-purple-50 rounded-lg text-white transition duration-300 ease-linear mt-5 border-2 border-purple-600 font-bold hover:text-purple-700 p-3" >
                   Checkout Payment
                 </button>
+                {/* </Link> */}
               </div>
             </div>
           </div>
