@@ -12,6 +12,7 @@ connectDB();
 
 const app = express();
 const PORT = process.env.PORT || 5002;
+const BEARER_TOKEN = process.env.BEARER_TOKEN;
 
 // Body parser Middleware
 app.use(express.json());
@@ -26,40 +27,31 @@ app.use("/api/users", userRoutes);
 
 app.post("/sso/token", async (req, res) => {
   try {
-    // Define the endpoint URL
     const endpointURL = "https://stagingaccount.xoxoday.com/chef/v1/oauth/sso/stores/company";
 
-    // Define the request body
     const requestBody = {
-      user_input: "email@example.com",
+      user_input: req.body.user_input,
       tpd: {
-        auth_header: "Bearer asdgfjhbsdlkjbasdlkjbadslkbdakasdhfjhfdb==",
-        employee_id: "4356XC90",
-        Uid: "TTEO32S99ERCL"
+        auth_header: `Bearer ${BEARER_TOKEN}`,
+        employee_id: req.body.employee_id,
+        Uid: req.body.Uid
       }
     };
 
-    // Define the request headers
     const headers = {
-      Authorization: 'Bearer eyJ0b2tlbkNvbnRlbnQiOnsiaXNzdWVkRm9yIjoiRnJlc2h3b3JrcyIsInNjb3BlIjoiIiwiaXNzdWVkQXQiOjE1NTk5MTk4ODE2MDEsImV4cGlyZXNBdCI6IjIwMTktMDYtMjJUMTU6MDQ6NDEuNjAxWiIsInRva2VuX3R5cGUi',
+      Authorization: 'Bearer ' + req.headers.authorization,
       'Content-Type': 'application/json'
     };
 
-    // Send the POST request
-    axios.post(endpointURL, requestBody, { headers })
-      .then(response => {
-        console.log(response.data); // Output the response data
-        res.json(response.data); // Send the response data to the client
-      })
-      .catch(error => {
-        console.error(error); // Output any errors
-        res.status(500).json({ error: 'Internal server error' }); // Send error response
-      });
+    const response = await axios.post(endpointURL, requestBody, { headers });
+    console.log(response.data);
+    res.json(response.data);
   } catch (error) {
-    console.error(error); // Output any errors
-    res.status(500).json({ error: 'Internal server error' }); // Send error response
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 
 app.get("/", (req, res) => {
   res.send("Welcome to the backend server!");
