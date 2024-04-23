@@ -8,6 +8,7 @@ import Login from "./Modals/Login";
 import KycVerification from "./Modals/KycVerification"; // Import the KycVerification component
 import { toast } from "react-toastify";
 
+
 function Navbar() {
   const userName = useSelector((state) => state.auth.userInfo.name);
   const cart = useSelector((state) => state.cart);

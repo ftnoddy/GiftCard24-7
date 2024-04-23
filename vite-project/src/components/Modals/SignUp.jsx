@@ -45,7 +45,16 @@ const SignUp = ({ closeSignupModal, setShowSignupModal }) => {
        closeSignupModal()
         console.log("responce",response);
         console.log('Signup successful');
-        toast.success('Signup successful'); // Show success toast message
+        toast.success('Signup successful');
+        
+        const { name, email } = response.data;
+        localStorage.setItem('userInfo', JSON.stringify({ userName: name, userEmail: email }));
+        // Redirect to the profile page with user data
+        navigate('/profile', { state: { userName: name, userEmail: email } });
+
+        // Dispatch action to set user credentials in Redux store
+        dispatch(setCredentials(response.data))
+
         setTimeout(() => {
           navigate('/'); // Use navigate to redirect to the home page
         }, 2000);
