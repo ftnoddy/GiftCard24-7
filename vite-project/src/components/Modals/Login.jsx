@@ -34,7 +34,10 @@ const Login = ({ closeSignupModal, setShowSignupModal }) => {
         // Login successful
         console.log('Login successful');
         toast.success('Login successful');
-        dispatch(setCredentials(response.data)); 
+        
+        dispatch(setCredentials(response.data));
+
+        localStorage.setItem('token', response.data.token); 
         // You can redirect to another page or perform any other action here
       } 
       else {

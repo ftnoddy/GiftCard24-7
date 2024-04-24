@@ -11,12 +11,14 @@ function ProfileScreen() {
 
   // Function to extract first two letters of a string
   const getInitials = (name) => {
+    if (!name) return ''; // Check if name is undefined
     const words = name.split(' ');
     return words.length > 1 ? (words[0][0] + words[1][0]).toUpperCase() : words[0][0].toUpperCase();
   };
-
+  
   // Function to generate background color based on user's name
   const getBackgroundColor = (name) => {
+    if (!name) return '#000'; // Default color if name is undefined
     const colors = ['#f44336', '#e91e63', '#9c27b0', '#673ab7', '#3f51b5', '#2196f3', '#00bcd4', '#009688', '#4caf50', '#8bc34a', '#ff9800', '#ff5722', '#795548', '#607d8b'];
     const index = name.charCodeAt(0) % colors.length;
     return colors[index];

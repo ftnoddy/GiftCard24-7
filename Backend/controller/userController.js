@@ -4,6 +4,7 @@ import KycVerification from "../models/kycModel.js";
 import jwt from "jsonwebtoken";
 import generateToken from "../utils/generateToken.js";
 
+
 // import bcrypt from 'bcryptjs';
 
 const submitKycVerification = async (req, res) => {
@@ -32,6 +33,10 @@ const submitKycVerification = async (req, res) => {
   }
 };
 
+const getKycVerification = asyncHandler(async (req, res) => {
+  const kycData = await KycVerification.find({});
+  res.json(kycData);
+});
 
 // @desc    Auth user & get token
 // @route   POST/ api/users/login
@@ -42,12 +47,16 @@ const authUser = asyncHandler(async (req, res) => {
     const user = await User.findOne({ email });
 
     if (user && (await user.matchPassword(password))) {
-      generateToken(res, user._id);
+      // generateToken(res, user._id);
+      const token = jwt.sign({ email }, process.env.JWT_SECRET, {
+        expiresIn: "1h",
+      });
 
       res.status(200).json({
         _id: user._id,
         name: user.name,
         email: user.email,
+        token: token,
         isAdmin: user.isAdmin,
       });
     } else {
@@ -78,11 +87,15 @@ const registerUser = asyncHandler(async (req, res) => {
     });
 
     if (user) {
-      generateToken(res, user._id);
+      // generateToken(res, user._id);
+      const token = jwt.sign({ email }, process.env.JWT_SECRET, {
+        expiresIn: "1h",
+      });
       res.status(201).json({
         _id: user._id,
         name: user.name,
         email: user.email,
+        token: token,
         isAdmin: user.isAdmin,
       });
     } else {
@@ -228,4 +241,5 @@ export {
   deleteUsers,
   updateUsers,
   submitKycVerification,
+  getKycVerification,
 };

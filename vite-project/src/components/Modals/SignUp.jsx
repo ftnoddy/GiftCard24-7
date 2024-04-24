@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 import { setCredentials } from "../../Redux/Slices/authSlice";
 import { useDispatch } from 'react-redux';
 
+
 const SignUp = ({ closeSignupModal, setShowSignupModal }) => {
   const dispatch = useDispatch();
   // const history = useHistory();
@@ -34,32 +35,32 @@ const SignUp = ({ closeSignupModal, setShowSignupModal }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     try {
       const response = await axios.post('http://localhost:5002/api/users', formData);
-    
-    
+  
       // Check if the signup was successful
-      if (response.status === 201) { // Changed to 201 for successful creation
+      if (response.status === 201) {
         // Signup successful
-       closeSignupModal()
-        console.log("responce",response);
+        closeSignupModal();
+        console.log("Response:", response.data);
         console.log('Signup successful');
         toast.success('Signup successful');
-        
-        const { name, email } = response.data;
-        localStorage.setItem('userInfo', JSON.stringify({ userName: name, userEmail: email }));
+  
+        const { name, email, token, _id, isAdmin } = response.data;
+  
+        // Store user data and token in localStorage
+        localStorage.setItem('userInfo', JSON.stringify({ name, email, token, _id, isAdmin }));
+  
         // Redirect to the profile page with user data
         navigate('/profile', { state: { userName: name, userEmail: email } });
-
+  
         // Dispatch action to set user credentials in Redux store
-        dispatch(setCredentials(response.data))
-
+        dispatch(setCredentials(response.data));
+  
         setTimeout(() => {
           navigate('/'); // Use navigate to redirect to the home page
         }, 2000);
-        dispatch(setCredentials(response.data)); 
-
       } else {
         // Signup failed
         console.error('Signup failed');

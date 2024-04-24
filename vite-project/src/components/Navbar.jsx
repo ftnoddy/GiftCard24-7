@@ -7,6 +7,7 @@ import SignUp from "./Modals/SignUp";
 import Login from "./Modals/Login";
 import KycVerification from "./Modals/KycVerification"; // Import the KycVerification component
 import { toast } from "react-toastify";
+import axios from "axios";
 
 
 function Navbar() {
@@ -19,8 +20,20 @@ function Navbar() {
     setShowSignupModal("signup");
   };
 
-  const logoutModel = () => {
-    toast.success("success");
+  // const logoutModel = () => {
+
+  //   toast.success("success");
+  // };
+
+  const logoutUsers = async () => {
+    try {
+      await axios.post('http://localhost:5002/api/users/logout'); // Use POST method for logout
+      toast.success("Logout successful");
+      // Redirect or perform any additional actions after logout
+    } catch (error) {
+      console.error('Error logging out:', error);
+      toast.error("Logout failed"); // Show error toast message
+    }
   };
 
   const closeSignupModal = () => {
@@ -69,6 +82,9 @@ function Navbar() {
             <Link to="/about" className="btn btn-ghost text-xl">
               ABOUT
             </Link>
+            <Link to="/admin" className="btn btn-ghost text-xl">
+              ADMIN
+            </Link>
             <Link to="/" className="btn btn-ghost text-xl">
               CONTACT US
             </Link>
@@ -92,7 +108,7 @@ function Navbar() {
                 <li>
                   <a onClick={openSignupModal}>Sign Up</a>
                 </li>
-                <li onClick={logoutModel}>
+                <li onClick={logoutUsers}>
                   <a>Logout</a>
                 </li>
                 <li>
