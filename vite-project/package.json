@@ -17,6 +17,7 @@
     "@reduxjs/toolkit": "^2.2.3",
     "axios": "^1.6.8",
     "browser-router": "^0.2.0",
+    "frontend": "file:..",
     "link": "^2.1.0",
     "lucide-react": "^0.368.0",
     "next-themes": "^0.3.0",

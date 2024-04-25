@@ -61,10 +61,10 @@ app.use(notFound);
 app.use(errorHandler);
 
 if (process.env.NODE_ENV === 'production'){
-  app.use(express.static(path.join(__dirname,'/vite-project/build')));
+  app.use(express.static(path.join(__dirname,'/vite-project/dist')));
 
   app.get('*',(req,res) =>
-res.sendFile(path.resolve(__dirname, '/vite-project', 'build', 'index.html')))
+res.sendFile(path.resolve(__dirname, '/vite-project', 'dist', 'index.html')))
 }
 else{
   app.get("/", (req, res) => {

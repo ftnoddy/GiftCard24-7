@@ -9,7 +9,7 @@
     "client": "npm run dev --prefix vite-project",
     "server": "nodemon backend/server.js",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "build": "npm install && npm install --prifix vite-project && npm run build --prifix vite-project"
+    "build": "npm install && npm install --prefix vite-project && npm run build --prefix vite-project"
   },
   "author": "Noddy",
   "license": "MIT",
