@@ -6,13 +6,13 @@ import cors from "cors";
 import { errorHandler, notFound } from "./middleware/errorMiddleware.js";
 import userRoutes from "./routes/userRoutes.js";
 import axios from 'axios';
+import path from 'path';
 
 dotenv.config();
 connectDB();
 
 const app = express();
 const PORT = process.env.PORT || 5002;
-const BEARER_TOKEN = process.env.BEARER_TOKEN;
 
 // Body parser Middleware
 app.use(express.json());
@@ -25,52 +25,30 @@ app.use(cors());
 // Routes
 app.use("/api/users", userRoutes);
 
-app.post("/sso/token", async (req, res) => {
-  try {
-    const endpointURL = "https://stagingaccount.xoxoday.com/chef/v1/oauth/sso/stores/company";
+// Serve static files in production
+if (process.env.NODE_ENV === 'production') {
+  const __dirname = path.resolve();
 
-    const requestBody = {
-      user_input: req.body.user_input,
-      tpd: {
-        auth_header: `Bearer ${BEARER_TOKEN}`,
-        employee_id: req.body.employee_id,
-        Uid: req.body.Uid
-      }
-    };
+  app.use(express.static(path.join(__dirname, 'vite-project', 'dist')));
 
-    const headers = {
-      Authorization: 'Bearer ' + req.headers.authorization,
-      'Content-Type': 'application/json'
-    };
-
-    const response = await axios.post(endpointURL, requestBody, { headers });
-    console.log(response.data);
-    res.json(response.data);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
-
-
-app.get("/", (req, res) => {
-  res.send("Welcome to the backend server!");
-});
-
-app.use(notFound);
-app.use(errorHandler);
-
-if (process.env.NODE_ENV === 'production'){
-  app.use(express.static(path.join(__dirname,'/vite-project/dist')));
-
-  app.get('*',(req,res) =>
-res.sendFile(path.resolve(__dirname, '/vite-project', 'dist', 'index.html')))
-}
-else{
+  // Fallback route for React SPA
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'vite-project', 'dist', 'index.html'));
+  });
+} else {
   app.get("/", (req, res) => {
     res.send("Welcome to the backend server!");
   });
 }
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send("Internal Server Error");
+});
+
+app.use(notFound);
+app.use(errorHandler);
 
 // Start the server
 app.listen(PORT, () => {
