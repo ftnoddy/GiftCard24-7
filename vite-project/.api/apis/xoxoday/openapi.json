@@ -1,0 +1,30 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Staging API",
+    "version": "unknown"
+  },
+  "servers": [
+    {
+      "url": "https://stagingaccount.xoxoday.com/chef/"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "sec0": {
+        "type": "oauth2",
+        "flows": {}
+      }
+    }
+  },
+  "security": [
+    {
+      "sec0": []
+    }
+  ],
+  "paths": {},
+  "x-readme": {
+    "headers": []
+  },
+  "x-readme-fauxas": true
+}

@@ -3,28 +3,23 @@ const router = express.Router();
 
 import {
   authUser,
-  logoutrUser,
+  logoutUser,
   registerUser,
   submitKycVerification,
   getUsers,
-  getKycVerification
-//   getUsersByID,
-//   deleteUsers,
-//   updateUsers,
+  getKycVerification,
+  getXoxodayData
 } from "../controller/userController.js";
-// import { protect, admin } from "../middleware/authMiddleware.js";
 
-router.route("/").post(registerUser)
-router.route("/").get(getUsers);
-router.route("/login").post(authUser);
-router.route("/logout").post(logoutrUser);
-router.route("/kyc-verification").post(submitKycVerification);
-router.route("/kyc-verification").get(getKycVerification);
-
-// router
-//   .route("/:id")
-//   .delete(protect, admin, deleteUsers)
-//   .get(protect, admin, getUsersByID)
-//   .put(protect, admin, updateUsers);
+router.post("/", registerUser);
+router.get("/", getUsers);
+router.post("/login", authUser);
+router.post("/logout", logoutUser);
+router.post("/kyc-verification", submitKycVerification);
+router.get("/kyc-verification", getKycVerification);
+router.get('/accessories', getXoxodayData, (req, res) => {
+  // Pass the Xoxoday data to your Accessories component
+  res.render('accessories', { xoxodayData: req.xoxodayData });
+});
 
 export default router;

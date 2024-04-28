@@ -27,7 +27,9 @@ function Navbar() {
 
   const logoutUsers = async () => {
     try {
-      await axios.post('http://localhost:5002/api/users/logout'); // Use POST method for logout
+      await axios.post('http://localhost:5002/api/users/logout');
+      localStorage.removeItem('token');
+      localStorage.removeItem('userInfo'); // Remove JWT token from local storage
       toast.success("Logout successful");
       // Redirect or perform any additional actions after logout
     } catch (error) {
@@ -35,6 +37,7 @@ function Navbar() {
       toast.error("Logout failed"); // Show error toast message
     }
   };
+  
 
   const closeSignupModal = () => {
     setShowSignupModal("");

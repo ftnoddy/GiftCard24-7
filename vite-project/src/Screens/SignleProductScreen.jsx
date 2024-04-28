@@ -4,13 +4,10 @@ import MainLayout from "../components/Layouts/MainLayout";
 import products from "../Array/ProductsArray";
 
 const SignleProductScreen = () => {
-  // Get the product ID from the URL parameters
   const { id } = useParams();
 
-  // Find the product with the matching ID
-  const product = products.find((product) => product.id === parseInt(id));
+  const product = products.find((product) => product.productId === parseInt(id));
 
-  // If the product is not found, display a message
   if (!product) {
     return (
       <MainLayout>
@@ -21,19 +18,34 @@ const SignleProductScreen = () => {
     );
   }
 
-  // Render the product details within a card-like layout
   return (
     <MainLayout>
-      <div className="container mx-auto px-4 py-8">
-        <div className="max-w-lg mx-auto bg-white rounded-lg overflow-hidden shadow-lg">
-          <img src={product.image} alt={product.name} className="w-full" />
-          <div className="p-4">
-            <h1 className="text-xl font-semibold mb-2">{product.name}</h1>
-            <p className="text-gray-700 mb-4">{product.description}</p>
-            <p className="text-lg font-semibold text-gray-800">Price: ${product.price}</p>
-            <p className="text-lg font-semibold text-gray-800">Rating: {product.rating}</p>
-            <p className="text-lg font-semibold text-gray-800">Brand: {product.brand}</p>
-            <p className="text-lg font-semibold text-gray-800">Category: {product.category}</p>
+      <div className="container mx-auto px-4 py-8 grid grid-cols-2 gap-8">
+        {/* Product Details */}
+        <div>
+          <div className="max-w-lg bg-white rounded-lg overflow-hidden shadow-lg">
+            <img src={product.imageUrl} alt={product.name} className="w-full" />
+            <div className="p-4">
+              <h1 className="text-xl font-semibold mb-2">{product.name}</h1>
+              <p className="text-gray-700 mb-4">{product.description}</p>
+              <p className="text-lg font-semibold text-gray-800">Price: ${product.valueDenominations}</p>
+              <p className="text-lg font-semibold text-gray-800">Country: {product.countryName}</p>
+              <p className="text-lg font-semibold text-gray-800">Categories: {product.categories}</p>
+              <p className="text-lg font-semibold text-gray-800">Validity: {product.expiryAndValidity}</p>
+            </div>
+          </div>
+        </div>
+        {/* Redemption Instructions */}
+        <div>
+          <div className="max-w-lg bg-white rounded-lg overflow-hidden shadow-lg">
+            <div className="p-4">
+              <h2 className="text-lg font-semibold text-gray-800">Redemption Instructions:</h2>
+              {/* Render HTML content using dangerouslySetInnerHTML */}
+              <div dangerouslySetInnerHTML={{ __html: product.redemptionInstructions }} />
+
+              <h2 className="text-lg font-semibold text-gray-800">Terms & Conditions Instructions:</h2>
+              <div dangerouslySetInnerHTML={{ __html: product.termsAndConditionsInstructions }} />
+            </div>
           </div>
         </div>
       </div>

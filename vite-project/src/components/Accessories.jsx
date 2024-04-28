@@ -19,7 +19,7 @@ const Accessories = () => {
   };
 
   const removeFromCart = (product) => {
-    dispatch(remove(product.id));
+    dispatch(remove(product.productId));
     enqueueSnackbar(`Item removed from your cart!`, {
       variant: "warning",
       autoHideDuration: 3000,
@@ -31,10 +31,10 @@ const Accessories = () => {
       <div className="p-4 md:p-8">
         <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 justify-center w-full gap-4">
           {products.map((product) => (
-            <div key={product.id} className="card w-full bg-base-100 shadow-xl carousel-item transform transition duration-300 hover:scale-105 hover:shadow-md">
-              <Link to={`/product/${product.id}`}>
+            <div key={product.productId} className="card w-full bg-base-100 shadow-xl carousel-item transform transition duration-300 hover:scale-105 hover:shadow-md">
+              <Link to={`/product/${product.productId}`}>
                 <figure>
-                  <img src={product.image} alt={product.name} />
+                  <img src={product.imageUrl} alt={product.name} />
                 </figure>
               </Link>
               <div className="card-body">
@@ -42,13 +42,10 @@ const Accessories = () => {
                   {product.name}
                   <div className="badge badge-secondary">NEW</div>
                 </h2>
-                <p>If a dog chews shoes whose shoes does he choose?</p>
-                <div className="flex justify-between items-center mb-4">
-                  <div className="text-sm font-medium">{product.name}</div>
-                  <div className="text-lg font-semibold">${product.price}</div>
-                </div>
+                
+                <p>Price: {product.currencyCode} {product.valueDenominations.split(',')[0]}</p> {/* Assuming valueDenominations contains comma-separated values */}
                 <div className="card-actions justify-end">
-                  {cart.some((p) => p.id === product.id) ? (
+                  {cart.some((p) => p.id === product.productId) ? (
                     <button className="btn btn-primary" onClick={() => removeFromCart(product)}>Remove from Cart</button>
                   ) : (
                     <button className="btn btn-primary" onClick={() => addToCart(product)}>Add to Cart</button>
