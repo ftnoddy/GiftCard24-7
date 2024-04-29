@@ -5,9 +5,9 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "start": "node backend/server.js",
+    "start": "node Backend/server.js",
     "client": "npm run dev --prefix vite-project",
-    "server": "nodemon backend/server.js",
+    "server": "nodemon Backend/server.js",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "build": "npm install && npm install --prefix vite-project && npm run build --prefix vite-project"
   },
