@@ -12,7 +12,7 @@ dotenv.config();
 connectDB();
 
 const app = express();
-const PORT = process.env.PORT || 5002;
+const PORT = process.env.PORT || 80;
 
 // Body parser Middleware
 app.use(express.json());
