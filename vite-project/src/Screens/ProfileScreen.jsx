@@ -16,8 +16,8 @@ function ProfileScreen() {
   useEffect(() => {
     (async () => {
       try {
-        console.log("token", authToken)
-        const response = await axios.get('http://localhost:5002/api/users/me', {
+        // console.log("token", authToken)
+        const response = await axios.get('http://www.giftcards247.shop:5002/api/users/me', {
           headers: {
             Authorization: `Bearer ${authToken}`
           }
