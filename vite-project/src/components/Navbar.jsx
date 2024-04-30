@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useSelector } from "react-redux";
 import ModeToggle from "./ModeToggle";
 import { ShoppingBasket } from "@mui/icons-material";
@@ -8,11 +8,13 @@ import Login from "./Modals/Login";
 import KycVerification from "./Modals/KycVerification"; // Import the KycVerification component
 import { toast } from "react-toastify";
 import axios from "axios";
+import { AuthContext } from "../context/AuthContext";
 
 
 function Navbar() {
   const userName = useSelector((state) => state.auth.userInfo.name);
   const cart = useSelector((state) => state.cart);
+  const {user, setUser} = useContext(AuthContext)
   const [showSignupModal, setShowSignupModal] = useState("");
   const [showKycModal, setShowKycModal] = useState(false);
 
@@ -31,7 +33,8 @@ function Navbar() {
       localStorage.removeItem('token');
       localStorage.removeItem('userInfo'); // Remove JWT token from local storage
       toast.success("Logout successful");
-      // Redirect or perform any additional actions after logout
+      localStorage.removeItem('userInfo')
+      setUser(null)
     } catch (error) {
       console.error('Error logging out:', error);
       toast.error("Logout failed"); // Show error toast message
@@ -85,9 +88,9 @@ function Navbar() {
             <Link to="/about" className="btn btn-ghost text-xl">
               ABOUT
             </Link>
-            <Link to="/admin" className="btn btn-ghost text-xl">
+            {user && <Link to="/admin" className="btn btn-ghost text-xl">
               ADMIN
-            </Link>
+            </Link>}
             <Link to="/" className="btn btn-ghost text-xl">
               CONTACT US
             </Link>
@@ -101,27 +104,27 @@ function Navbar() {
                 className="btn btn-ghost btn-circle avatar"
               >
                 <div className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center text-xl font-semibold text-purple-700">
-                  {userName ? userName.slice(0, 2).toUpperCase() : null}
+                  {user ? user?.name?.slice(0, 2).toUpperCase() : null}
                 </div>
               </div>
               <ul
                 tabIndex={0}
                 className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
               >
-                <li>
+                {!user && <li>
                   <a onClick={openSignupModal}>Sign Up</a>
-                </li>
-                <li onClick={logoutUsers}>
+                </li>}
+                {user !== null && <li onClick={logoutUsers}>
                   <a>Logout</a>
-                </li>
-                <li>
+                </li>}
+                {user !== null && <li>
                   <a onClick={openKycModal}>Complete Kyc</a>
-                </li>
-                <Link to="/profile">
+                </li>}
+                {user && <Link to="/profile">
                   <li>
                     <a>Profile</a>
                   </li>
-                </Link>
+                </Link>}
               </ul>
             </div>
             <Link to={"/cart"}>

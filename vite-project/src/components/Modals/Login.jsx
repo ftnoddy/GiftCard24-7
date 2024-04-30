@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import MainLayout from "../Layouts/MainLayout";
 import ModalLayout from "../Layouts/ModalLayout";
 import { X } from "lucide-react";
@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import { setCredentials } from "../../Redux/Slices/authSlice";
 import { useDispatch } from 'react-redux';
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext";
 const Login = ({ closeSignupModal, setShowSignupModal }) => {
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({
@@ -14,6 +15,7 @@ const Login = ({ closeSignupModal, setShowSignupModal }) => {
     password: "",
   });
   const navigate = useNavigate();
+  const {setUser} = useContext(AuthContext)
 
   const handleChange = (e) => {
     setFormData({
@@ -37,7 +39,8 @@ const Login = ({ closeSignupModal, setShowSignupModal }) => {
         
         dispatch(setCredentials(response.data));
 
-        localStorage.setItem('token', response.data.token); 
+        setUser({...response.data})
+        localStorage.setItem('userInfo', JSON.stringify({ ...response.data }));
         // You can redirect to another page or perform any other action here
       } 
       else {
