@@ -5,9 +5,10 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "start": "node backend/server.js",
+    "start": "node Backend/server.js",
+    "main": "Backend/server.js",
     "client": "npm run dev --prefix vite-project",
-    "server": "nodemon backend/server.js",
+    "server": "nodemon Backend/server.js",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "build": "npm install && npm install --prefix vite-project && npm run build --prefix vite-project"
   },
@@ -21,6 +22,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "https": "^1.0.0",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.5.0",
     "mongoose": "^8.3.1",

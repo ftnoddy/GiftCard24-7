@@ -3,6 +3,39 @@ import User from "../models/userModel.js";
 import KycVerification from "../models/kycModel.js";
 import jwt from "jsonwebtoken";
 import generateToken from "../utils/generateToken.js";
+import axios from "axios"
+
+import dotenv from 'dotenv';
+dotenv.config();
+const bearerToken = process.env.BEARER_TOKEN;
+
+const getXoxodayData = async (req, res, next) => {
+  try {
+    const response = await axios.post(
+      'https://stagingaccount.xoxoday.com/chef/v1/oauth/api/',
+      {
+        query: 'plumProAPI.mutation.getVouchers',
+        tag: 'plumProAPI',
+        variables: {
+          data: { limit: 10, page: 1, exchangeRate: 1, sort: { field: 'name', order: 'ASC' } }
+        }
+      },
+      {
+        headers: {
+          accept: 'application/json',
+          'content-type': 'application/json',
+          authorization: `Bearer ${bearerToken}`
+        }
+      }
+    );
+
+    req.xoxodayData = response.data; // Save the Xoxoday data in the request object
+    console.log('Xoxoday Data:', response.data);
+    next();
+  } catch (error) {
+    next(error);
+  }
+};
 
 
 // import bcrypt from 'bcryptjs';
@@ -107,7 +140,7 @@ const registerUser = asyncHandler(async (req, res) => {
 // @desc    Logout a user / clear the cookies
 // @route   POST/ api/users/logout
 // @access  Private
-const logoutrUser = asyncHandler(async (req, res) => {
+const logoutUser = asyncHandler(async (req, res) => {
   res.cookie("jwt", "", {
     httpOnly: true,
     expires: new Date(0),
@@ -233,7 +266,7 @@ const updateUsers = asyncHandler(async (req, res) => {
 export {
   authUser,
   registerUser,
-  logoutrUser,
+  logoutUser,
   getUserProfile,
   updateUserProfile,
   getUsers,
@@ -242,4 +275,5 @@ export {
   updateUsers,
   submitKycVerification,
   getKycVerification,
+  getXoxodayData ,
 };

@@ -1,24 +1,20 @@
 import React from "react";
 import { Delete } from "@mui/icons-material";
 import { remove } from "../Redux/Slices/cartSlice";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useSnackbar } from "notistack";
 
 const CartitemScreen = ({ item }) => {
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
-  const cart = useSelector((state) => state.cart); // Accessing the cart state from Redux store
 
   const removeItemFromCart = () => {
-    dispatch(remove(item.id));
+    dispatch(remove(item.productId)); // Assuming productId is used as the unique identifier for items in the cart
     enqueueSnackbar(`Item removed from your cart!`, {
       variant: "warning",
       autoHideDuration: 3000,
     });
   };
-
-  // Log the item object to inspect its structure
-  console.log("Item:", item);
 
   return (
     <div className="flex items-center p-5 justify-between bg-violet-200 mt-2 mb-2 rounded-xl">
@@ -27,14 +23,14 @@ const CartitemScreen = ({ item }) => {
         {item && (
           <>
             {/* Display item image */}
-            <img src={item.image} className="h-28 rounded-lg" alt="" />
+            <img src={item.imageUrl} className="h-28 rounded-lg" alt={item.name} />
             <div className="ml-10 self-start space-y-5">
               {/* Display item title */}
               <h1 className="text-xl text-purple-700 font-semibold">
                 {item.name}
               </h1>
               {/* Display item price */}
-              <p>${item.price}</p>
+              <p>{item.currencyCode} {item.valueDenominations.split(',')[0]}</p> {/* Assuming valueDenominations contains comma-separated values */}
             </div>
           </>
         )}
