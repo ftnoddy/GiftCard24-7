@@ -1,13 +1,33 @@
-import React from 'react';
+import { useContext, useEffect, useState } from 'react';
+import axios from 'axios';
 import { useLocation } from 'react-router-dom';
 import { Avatar } from '@mui/material'; // Import Avatar component from Material-UI
+import { AuthContext } from '../context/AuthContext';
 
 function ProfileScreen() {
   const location = useLocation();
-  const userInfo = location.state || JSON.parse(localStorage.getItem('userInfo'));
-
+  const {user: userInfo} = useContext(AuthContext)
+  const [user, setUser] = useState()
+  const authToken = userInfo.token || ''
   // Destructure user information
-  const { userName, userEmail } = userInfo || {};
+  const { name: userName, email: userEmail } = userInfo
+  
+  // could be removed it is just to validate the middleware
+  useEffect(() => {
+    (async () => {
+      try {
+        console.log("token", authToken)
+        const response = await axios.get('http://localhost:5002/api/users/me', {
+          headers: {
+            Authorization: `Bearer ${authToken}`
+          }
+        });
+        setUser(response.data);
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      }
+    })();
+  }, [])
 
   // Function to extract first two letters of a string
   const getInitials = (name) => {
