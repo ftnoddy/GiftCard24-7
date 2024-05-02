@@ -12,7 +12,7 @@ import { AuthContext } from "../context/AuthContext";
 
 
 function Navbar() {
-  const userName = useSelector((state) => state.auth.userInfo.name);
+  // const userName = useSelector((state) => state.auth.userInfo.name);
   const cart = useSelector((state) => state.cart);
   const {user, setUser} = useContext(AuthContext)
   const [showSignupModal, setShowSignupModal] = useState("");
@@ -71,7 +71,7 @@ function Navbar() {
       {showKycModal && <KycVerification closeKycModal={closeKycModal} />}{" "}
       {/* Pass closeKycModal function as prop */}
       <div>
-        <div className="navbar bg-base-100 border-b border-gray-300 shadow-lg fixed top-0 w-full z-10">
+        <div className="navbar bg-base-100 border-b border-gray-300  shadow-lg fixed top-0 w-full z-10">
           <div className="flex-1">
             {/* Replace anchor tag with image tag for the logo */}
             <img
@@ -82,16 +82,16 @@ function Navbar() {
           </div>
 
           <div className="flex-none">
-            <Link to="/" className="btn btn-ghost text-xl">
+            <Link to="/" className="text-white bg-gradient-to-br from-pink-500 to-orange-400 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
               ACCESSORIES
             </Link>
-            <Link to="/about" className="btn btn-ghost text-xl">
+            <Link to="/about" className="text-white bg-gradient-to-br from-pink-500 to-orange-400 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
               ABOUT
             </Link>
-            {user && <Link to="/admin" className="btn btn-ghost text-xl">
+            {user && <Link to="/admin" className="text-white bg-gradient-to-br from-pink-500 to-orange-400 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
               ADMIN
             </Link>}
-            <Link to="/" className="btn btn-ghost text-xl">
+            <Link to="/" className="text-white bg-gradient-to-br from-pink-500 to-orange-400 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
               CONTACT US
             </Link>
             {/* <ModeToggle /> */}

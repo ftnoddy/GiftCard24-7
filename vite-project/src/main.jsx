@@ -16,6 +16,10 @@ import CartScreen from "./Screens/CartScreen.jsx";
 import ProfileScreen from "./Screens/ProfileScreen.jsx";
 import PaymentMethodScreen from "./Screens/PaymentMethodScreen.jsx";
 import AdminPageScreen from "./Screens/AdminPageScreen.jsx";
+import TermsConditionsScreen from "./Screens/TermsConditionsScreen.jsx";
+import RefReturnPoliciesScreen from "./Screens/RefReturnPoliciesScreen.jsx";
+import ShippingPoliciesScreen from "./Screens/ShippingPoliciesScreen.jsx";
+
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -28,6 +32,9 @@ const router = createBrowserRouter(
       <Route path="/profile" element = {<ProfileScreen />} />
       <Route path="/payment-method" element={<PaymentMethodScreen/>} />
       <Route path="/admin" element={<AdminPageScreen/>} />
+      <Route path="/Terms-Conditions" element={<TermsConditionsScreen />} />
+      <Route path="/Refund-return" element={<RefReturnPoliciesScreen />} />
+      <Route path="/Shipping-policies" element={<ShippingPoliciesScreen />} />
 
     </Route>
   )

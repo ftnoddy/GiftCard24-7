@@ -2,20 +2,32 @@ import React from "react";
 import { Link } from "react-router-dom";
 import products from "../Array/ProductsArray";
 import { add, remove } from "../Redux/Slices/cartSlice";
+import { setCredentials } from "../Redux/Slices/authSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { useSnackbar } from "notistack";
 
+
 const Accessories = () => {
   const cart = useSelector((state) => state.cart);
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
 
+  // const isAuthenticated = useSelector((state) => state.auth.isAuthenticated); // Assuming you have a slice for authentication status
+
   const addToCart = (product) => {
-    dispatch(add(product));
-    enqueueSnackbar(`Item added to your cart successfully`, {
-      variant: "success",
-      autoHideDuration: 3000,
-    });
+    if (isAuthenticated) {
+      dispatch(add(product));
+      enqueueSnackbar(`Item added to your cart successfully`, {
+        variant: "success",
+        autoHideDuration: 3000,
+      });
+    } else {
+      enqueueSnackbar(`Please sign up or log in to add items to your cart`, {
+        variant: "warning",
+        autoHideDuration: 3000,
+      });
+    }
   };
 
   const removeFromCart = (product) => {
@@ -43,19 +55,16 @@ const Accessories = () => {
                   <div className="badge badge-secondary">NEW</div>
                 </h2>
                 
-                <p>Price: {product.currencyCode} {product.valueDenominations.split(',')[0]}</p> {/* Assuming valueDenominations contains comma-separated values */}
+                <p>Price: {product.currencyCode} {product.valueDenominations.split(',')[0]}</p>
                 <div className="card-actions justify-end">
-                  {cart.some((p) => p.id === product.productId) ? (
-                    <button className="btn btn-primary" onClick={() => removeFromCart(product)}>Remove from Cart</button>
-                  ) : (
-                    <button className="btn btn-primary" onClick={() => addToCart(product)}>Add to Cart</button>
-                  )}
+                  <button className="btn btn-primary" onClick={() => addToCart(product)}>Add to Cart</button>
                 </div>
               </div>
             </div>
           ))}
         </div>
       </div>
+      
     </>
   );
 };

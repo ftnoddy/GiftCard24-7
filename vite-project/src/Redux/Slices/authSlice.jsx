@@ -1,10 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+const isAuthenticatedLS = localStorage.getItem("isAuthenticated") === "true";
+
 const initialState = {
-  userInfo: {
-    name: null,
-    // Add other user info fields as needed
-  },
+  userInfo: null,
+  isAuthenticated: isAuthenticatedLS,
 };
 
 const authSlice = createSlice({
@@ -13,11 +13,13 @@ const authSlice = createSlice({
   reducers: {
     setCredentials: (state, action) => {
       state.userInfo = action.payload;
-      // Update localStorage accordingly
+      state.isAuthenticated = true;
+      localStorage.setItem("isAuthenticated", "true");
     },
     logout: (state) => {
-      state.userInfo = initialState.userInfo;
-      // Clear localStorage accordingly
+      state.userInfo = null;
+      state.isAuthenticated = false;
+      localStorage.removeItem("isAuthenticated");
     },
   },
 });
