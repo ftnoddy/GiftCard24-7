@@ -2,18 +2,17 @@ import React from "react";
 import { Link } from "react-router-dom";
 import products from "../Array/ProductsArray";
 import { add, remove } from "../Redux/Slices/cartSlice";
-import { setCredentials } from "../Redux/Slices/authSlice";
+// import { setCredentials, logout } from "../Redux/Slices/authSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { useSnackbar } from "notistack";
 
 
 const Accessories = () => {
   const cart = useSelector((state) => state.cart);
-  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
 
-  // const isAuthenticated = useSelector((state) => state.auth.isAuthenticated); // Assuming you have a slice for authentication status
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated); // Assuming you have a slice for authentication status
 
   const addToCart = (product) => {
     if (isAuthenticated) {
