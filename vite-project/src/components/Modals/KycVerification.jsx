@@ -3,13 +3,15 @@ import MainLayout from "../Layouts/MainLayout";
 import ModalLayout from "../Layouts/ModalLayout";
 import { X } from "lucide-react";
 import axios from 'axios';
+import { toast } from 'react-toastify';
+// import 'react-toastify/dist/ReactToastify.css';
 
 const KycVerification = ({ closeKycModal }) => {
   const [formData, setFormData] = useState({
     userName: "",
     dob: "",
     idProofType: "",
-    idProofImage: null,
+    idProofNo: "",
     email: "",
     otp: "",
   });
@@ -21,35 +23,17 @@ const KycVerification = ({ closeKycModal }) => {
     });
   };
 
-  const handleFileChange = (e) => {
-    setFormData({
-      ...formData,
-      idProofImage: e.target.files[0],
-    });
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     
     try {
-      const formData = new FormData();
-      formData.append('userName', formData.userName);
-      formData.append('dob', formData.dob);
-      formData.append('idProofType', formData.idProofType);
-      formData.append('idProofImage', formData.idProofImage);
-      formData.append('email', formData.email);
-      
-      const response = await axios.post('http://www.giftcards247.shop:5002/api/users/kyc-verification', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
+      const response = await axios.post('http://www.giftcards247.shop:5002/api/users/kyc-verification', formData);
       
       console.log('Response:', response.data);
-      alert('KYC verification successful');
+      toast.success('KYC verification successful');
     } catch (error) {
       console.error('Error:', error);
-      alert('Error occurred while verifying KYC');
+      toast.error('Error occurred while verifying KYC');
     }
   };
 
@@ -67,7 +51,7 @@ const KycVerification = ({ closeKycModal }) => {
             </button>
           </div>
           <form onSubmit={handleSubmit}>
-          <div className="mb-4">
+            <div className="mb-4">
               <label htmlFor="userName" className="block text-gray-700 font-semibold mb-2">User Name:</label>
               <input
                 type="text"
@@ -92,7 +76,6 @@ const KycVerification = ({ closeKycModal }) => {
                 required
               />
             </div>
-
             <div className="mb-4">
               <label htmlFor="email" className="block text-gray-700 font-semibold mb-2">Email:</label>
               <input
@@ -106,7 +89,6 @@ const KycVerification = ({ closeKycModal }) => {
                 required
               />
             </div>
-
             <div className="mb-4">
               <label htmlFor="idProofType" className="block text-gray-700 font-semibold mb-2">ID Proof Type:</label>
               <select
@@ -124,12 +106,14 @@ const KycVerification = ({ closeKycModal }) => {
               </select>
             </div>
             <div className="mb-4">
-              <label htmlFor="idProofImage" className="block text-gray-700 font-semibold mb-2">Upload ID Proof:</label>
+              <label htmlFor="idProofNo" className="block text-gray-700 font-semibold mb-2">ID Proof Number:</label>
               <input
-                type="file"
-                id="idProofImage"
-                name="idProofImage"
-                onChange={handleFileChange}
+                type="text"
+                id="idProofNo"
+                name="idProofNo"
+                value={formData.idProofNo}
+                onChange={handleChange}
+                placeholder="Enter ID Proof Number"
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
                 required
               />

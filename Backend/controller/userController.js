@@ -43,7 +43,7 @@ const getXoxodayData = async (req, res, next) => {
 const submitKycVerification = async (req, res) => {
   try {
     // Extract data from request body
-    const { userName, dob, idProofType, idProofImage, email } = req.body;
+    const { userName, dob, idProofType, idProofNo, email } = req.body;
 
     // Create a new KYC verification document
     const kycVerification = new KycVerification({
@@ -51,7 +51,7 @@ const submitKycVerification = async (req, res) => {
       dob,
       email,
       idProofType,
-      idProofImage,
+      idProofNo,
      
     });
 

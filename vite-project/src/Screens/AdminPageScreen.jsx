@@ -67,8 +67,10 @@ function AdminPageScreen() {
               <tr className="bg-gray-200">
                 <th className="px-4 py-2">User Name</th>
                 <th className="px-4 py-2">Date of Birth</th>
-                <th className="px-4 py-2">ID Proof Type</th>
                 <th className="px-4 py-2">Email</th>
+                <th className="px-4 py-2">ID Proof Type</th>
+                <th className="px-4 py-2">ID Proof Number</th>
+                
               </tr>
             </thead>
             <tbody>
@@ -76,8 +78,11 @@ function AdminPageScreen() {
                 <tr key={data._id} className="hover:bg-gray-100">
                   <td className="border px-4 py-2">{data.userName}</td>
                   <td className="border px-4 py-2">{data.dob}</td>
-                  <td className="border px-4 py-2">{data.idProofType}</td>
                   <td className="border px-4 py-2">{data.email}</td>
+                  <td className="border px-4 py-2">{data.idProofType}</td>
+                  <td className="border px-4 py-2">{data.idProofNo}</td>
+
+                  
                 </tr>
               ))}
             </tbody>
