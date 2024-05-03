@@ -14,12 +14,12 @@ const authSlice = createSlice({
     setCredentials: (state, action) => {
       state.userInfo = action.payload;
       state.isAuthenticated = true;
-      localStorage.setItem("isAuthenticated", "true");
+      localStorage.setItem("isAuthenticated", "true"); // Set isAuthenticated flag in local storage
     },
     logout: (state) => {
       state.userInfo = null;
       state.isAuthenticated = false;
-      localStorage.removeItem("isAuthenticated");
+      localStorage.removeItem("isAuthenticated"); // Remove isAuthenticated flag from local storage
     },
   },
 });

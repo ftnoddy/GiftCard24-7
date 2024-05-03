@@ -1,11 +1,15 @@
 import { Outlet } from "react-router-dom";
 import { store } from "./Redux/store";
+import { setCredentials } from "./Redux/Slices/authSlice";
 import { Provider } from 'react-redux';
 import { ToastContainer } from 'react-toastify';
 import { SnackbarProvider } from 'notistack';
 import 'react-toastify/dist/ReactToastify.css';
 import { AuthContextProvider } from "./context/AuthContext";
 function App() {
+
+
+  
   return (
     <>
     <SnackbarProvider>
@@ -24,3 +28,4 @@ function App() {
 }
 
 export default App;
+
