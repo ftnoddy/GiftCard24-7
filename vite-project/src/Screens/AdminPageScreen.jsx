@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
+import { AuthContext } from '../context/AuthContext';
 
 function AdminPageScreen() {
   const [users, setUsers] = useState([]);
   const [kycData, setKycData] = useState([]);
+  const {user} = useContext(AuthContext)
 
   useEffect(() => {
     // Fetch users' data from the backend API
@@ -27,6 +29,14 @@ function AdminPageScreen() {
       console.error('Error fetching KYC data:', error);
     }
   };
+
+  if(!user.isAdmin){
+      return (
+        <div className="container mx-auto px-4 py-8">
+          You are not allowed to view this page
+        </div>
+      )
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
