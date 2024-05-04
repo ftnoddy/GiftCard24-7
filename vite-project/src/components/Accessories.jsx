@@ -1,10 +1,11 @@
-import React from "react";
+import {useContext} from "react";
 import { Link } from "react-router-dom";
 import products from "../Array/ProductsArray";
 import { add, remove } from "../Redux/Slices/cartSlice";
 // import { setCredentials, logout } from "../Redux/Slices/authSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { useSnackbar } from "notistack";
+import { AuthContext } from "../context/AuthContext";
 
 
 const Accessories = () => {
@@ -12,10 +13,10 @@ const Accessories = () => {
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
 
-  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated); // Assuming you have a slice for authentication status
+  const {user} = useContext(AuthContext)
 
   const addToCart = (product) => {
-    if (isAuthenticated) {
+    if (user) {
       dispatch(add(product));
       enqueueSnackbar(`Item added to your cart successfully`, {
         variant: "success",
