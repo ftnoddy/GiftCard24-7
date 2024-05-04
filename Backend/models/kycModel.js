@@ -5,7 +5,7 @@ const kycVerificationSchema = new mongoose.Schema(
     userName: { type: String, required: true },
     dob: { type: Date, required: true },
     idProofType: { type: String, required: true },
-    idProofNo: { type: Number, required: true }, // Store file path or URL
+    idProofNo: { type: String, required: true }, // Updated data type to String
     email: { type: String, required: true },
     // Add any other fields specific to KYC verification
   },
