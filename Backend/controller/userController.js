@@ -3,6 +3,7 @@ import User from "../models/userModel.js";
 import KycVerification from "../models/kycModel.js";
 import jwt from "jsonwebtoken";
 import generateToken from "../utils/generateToken.js";
+import { sendCongratulatoryEmail } from "../utils/mailSender.js";
 import axios from "axios"
 
 import dotenv from 'dotenv';
@@ -107,36 +108,48 @@ const authUser = asyncHandler(async (req, res) => {
 const registerUser = asyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
 
-  const userExists = await User.findOne({ email: email });
+  try {
+    // Check if the user already exists
+    const userExists = await User.findOne({ email });
 
-  if (userExists) {
-    res.status(400);
-    throw new Error("User already exists");
-  } else {
+    if (userExists) {
+      return res.status(400).json({ message: "User already exists" });
+    }
+
+    // Create the user
     const user = await User.create({
-      name: name,
-      email: email,
-      password: password,
+      name,
+      email,
+      password,
     });
 
-    if (user) {
-      // generateToken(res, user._id);
-      const token = jwt.sign({ email }, process.env.JWT_SECRET, {
-        expiresIn: "1h",
-      });
-      res.status(201).json({
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        token: token,
-        isAdmin: user.isAdmin,
-      });
-    } else {
-      res.status(401).json({ message: "Invalid user data" });
-      throw new Error("Invalid user data");
+    // Generate JWT token
+    const token = jwt.sign({ email }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
+
+    // Send congratulatory email
+    try {
+      await sendCongratulatoryEmail(email, name);
+    } catch (emailError) {
+      console.error("Error sending congratulatory email:", emailError);
+      // Log the error but continue the registration process
     }
+
+    // Respond with user data and token
+    res.status(201).json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      token,
+      isAdmin: user.isAdmin,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server Error" });
   }
 });
+
 // @desc    Logout a user / clear the cookies
 // @route   POST/ api/users/logout
 // @access  Private
