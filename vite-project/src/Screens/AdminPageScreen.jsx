@@ -11,7 +11,7 @@ function AdminPageScreen() {
     // Fetch users' data from the backend API
     const fetchUsers = async () => {
       try {
-        const response = await axios.get('http://www.giftcards247.shop:5002/api/users'); // Replace '/api/users' with your actual backend API endpoint
+        const response = await axios.get('https://giftcards247.shop/api/users'); // Replace '/api/users' with your actual backend API endpoint
         setUsers(response.data);
       } catch (error) {
         console.error('Error fetching users:', error);
@@ -23,7 +23,7 @@ function AdminPageScreen() {
 
   const handleGetKycData = async () => {
     try {
-      const response = await axios.get('http://www.giftcards247.shop:5002/api/users/kyc-verification'); // Fetch KYC data from the backend
+      const response = await axios.get('https://giftcards247.shop/api/users/kyc-verification'); // Fetch KYC data from the backend
       setKycData(response.data);
     } catch (error) {
       console.error('Error fetching KYC data:', error);

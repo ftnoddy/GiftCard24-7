@@ -29,7 +29,7 @@ function Navbar() {
 
   const logoutUsers = async () => {
     try {
-      await axios.post('http://www.giftcards247.shop:5002/api/users/logout');
+      await axios.post('https://giftcards247.shop/api/users/logout');
       localStorage.removeItem('token');
       localStorage.removeItem('userInfo'); // Remove JWT token from local storage
       toast.success("Logout successful");

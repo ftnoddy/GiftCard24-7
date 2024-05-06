@@ -6,11 +6,13 @@ const sendCongratulatoryEmail = async (email, name) => {
   try {
     // Create a Nodemailer transporter
     const transporter = nodemailer.createTransport({
-      service: "gmail",
+      host: process.env.MAIL_HOST,
+      port: 587,
+      secure: false, // true for 465, false for other ports
       auth: {
         user: process.env.MAIL_USER,
-        pass: process.env.MAIL_PASS
-      }
+        pass: process.env.MAIL_PASS,
+      },
     });
 
     // Email message options
@@ -32,3 +34,7 @@ const sendCongratulatoryEmail = async (email, name) => {
 };
 
 export { sendCongratulatoryEmail };
+
+// host: process.env.MAIL_HOST,
+// user: process.env.MAIL_USER,
+//         pass: process.env.MAIL_PASS,
