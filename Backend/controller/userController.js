@@ -3,7 +3,7 @@ import User from "../models/userModel.js";
 import KycVerification from "../models/kycModel.js";
 import jwt from "jsonwebtoken";
 import generateToken from "../utils/generateToken.js";
-import { sendCongratulatoryEmail } from "../utils/mailSender.js";
+import sendMail from "../utils/mailSender.js";
 import axios from "axios"
 
 import dotenv from 'dotenv';
@@ -129,12 +129,9 @@ const registerUser = asyncHandler(async (req, res) => {
     });
 
     // Send congratulatory email
-    try {
-      await sendCongratulatoryEmail(email, name);
-    } catch (emailError) {
-      console.error("Error sending congratulatory email:", emailError);
-      // Log the error but continue the registration process
-    }
+    const emailSubject = "Welcome to Our Platform!";
+    const emailText = `Hello ${name},\n\nCongratulations on signing up for our platform! We're excited to have you on board.\n\nBest regards,\nThe Team`;
+    await sendMail(email, emailSubject, emailText);
 
     // Respond with user data and token
     res.status(201).json({

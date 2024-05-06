@@ -1,40 +1,35 @@
 import nodemailer from "nodemailer";
-import dotenv from 'dotenv';
-dotenv.config();
+// import dotenv from 'dotenv';
 
-const sendCongratulatoryEmail = async (email, name) => {
+// dotenv.config();
+
+const transporter = nodemailer.createTransport({
+  host: "smtp.gmail.com",
+  // port: 465,
+  secure: true, // Use SSL/TLS
+  auth: {
+    user: "atindramohandas353@gmail.com",
+    pass: "pvmqweuhjferjjjk",
+  },
+});
+
+async function sendMail(to, subject, text, html) {
   try {
-    // Create a Nodemailer transporter
-    const transporter = nodemailer.createTransport({
-      host: process.env.MAIL_HOST,
-      port: 587,
-      secure: false, // true for 465, false for other ports
-      auth: {
-        user: process.env.MAIL_USER,
-        pass: process.env.MAIL_PASS,
-      },
+    // Send mail with defined transport object
+    const info = await transporter.sendMail({
+      from: "atindramohandas353@gmail.com", // Sender address
+      to, // List of receivers
+      subject, // Subject line
+      text, // Plain text body
+      html, // HTML body
     });
 
-    // Email message options
-    const mailOptions = {
-      from: process.env.MAIL_USER,
-      to: email,
-      subject: "Welcome to Our Platform!",
-      text: `Hello ${name},\n\nCongratulations on signing up for our platform! We're excited to have you on board.\n\nBest regards,\nThe Team`,
-    };
-
-    // Send the email
-    await transporter.sendMail(mailOptions);
-
-    console.log(`Congratulatory email sent to ${email}`);
+    console.log("Email sent:", info.messageId);
+    return info.messageId;
   } catch (error) {
-    console.error("Error sending congratulatory email:", error);
-    throw new Error("Failed to send congratulatory email");
+    console.error("Error sending email:", error);
+    throw new Error("Failed to send email");
   }
-};
+}
 
-export { sendCongratulatoryEmail };
-
-// host: process.env.MAIL_HOST,
-// user: process.env.MAIL_USER,
-//         pass: process.env.MAIL_PASS,
+export default sendMail;

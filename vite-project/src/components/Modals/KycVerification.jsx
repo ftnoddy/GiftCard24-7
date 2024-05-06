@@ -13,7 +13,7 @@ const KycVerification = ({ closeKycModal }) => {
     idProofType: "",
     idProofNo: "",
     email: "",
-    otp: "",
+    
   });
 
   const handleChange = (e) => {
@@ -27,7 +27,7 @@ const KycVerification = ({ closeKycModal }) => {
     e.preventDefault();
     
     try {
-      const response = await axios.post('http://www.giftcards247.shop:5002/api/users/kyc-verification', formData);
+      const response = await axios.post('https://giftcards247.shop/api/users/kyc-verification', formData);
       
       console.log('Response:', response.data);
       toast.success('KYC verification successful');
