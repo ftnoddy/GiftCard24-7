@@ -1,9 +1,12 @@
 import asyncHandler from "../middleware/asyncHandler.js";
 import User from "../models/userModel.js";
-import KycVerification from "../models/kycModel.js";
+import Token from "../models/token.js";
+import sendVerificationEmail from "../utils/mailSender.js";
 import jwt from "jsonwebtoken";
+import KycVerification from "../models/kycModel.js";
+
 import generateToken from "../utils/generateToken.js";
-import sendMail from "../utils/mailSender.js";
+
 import axios from "axios"
 
 import dotenv from 'dotenv';
@@ -44,7 +47,7 @@ const getXoxodayData = async (req, res, next) => {
 const submitKycVerification = async (req, res) => {
   try {
     // Extract data from request body
-    const { userName, dob, idProofType, idProofNo, email } = req.body;
+    const { userName, dob, email, idProofType, idProofNo } = req.body;
 
     // Create a new KYC verification document
     const kycVerification = new KycVerification({
@@ -105,7 +108,7 @@ const authUser = asyncHandler(async (req, res) => {
 // @desc    Register a user
 // @route   POST/ api/users
 // @access  Public
-const registerUser = asyncHandler(async (req, res) => {
+const registerUser = async (req, res) => {
   const { name, email, password } = req.body;
 
   try {
@@ -128,10 +131,8 @@ const registerUser = asyncHandler(async (req, res) => {
       expiresIn: "1h",
     });
 
-    // Send congratulatory email
-    const emailSubject = "Welcome to Our Platform!";
-    const emailText = `Hello ${name},\n\nCongratulations on signing up for our platform! We're excited to have you on board.\n\nBest regards,\nThe Team`;
-    await sendMail(email, emailSubject, emailText);
+    // Send verification email
+    await sendVerificationEmail(email, user._id); // Pass user email and ID to the function
 
     // Respond with user data and token
     res.status(201).json({
@@ -145,7 +146,7 @@ const registerUser = asyncHandler(async (req, res) => {
     console.error(error);
     res.status(500).json({ message: "Server Error" });
   }
-});
+};
 
 // @desc    Logout a user / clear the cookies
 // @route   POST/ api/users/logout

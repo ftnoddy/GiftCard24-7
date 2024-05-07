@@ -4,21 +4,40 @@ const router = express.Router();
 import {
   authUser,
   logoutUser,
-  registerUser,
   submitKycVerification,
   getUsers,
   getKycVerification,
   getXoxodayData
 } from "../controller/userController.js";
 import { protect, admin } from "../middleware/authMiddleware.js";
-// router
-//   .route("/:id")
-//   .delete(protect, admin, deleteUsers)
-//   .get(protect, admin, getUsersByID)
-//   .put(protect, admin, updateUsers);
 
+// Import the registerUser and verifyEmail functions from the controller
+import { registerUser, verifyEmail } from "../controller/userController.js";
 
-router.post("/", registerUser);
+// Import the sendVerificationEmail function
+import sendVerificationEmail from "../utils/mailSender.js";
+
+router.post("/", async (req, res) => {
+  try {
+    // Call the registerUser function from the controller
+    await registerUser(req, res);
+
+    // Extract email from the request body
+    const { email } = req.body;
+
+    // Send verification email
+    await sendVerificationEmail(email, "Verify Your Email", "Click the link to verify your email.");
+
+    // No need to send response here, as registerUser function already handles it
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+// Route for verifying email
+router.get("/:id/verify/:token", verifyEmail);
+
 router.get("/", getUsers);
 router.post("/login", authUser);
 router.post("/logout", logoutUser);
