@@ -1,6 +1,6 @@
 import asyncHandler from "../middleware/asyncHandler.js";
 import User from "../models/userModel.js";
-import Token from "../models/token.js";
+// import Token from "../models/token.js";
 import sendVerificationEmail from "../utils/mailSender.js";
 import jwt from "jsonwebtoken";
 import KycVerification from "../models/kycModel.js";
@@ -148,6 +148,31 @@ const registerUser = async (req, res) => {
   }
 };
 
+const verifyEmail = async (req, res) =>{
+  try{
+    const emailToken = req.body.emailToken;
+    if (!emailToken) return res.status(404).json("Email token is not found ..");
+    const user = await User.findOne({emailToken});
+
+    if (user){
+      user.isVerified = true;
+      await user.save();
+
+      const token = createToken(user._id);
+      res.status(200).json({
+        _id: user._id,
+        name:user.name,
+        email:user.email,
+        token,
+        isVerified: user?.isVerified,
+      });
+    }else res.status(404).json("Email verification failed, invalid token!")
+  }catch (error){
+    console.log(error);
+    res.status(500).json(error.message)
+  }
+}
+
 // @desc    Logout a user / clear the cookies
 // @route   POST/ api/users/logout
 // @access  Private
@@ -287,4 +312,5 @@ export {
   submitKycVerification,
   getKycVerification,
   getXoxodayData ,
+  verifyEmail ,
 };

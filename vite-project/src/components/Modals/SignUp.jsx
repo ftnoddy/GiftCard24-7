@@ -37,7 +37,7 @@ const SignUp = ({ closeSignupModal, setShowSignupModal }) => {
     e.preventDefault();
   
     try {
-      const response = await axios.post('https://giftcards247.shop/api/users', formData);
+      const response = await axios.post('http://localhost:5002/api/users', formData);
   
       // Check if the signup was successful
       if (response.status === 201) {
@@ -47,10 +47,10 @@ const SignUp = ({ closeSignupModal, setShowSignupModal }) => {
         console.log('Signup successful');
         toast.success('Signup successful');
   
-        const { name, email, token, _id, isAdmin } = response.data;
+        const { name, email, token, _id, isAdmin ,isVerified} = response.data;
   
         // Store user data and token in localStorage
-        localStorage.setItem('userInfo', JSON.stringify({ name, email, token, _id, isAdmin }));
+        localStorage.setItem('userInfo', JSON.stringify({ name, email, token, _id, isAdmin, isVerified }));
   
         // Redirect to the profile page with user data
         navigate('/profile', { state: { userName: name, userEmail: email } });
