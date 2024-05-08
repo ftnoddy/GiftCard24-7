@@ -132,7 +132,7 @@ const registerUser = async (req, res) => {
     });
 
     // Send verification email
-    await sendVerificationEmail(email, user._id); // Pass user email and ID to the function
+    await sendVerificationEmail(email, user._id, user.emailToken); // Pass user email and ID to the function
 
     // Respond with user data and token
     res.status(201).json({
