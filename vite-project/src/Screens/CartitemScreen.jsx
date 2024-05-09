@@ -15,7 +15,7 @@ const CartitemScreen = ({ item }) => {
       autoHideDuration: 3000,
     });
   };
-
+console.log(item);
   return (
     <div className="flex items-center p-5 justify-between bg-violet-200 mt-2 mb-2 rounded-xl">
       <div className="flex p-3">
@@ -23,14 +23,14 @@ const CartitemScreen = ({ item }) => {
         {item && (
           <>
             {/* Display item image */}
-            <img src={item.imageUrl} className="h-28 rounded-lg" alt={item.name} />
+            <img src={item.product.imageUrl} className="h-28 rounded-lg" alt={item.name} />
             <div className="ml-10 self-start space-y-5">
               {/* Display item title */}
               <h1 className="text-xl text-purple-700 font-semibold">
-                {item.name}
+                {item.product.name}
               </h1>
               {/* Display item price */}
-              <p>{item.currencyCode} {item.valueDenominations.split(',')[0]}</p> {/* Assuming valueDenominations contains comma-separated values */}
+              <p>{item.product.currencyCode} {item.price}</p> {/* Assuming valueDenominations contains comma-separated values */}
             </div>
           </>
         )}

@@ -35,8 +35,9 @@ router.route('/me').get(protect, async (req, res) => {
 })
 router.get('/accessories', getXoxodayData, (req, res) => {
   // Pass the Xoxoday data to your Accessories component
-  res.render('accessories', { xoxodayData: req.xoxodayData });
+  res.status(200).json({ xoxodayData: req.xoxodayData });
 });
+
 
 
 
