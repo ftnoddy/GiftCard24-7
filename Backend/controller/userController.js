@@ -4,6 +4,10 @@ import User from "../models/userModel.js";
 import sendVerificationEmail from "../utils/mailSender.js";
 import jwt from "jsonwebtoken";
 import KycVerification from "../models/kycModel.js";
+import OTP from "../models/otpModel.js";
+import EmailVerification from "../models/emailModel.js";
+import crypto from "crypto";
+import twilio from 'twilio';
 
 import generateToken from "../utils/generateToken.js";
 
@@ -119,11 +123,15 @@ const registerUser = async (req, res) => {
       return res.status(400).json({ message: "User already exists" });
     }
 
-    // Create the user
+    // Generate email token
+    const emailToken = crypto.randomBytes(32).toString("hex");
+
+    // Create the user with email token
     const user = await User.create({
       name,
       email,
       password,
+      emailToken, // Save email token to the user document
     });
 
     // Generate JWT token
@@ -132,7 +140,7 @@ const registerUser = async (req, res) => {
     });
 
     // Send verification email
-    await sendVerificationEmail(email, user._id, user.emailToken); // Pass user email and ID to the function
+    await sendVerificationEmail(email, user._id, emailToken);
 
     // Respond with user data and token
     res.status(201).json({
@@ -148,32 +156,79 @@ const registerUser = async (req, res) => {
   }
 };
 
-const verifyEmail = async (req, res) =>{
-  try{
+const verifyEmail = async (req, res) => {
+  try {
     const emailToken = req.body.emailToken;
-    if (!emailToken) return res.status(404).json("Email token is not found ..");
-    const user = await User.findOne({emailToken});
+    if (!emailToken) return res.status(404).json("Email token is not found");
 
-    if (user){
+    // Find user by emailToken
+    const user = await User.findOne({ emailToken });
+
+    if (user) {
+      // Mark user as verified
       user.isVerified = true;
       await user.save();
 
-      const token = createToken(user._id);
+      // Generate JWT token for the user
+      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+        expiresIn: '1h',
+      });
+
+      // Respond with user data and token
       res.status(200).json({
         _id: user._id,
-        name:user.name,
-        email:user.email,
+        name: user.name,
+        email: user.email,
         token,
-        isVerified: user?.isVerified,
+        isVerified: user.isVerified,
+        message: "Email verification successful",
       });
-    }else res.status(404).json("Email verification failed, invalid token!")
-  }catch (error){
+    } else {
+      res.status(404).json("Email verification failed, invalid token");
+    }
+  } catch (error) {
     console.log(error);
-    res.status(500).json(error.message)
+    res.status(500).json({ message: error.message });
   }
-}
+};
 
-// @desc    Logout a user / clear the cookies
+const sendOtp = async (req, res) => {
+  const { mobile } = req.body;
+
+  try {
+    // Generate OTP (you can use a library like otp-generator)
+    const generateOTP = () => {
+      // Generate a random 6-digit OTP
+      const otp = Math.floor(100000 + Math.random() * 900000);
+      return otp.toString(); // Convert OTP to string
+    };
+
+    // Generate the OTP
+    const otp = generateOTP();
+
+    // Initialize Twilio client
+    const accountSid = process.env.TWILIO_ACCOUNT_SID;
+    const authToken = process.env.TWILIO_AUTH_TOKEN;
+    const twilioClient = twilio(accountSid, authToken);
+
+    // Send OTP to the mobile number
+    await twilioClient.messages.create({
+      body: `Your OTP is: ${otp}`,
+      from: process.env.TWILIO_PH_NO, // Twilio phone number
+      to: mobile,
+    });
+
+    // Save OTP to the database
+    await OTP.create({ mobile, otp });
+
+    res.status(200).json({ otp });
+  } catch (error) {
+    console.error('Error sending OTP:', error);
+    res.status(500).json({ message: 'Failed to send OTP' });
+  }
+};
+
+// @desc    Logout a user / clear the cooki
 // @route   POST/ api/users/logout
 // @access  Private
 const logoutUser = asyncHandler(async (req, res) => {
@@ -313,4 +368,5 @@ export {
   getKycVerification,
   getXoxodayData ,
   verifyEmail ,
+  sendOtp
 };

@@ -12,19 +12,15 @@ import { useDispatch } from 'react-redux';
 
 const SignUp = ({ closeSignupModal, setShowSignupModal }) => {
   const dispatch = useDispatch();
-  // const history = useHistory();
-  // const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
-    confirmPassword: "",
+    mobile: "", // Add mobile field to formData
+    otp: "", // Add otp field to formData
   });
 
-  const [signupSuccess, setSignupSuccess] = useState(false);
-
   const navigate = useNavigate();
-   // Use useNavigate to get the navigate function
 
   const handleChange = (e) => {
     setFormData({
@@ -33,15 +29,33 @@ const SignUp = ({ closeSignupModal, setShowSignupModal }) => {
     });
   };
 
+  const handleSendOTP = async () => {
+    if (!formData.mobile) {
+      toast.error('Please enter a mobile number');
+      return;
+    }
+
+    try {
+      const response = await axios.post('http://localhost:5002/api/users/send-otp', { mobile: formData.mobile });
+      
+      if (response.status === 200) {
+        toast.success('OTP sent successfully');
+      } else {
+        toast.error('Failed to send OTP');
+      }
+    } catch (error) {
+      console.error('Error sending OTP:', error);
+      toast.error('Failed to send OTP');
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     try {
       const response = await axios.post('http://localhost:5002/api/users', formData);
   
-      // Check if the signup was successful
       if (response.status === 201) {
-        // Signup successful
         closeSignupModal();
         console.log("Response:", response.data);
         console.log('Signup successful');
@@ -49,29 +63,25 @@ const SignUp = ({ closeSignupModal, setShowSignupModal }) => {
   
         const { name, email, token, _id, isAdmin ,isVerified} = response.data;
   
-        // Store user data and token in localStorage
         localStorage.setItem('userInfo', JSON.stringify({ name, email, token, _id, isAdmin, isVerified }));
   
-        // Redirect to the profile page with user data
-        navigate('/profile', { state: { userName: name, userEmail: email } });
+        navigate('/profile', { state: { userName: name, userEmail: email, userVerify: isVerified } });
   
-        // Dispatch action to set user credentials in Redux store
         dispatch(setCredentials(response.data));
   
         setTimeout(() => {
-          navigate('/'); // Use navigate to redirect to the home page
+          navigate('/');
         }, 2000);
       } else {
-        // Signup failed
         console.error('Signup failed');
-        toast.error('Signup failed'); // Show error toast message
+        toast.error('Signup failed');
       }
     } catch (error) {
-      // Network error or other errors
       console.error('Error:', error);
-      toast.error('Signup failed'); // Show error toast message
+      toast.error('Signup failed');
     }
   };
+
 
 
   return (
@@ -136,23 +146,35 @@ const SignUp = ({ closeSignupModal, setShowSignupModal }) => {
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
               />
             </div>
-            <div className="mb-6">
-              <label
-                htmlFor="confirm-password"
-                className="block text-gray-700 font-semibold mb-2"
-              >
-                Confirm Password
-              </label>
+
+            <div className="mb-4">
+              <label htmlFor="mobile" className="block text-gray-700 font-semibold mb-2">Mobile Number</label>
+              <div className="flex">
+                <input
+                  type="text"
+                  id="mobile"
+                  name="mobile"
+                  value={formData.mobile}
+                  onChange={handleChange}
+                  placeholder="Your Mobile Number"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+                />
+                <button type="button" className="bg-blue-500 text-white px-4 py-2 rounded-md ml-2" onClick={handleSendOTP}>Send OTP</button>
+              </div>
+            </div>
+            <div className="mb-4">
+              <label htmlFor="otp" className="block text-gray-700 font-semibold mb-2">OTP</label>
               <input
-                type="password"
-                id="confirm-password"
-                name="confirmPassword"
-                value={formData.confirmPassword}
+                type="text"
+                id="otp"
+                name="otp"
+                value={formData.otp}
                 onChange={handleChange}
-                placeholder="Confirm Password"
+                placeholder="Enter OTP"
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
               />
             </div>
+            
             <div className=" flex flex-col items-center ">
               <button
                 className="bg-blue-500 w-full text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-200"

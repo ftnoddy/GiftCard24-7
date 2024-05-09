@@ -21,6 +21,7 @@
     "colors": "^1.4.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
+    "crypto": "^1.0.1",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "https": "^1.0.0",
@@ -30,6 +31,7 @@
     "nodemailer": "^6.9.13",
     "otp-generator": "^4.0.1",
     "razorpay": "^2.9.2",
+    "twilio": "^5.0.4",
     "vite-project": "^1.0.2"
   },
   "devDependencies": {

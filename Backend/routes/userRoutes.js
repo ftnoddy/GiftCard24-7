@@ -9,9 +9,11 @@ import {
   getUsers,
   getKycVerification,
   getXoxodayData,
-  verifyEmail
+  verifyEmail,
+  sendOtp
 } from "../controller/userController.js";
 import { protect, admin } from "../middleware/authMiddleware.js";
+
 
 
 
@@ -21,7 +23,8 @@ router.post("/login", authUser);
 router.post("/logout", logoutUser);
 router.post("/kyc-verification", submitKycVerification);
 router.post("/email-verification", verifyEmail);
-router.get("/kyc-verification", getKycVerification);
+router.post("/email-verification", verifyEmail);
+router.post("/send-otp",sendOtp );
 router.route('/me').get(protect, async (req, res) => {
   if(req.user){
     res.status(200).json({user: req.user})
