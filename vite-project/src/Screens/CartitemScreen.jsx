@@ -1,4 +1,3 @@
-import React from "react";
 import { Delete } from "@mui/icons-material";
 import { remove } from "../Redux/Slices/cartSlice";
 import { useDispatch } from "react-redux";
@@ -9,13 +8,13 @@ const CartitemScreen = ({ item }) => {
   const { enqueueSnackbar } = useSnackbar();
 
   const removeItemFromCart = () => {
-    dispatch(remove(item.productId)); // Assuming productId is used as the unique identifier for items in the cart
+    dispatch(remove(item.product.productId)); // Assuming productId is used as the unique identifier for items in the cart
     enqueueSnackbar(`Item removed from your cart!`, {
       variant: "warning",
       autoHideDuration: 3000,
     });
   };
-console.log(item);
+
   return (
     <div className="flex items-center p-5 justify-between bg-violet-200 mt-2 mb-2 rounded-xl">
       <div className="flex p-3">
