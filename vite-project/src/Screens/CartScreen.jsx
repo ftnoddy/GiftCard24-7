@@ -8,6 +8,7 @@ const CartScreen = () => {
   const [itemNames, setItemNames] = useState([]);
   const cart = useSelector((state) => state.cart);
   const navigate = useNavigate();
+  
 
   const handleCheckout = () => {
     // Navigate to PaymentMethodScreen and pass totalAmount as state
@@ -16,11 +17,17 @@ const CartScreen = () => {
 
   useEffect(() => {
     // Calculate total amount
-    const total = cart.reduce((acc, curr) => acc + curr.price, 0);
+    const total = cart.reduce((acc, curr) => {
+      console.log('acc',typeof acc)
+      let floatCurr = parseFloat(curr.price)
+      if(!isNaN(floatCurr)){
+        return acc + (floatCurr)
+      }
+    }, 0);
     setTotalAmount(total);
 
     // Extract item names
-    const names = cart.map((item) => item.name);
+    const names = cart.map((item) => item.product.name);
     setItemNames(names);
   }, [cart]);
 
@@ -43,7 +50,7 @@ const CartScreen = () => {
                   <span className="text-gray-700 font-semibold">
                     Item Names
                   </span>{" "}
-                  : {itemNames.join(", ")}
+                  : {itemNames?.join(", ")}
                 </p>
 
                 <p>
