@@ -9,7 +9,9 @@ import { AuthContext } from "../context/AuthContext";
 
 
  function ProductCard({product,addToCart,removeFromCart}) {
-  const [selectedValue, setSelectedValue] = useState(''); 
+  
+  const Denominations = product.valueDenominations.split(',')
+  const [selectedValue, setSelectedValue] = useState(Denominations[0]); 
   return (
      <div
     key={product.productId}
@@ -32,7 +34,7 @@ import { AuthContext } from "../context/AuthContext";
           value={selectedValue}
           onChange={(e) => setSelectedValue(e.target.value)}
         >
-          {product.valueDenominations.split(',').map((value, index) => (
+          {Denominations.map((value, index) => (
             <option key={index} value={value}>
               {product.currencyCode} {value}
             </option>
