@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import CartitemScreen from "./CartitemScreen";
 import { Link, useNavigate } from 'react-router-dom';
@@ -18,7 +18,6 @@ const CartScreen = () => {
   useEffect(() => {
     // Calculate total amount
     const total = cart.reduce((acc, curr) => {
-      console.log('acc',typeof acc)
       let floatCurr = parseFloat(curr.price)
       if(!isNaN(floatCurr)){
         return acc + (floatCurr)
