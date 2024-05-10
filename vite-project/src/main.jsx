@@ -20,6 +20,7 @@ import TermsConditionsScreen from "./Screens/TermsConditionsScreen.jsx";
 import RefReturnPoliciesScreen from "./Screens/RefReturnPoliciesScreen.jsx";
 import ShippingPoliciesScreen from "./Screens/ShippingPoliciesScreen.jsx";
 import Contact from "./Screens/ContactUsScreen.jsx";
+import EmailVerificationScreen from "./Screens/EmailVerificationScreen.jsx";
 
 
 const router = createBrowserRouter(
@@ -36,6 +37,7 @@ const router = createBrowserRouter(
       <Route path="/Terms-Conditions" element={<TermsConditionsScreen />} />
       <Route path="/Refund-return" element={<RefReturnPoliciesScreen />} />
       <Route path="/Shipping-policies" element={<ShippingPoliciesScreen />} />
+      <Route path="/verify-email:email" element={<EmailVerificationScreen />} />
       <Route path="/contact-us" element={<Contact />} />
 
     </Route>
