@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import CartitemScreen from "./CartitemScreen";
 import { Link, useNavigate } from 'react-router-dom';
+import Checkout from '../components/Paypal'
 
 const CartScreen = () => {
   const [totalAmount, setTotalAmount] = useState(0);
   const [itemNames, setItemNames] = useState([]);
   const cart = useSelector((state) => state.cart);
   const navigate = useNavigate();
+  
 
   const handleCheckout = () => {
     // Navigate to PaymentMethodScreen and pass totalAmount as state
@@ -16,11 +18,16 @@ const CartScreen = () => {
 
   useEffect(() => {
     // Calculate total amount
-    const total = cart.reduce((acc, curr) => acc + curr.price, 0);
+    const total = cart.reduce((acc, curr) => {
+      let floatCurr = parseFloat(curr.price)
+      if(!isNaN(floatCurr)){
+        return acc + (floatCurr)
+      }
+    }, 0);
     setTotalAmount(total);
 
     // Extract item names
-    const names = cart.map((item) => item.name);
+    const names = cart.map((item) => item.product.name);
     setItemNames(names);
   }, [cart]);
 
@@ -43,7 +50,7 @@ const CartScreen = () => {
                   <span className="text-gray-700 font-semibold">
                     Item Names
                   </span>{" "}
-                  : {itemNames.join(", ")}
+                  : {itemNames?.join(", ")}
                 </p>
 
                 <p>
@@ -58,9 +65,9 @@ const CartScreen = () => {
                   </span>{" "}
                   : ${totalAmount}
                 </p>
-                <button onClick={handleCheckout} className="bg-purple-700 hover:bg-purple-50 rounded-lg text-white transition duration-300 ease-linear mt-5 border-2 border-purple-600 font-bold hover:text-purple-700 p-3" >
-                  Checkout Payment
-                </button>
+              </div>
+              <div className="self-end mt-2 pl-[10rem]">
+                <Checkout amount={totalAmount}/>
               </div>
             </div>
           </div>

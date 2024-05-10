@@ -3,14 +3,15 @@ import React, { useState } from 'react';
 import { Link } from "react-router-dom";
 import products from "../Array/ProductsArray";
 import { add, remove } from "../Redux/Slices/cartSlice";
-// import { setCredentials, logout } from "../Redux/Slices/authSlice";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useSnackbar } from "notistack";
 import { AuthContext } from "../context/AuthContext";
 
 
  function ProductCard({product,addToCart,removeFromCart}) {
-  const [selectedValue, setSelectedValue] = useState(''); 
+  
+  const Denominations = product.valueDenominations.split(',')
+  const [selectedValue, setSelectedValue] = useState(Denominations[0]); 
   return (
      <div
     key={product.productId}
@@ -33,7 +34,7 @@ import { AuthContext } from "../context/AuthContext";
           value={selectedValue}
           onChange={(e) => setSelectedValue(e.target.value)}
         >
-          {product.valueDenominations.split(',').map((value, index) => (
+          {Denominations.map((value, index) => (
             <option key={index} value={value}>
               {product.currencyCode} {value}
             </option>
@@ -51,8 +52,7 @@ import { AuthContext } from "../context/AuthContext";
 }
 
 
-const Accessories = ({  }) => {
-  const cart = useSelector((state) => state.cart);
+const Accessories = () => {
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
    // Default value
@@ -87,8 +87,12 @@ const Accessories = ({  }) => {
       <div className="p-4 md:p-8">
         <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 justify-center w-full gap-4">
           {products.map((product) => (
-          <ProductCard product={product} addToCart={addToCart} removeFromCart={removeFromCart}/>
-          
+          <ProductCard 
+            key={product.id}
+            product={product}
+            addToCart={addToCart}
+            removeFromCart={removeFromCart}
+          />
           ))}
         </div>
       </div>
