@@ -15,15 +15,15 @@ const CartitemScreen = ({ item }) => {
       autoHideDuration: 3000,
     });
   };
-console.log(item);
+
   return (
     <div className="flex items-center p-5 justify-between bg-violet-200 mt-2 mb-2 rounded-xl">
       <div className="flex p-3">
         {/* Check if item exists before accessing its properties */}
-        {item && (
+        {item && item.product && (
           <>
             {/* Display item image */}
-            <img src={item.product.imageUrl} className="h-28 rounded-lg" alt={item.name} />
+            <img src={item.product.imageUrl} className="h-28 rounded-lg" alt={item.product.name} />
             <div className="ml-10 self-start space-y-5">
               {/* Display item title */}
               <h1 className="text-xl text-purple-700 font-semibold">

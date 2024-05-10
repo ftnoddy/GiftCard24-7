@@ -23,7 +23,6 @@ router.post("/login", authUser);
 router.post("/logout", logoutUser);
 router.post("/kyc-verification", submitKycVerification);
 router.post("/email-verification", verifyEmail);
-router.post("/email-verification", verifyEmail);
 router.post("/send-otp",sendOtp );
 router.route('/me').get(protect, async (req, res) => {
   if(req.user){

@@ -6,28 +6,31 @@ import { AuthContext } from '../context/AuthContext';
 
 function ProfileScreen() {
   const location = useLocation();
-  const {user: userInfo} = useContext(AuthContext)
-  const [user, setUser] = useState()
-  const authToken = userInfo.token || ''
-  // Destructure user information
-  const { name: userName, email: userEmail } = userInfo
-  
-  // could be removed it is just to validate the middleware
+  const { user: userInfo } = useContext(AuthContext);
+  const [user, setUser] = useState();
+  const authToken = userInfo.token || '';
+
   useEffect(() => {
-    (async () => {
+    // Function to handle email verification
+    const verifyEmail = async () => {
       try {
-        // console.log("token", authToken)
-        const response = await axios.get('https://giftcards247.shop/api/users/me', {
-          headers: {
-            Authorization: `Bearer ${authToken}`
-          }
-        });
-        setUser(response.data);
+        const token = new URLSearchParams(location.search).get('token'); // Get token from query parameters
+        if (token) {
+          // If token exists, send request to backend to verify email
+          await axios.post('http://localhost:5002/email-verification', { token });
+          // Redirect to profile page after email verification
+          window.location.href = '/profile';
+        }
       } catch (error) {
-        console.error('Error fetching users:', error);
+        console.error('Error verifying email:', error);
       }
-    })();
-  }, [])
+    };
+
+    verifyEmail(); // Call verifyEmail function when component mounts
+  }, [location.search]);
+
+  // Destructure user information
+  const { name: userName, email: userEmail } = userInfo;
 
   // Function to extract first two letters of a string
   const getInitials = (name) => {
@@ -35,7 +38,7 @@ function ProfileScreen() {
     const words = name.split(' ');
     return words.length > 1 ? (words[0][0] + words[1][0]).toUpperCase() : words[0][0].toUpperCase();
   };
-  
+
   // Function to generate background color based on user's name
   const getBackgroundColor = (name) => {
     if (!name) return '#000'; // Default color if name is undefined
