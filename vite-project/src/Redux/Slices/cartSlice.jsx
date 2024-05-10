@@ -12,7 +12,7 @@ const cartSlice = createSlice({
       console.log(state);
     },
     remove(state, action) {
-      return state.filter((item) => item.productId !== action.payload);
+      return state.filter((item) => item.product.productId !== action.payload);
     },
   },
 });
