@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import CartitemScreen from "./CartitemScreen";
 import { Link, useNavigate } from 'react-router-dom';
+import Checkout from '../components/Paypal'
 
 const CartScreen = () => {
   const [totalAmount, setTotalAmount] = useState(0);
@@ -64,9 +65,9 @@ const CartScreen = () => {
                   </span>{" "}
                   : ${totalAmount}
                 </p>
-                <button onClick={handleCheckout} className="bg-purple-700 hover:bg-purple-50 rounded-lg text-white transition duration-300 ease-linear mt-5 border-2 border-purple-600 font-bold hover:text-purple-700 p-3" >
-                  Checkout Payment
-                </button>
+              </div>
+              <div className="self-end mt-2 pl-[10rem]">
+                <Checkout amount={totalAmount}/>
               </div>
             </div>
           </div>
