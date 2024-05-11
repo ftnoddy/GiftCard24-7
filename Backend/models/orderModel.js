@@ -1,38 +1,78 @@
-import { Schema, model } from "mongoose";
+import mongoose from 'mongoose';
 
-const orderSchema = new Schema({
-  userId: {
-    type: Schema.Types.ObjectId,
-    ref: "User",
-    required: true,
-  },
-  products: [
-    {
-      productId: {
-        type: Schema.Types.ObjectId,
-        ref: "Product",
-        required: true,
-      },
-      quantity: {
-        type: Number,
-        required: true,
-      },
-    },
-  ],
-  transactionId: {
-    type: String,
-    required: true,
-  },
-  totalAmount: {
-    type: Number,
-    required: true,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-});
+const orderSchema = mongoose.Schema(
+	{
+		// add a reference to the corresponding user
+		user: {
+			type: mongoose.Schema.Types.ObjectId,
+			required: true,
+			ref: 'User',
+		},
+		orderItems: [
+			{
+				qty: { type: Number, required: true, default: 0 },
+				name: { type: String, required: true },
+				price: { type: Number, required: true, default: 0 },
+				image: { type: String, required: true },
+				product: {
+					type: mongoose.Schema.Types.ObjectId,
+					required: true,
+					ref: 'Product',
+				},
+			},
+		],
 
-const Order = model("Order", orderSchema);
+		paymentMethod: {
+			type: String,
+			required: true,
+		},
+		// depends on if stripe or paypal method is used
+		paymentResult: {
+			id: { type: String },
+			status: { type: String },
+			update_time: { type: String },
+			email_address: { type: String },
+		},
+		itemsPrice: {
+			type: Number,
+			required: true,
+			default: 0.0,
+		},
+		taxPrice: {
+			type: Number,
+			required: true,
+			default: 0.0,
+		},
+		shippingPrice: {
+			type: Number,
+			required: true,
+			default: 0.0,
+		},
+		totalPrice: {
+			type: Number,
+			required: true,
+			default: 0.0,
+		},
+		isPaid: {
+			type: Boolean,
+			default: false,
+		},
+		isDelivered: {
+			type: Boolean,
+			default: false,
+		},
+		paidAt: {
+			type: Date,
+		},
+		deliveredAt: {
+			type: Date,
+		},
+	},
+	{
+		timestamps: true,
+	}
+);
+
+const Order = mongoose.model('Order', orderSchema);
 
 export default Order;
