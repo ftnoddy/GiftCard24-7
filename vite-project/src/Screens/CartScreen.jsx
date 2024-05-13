@@ -18,6 +18,7 @@ const CartScreen = () => {
     const names = cart.map((item) => item.product.name);
     setItemNames(names);
   }, [cart]);
+  console.log("total amount", typeof totalAmount)
 
   return (
     <>

@@ -234,7 +234,8 @@ const sendOtp = async (req, res) => {
 const checkout = async (req, res) => {
   try {
     // Extract order details from the request body
-    const { orderItems, paymentMethod, itemsPrice, taxPrice, shippingPrice, totalPrice } = req.body;
+    const { orderItems, paymentMethod, itemsPrice, taxPrice, totalPrice, user } = req.body;
+    console.log(req.body)
 
     // Validate request body
     const errors = validationResult(req);
@@ -244,12 +245,11 @@ const checkout = async (req, res) => {
 
     // Create a new order object
     const order = new Order({
-      user: req.user._id, // Assuming authenticated user's ID is stored in req.user
+      user: user._id, // Assuming authenticated user's ID is stored in req.user
       orderItems,
       paymentMethod,
       itemsPrice,
       taxPrice,
-      shippingPrice,
       totalPrice,
     });
 
