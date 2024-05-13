@@ -8,22 +8,10 @@ const CartScreen = () => {
   const [totalAmount, setTotalAmount] = useState(0);
   const [itemNames, setItemNames] = useState([]);
   const cart = useSelector((state) => state.cart);
-  const navigate = useNavigate();
-  
-
-  const handleCheckout = () => {
-    // Navigate to PaymentMethodScreen and pass totalAmount as state
-    navigate('/payment-method', { state: { totalAmount } });
-  };
 
   useEffect(() => {
     // Calculate total amount
-    const total = cart.reduce((acc, curr) => {
-      let floatCurr = parseFloat(curr.price)
-      if(!isNaN(floatCurr)){
-        return acc + (floatCurr)
-      }
-    }, 0);
+    const total = cart.reduce((acc, curr) => acc + parseFloat(curr.price), 0);
     setTotalAmount(total);
 
     // Extract item names
@@ -65,7 +53,7 @@ const CartScreen = () => {
                 : ${totalAmount}
               </p>
               <div className="self-end">
-                <Checkout amount={totalAmount}/>
+                <Checkout amount={totalAmount} />
               </div>
             </div>
           </div>

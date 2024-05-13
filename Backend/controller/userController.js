@@ -6,8 +6,11 @@ import jwt from "jsonwebtoken";
 import KycVerification from "../models/kycModel.js";
 import OTP from "../models/otpModel.js";
 import EmailVerification from "../models/emailModel.js";
+import Order from "../models/orderModel.js";
 import crypto from "crypto";
 import twilio from 'twilio';
+import { validationResult } from "express-validator";
+
 
 import generateToken from "../utils/generateToken.js";
 
@@ -228,6 +231,40 @@ const sendOtp = async (req, res) => {
   }
 };
 
+const checkout = async (req, res) => {
+  try {
+    // Extract order details from the request body
+    const { orderItems, paymentMethod, itemsPrice, taxPrice, shippingPrice, totalPrice } = req.body;
+
+    // Validate request body
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    // Create a new order object
+    const order = new Order({
+      user: req.user._id, // Assuming authenticated user's ID is stored in req.user
+      orderItems,
+      paymentMethod,
+      itemsPrice,
+      taxPrice,
+      shippingPrice,
+      totalPrice,
+    });
+
+    // Save the order to the database
+    await order.save();
+
+    // Respond with success message
+    res.status(200).json({ message: "Order placed successfully", orderId: order._id });
+  } catch (error) {
+    console.error("Error handling checkout:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+
 // @desc    Logout a user / clear the cooki
 // @route   POST/ api/users/logout
 // @access  Private
@@ -368,5 +405,6 @@ export {
   getKycVerification,
   getXoxodayData ,
   verifyEmail ,
-  sendOtp
+  sendOtp,
+  checkout
 };

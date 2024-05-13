@@ -1,4 +1,3 @@
-
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 
 export default function Checkout({amount}) {
@@ -13,7 +12,8 @@ export default function Checkout({amount}) {
         label: 'checkout',
     }
     const message= {
-        amount: amount
+        amount: amount,
+        
     }
 
     /*for creating order in the backend

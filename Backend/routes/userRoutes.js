@@ -10,7 +10,8 @@ import {
   getKycVerification,
   getXoxodayData,
   verifyEmail,
-  sendOtp
+  sendOtp,
+  checkout
 } from "../controller/userController.js";
 import { protect, admin } from "../middleware/authMiddleware.js";
 
@@ -24,6 +25,8 @@ router.post("/logout", logoutUser);
 router.post("/kyc-verification", submitKycVerification);
 router.post("/getkyc-verification", getKycVerification);
 router.post("/email-verification", verifyEmail);
+router.post("/checkout", checkout);
+
 router.post("/send-otp",sendOtp );
 router.route('/me').get(protect, async (req, res) => {
   if(req.user){
