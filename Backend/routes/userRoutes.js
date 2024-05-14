@@ -27,7 +27,7 @@ router.post("/kyc-verification", submitKycVerification);
 router.get("/getkyc-verification", getKycVerification);
 router.post("/email-verification", verifyEmail);
 router.post("/checkout", checkout);
-router.get("/get-orders", getOrders);
+router.get("/get-orders", getOrders, protect);
 
 router.post("/send-otp",sendOtp );
 router.route('/me').get(protect, async (req, res) => {

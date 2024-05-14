@@ -3,7 +3,7 @@ import { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
 import { useSelector } from "react-redux";
-import { useHistory } from "react-router-dom";
+// import { useHistory } from "react-router-dom";
 import { useSnackbar } from "notistack";
 
 
@@ -21,7 +21,7 @@ export default function Checkout({ amount }) {
 
     const [loading, setLoading] = useState(false);
     const { user } = useContext(AuthContext);
-    const history = useHistory();
+    // const history = useHistory();
     const { enqueueSnackbar } = useSnackbar();
 
     const cart = useSelector((state) => state.cart);
@@ -54,7 +54,7 @@ export default function Checkout({ amount }) {
                 console.log("Order details sent to backend:", response.data);
                 enqueueSnackbar("Order placed successfully!", { variant: "success" });
                 setLoading(false); // Reset loading state
-                history.push("/"); // Redirect to the home page
+                // history.push("/"); // Redirect to the home page
             }).catch((error) => {
                 console.error("Error sending order details to backend:", error);
                 setLoading(false); // Reset loading state

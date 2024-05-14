@@ -265,10 +265,10 @@ const checkout = async (req, res) => {
 };
 
 
-const getOrders = async (req, res) => {
+const getOrders = asyncHandler(async (req, res) => {
   try {
-    // Fetch orders from the database
-    const orders = await Order.find({ user: req.user._id }); // Assuming authenticated user's ID is stored in req.user
+    const orders = await Order.find({}).lean();
+    // console.log("orders", orders);
 
     // Respond with the fetched orders
     res.status(200).json(orders);
@@ -276,10 +276,12 @@ const getOrders = async (req, res) => {
     console.error("Error fetching orders:", error);
     res.status(500).json({ message: "Internal server error" });
   }
-};
+});
 
 
-// @desc    Logout a user / clear the cooki
+
+
+// @desc    Logout a user / clear the cookie
 // @route   POST/ api/users/logout
 // @access  Private
 const logoutUser = asyncHandler(async (req, res) => {
@@ -347,6 +349,7 @@ const getUsers = asyncHandler(async (req, res) => {
     throw new Error("User not found");
   }
 });
+
 
 // @desc    Get users by ID
 // @route   GET/ api/users/:id
