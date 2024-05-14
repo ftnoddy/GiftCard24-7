@@ -11,7 +11,8 @@ import {
   getXoxodayData,
   verifyEmail,
   sendOtp,
-  checkout
+  checkout,
+  getOrders
 } from "../controller/userController.js";
 import { protect, admin } from "../middleware/authMiddleware.js";
 
@@ -23,9 +24,10 @@ router.get("/", getUsers);
 router.post("/login", authUser);
 router.post("/logout", logoutUser);
 router.post("/kyc-verification", submitKycVerification);
-router.post("/getkyc-verification", getKycVerification);
+router.get("/getkyc-verification", getKycVerification);
 router.post("/email-verification", verifyEmail);
 router.post("/checkout", checkout);
+router.get("/get-orders", getOrders);
 
 router.post("/send-otp",sendOtp );
 router.route('/me').get(protect, async (req, res) => {

@@ -265,6 +265,20 @@ const checkout = async (req, res) => {
 };
 
 
+const getOrders = async (req, res) => {
+  try {
+    // Fetch orders from the database
+    const orders = await Order.find({ user: req.user._id }); // Assuming authenticated user's ID is stored in req.user
+
+    // Respond with the fetched orders
+    res.status(200).json(orders);
+  } catch (error) {
+    console.error("Error fetching orders:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+
 // @desc    Logout a user / clear the cooki
 // @route   POST/ api/users/logout
 // @access  Private
@@ -406,5 +420,6 @@ export {
   getXoxodayData ,
   verifyEmail ,
   sendOtp,
-  checkout
+  checkout,
+  getOrders
 };
