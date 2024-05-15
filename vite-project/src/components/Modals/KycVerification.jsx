@@ -4,6 +4,7 @@ import ModalLayout from "../Layouts/ModalLayout";
 import { X } from "lucide-react";
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { useNavigate } from "react-router-dom";
 // import 'react-toastify/dist/ReactToastify.css';
 
 const KycVerification = ({ closeKycModal }) => {
@@ -15,6 +16,8 @@ const KycVerification = ({ closeKycModal }) => {
     email: "",
     
   });
+
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({
@@ -30,6 +33,9 @@ const KycVerification = ({ closeKycModal }) => {
       const response = await axios.post('http://localhost:5002/api/users/kyc-verification', formData);
       console.log('Response:', response.data);
       toast.success('KYC verification successful');
+      setTimeout(() => {
+        navigate('/');
+      }, 2000)
     } catch (error) {
       console.error('Error:', error);
       toast.error('Error occurred while verifying KYC');

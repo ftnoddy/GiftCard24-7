@@ -11,6 +11,7 @@ import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
 
 
+
 function Navbar() {
   // const userName = useSelector((state) => state.auth.userInfo.name);
   const cart = useSelector((state) => state.cart);
@@ -75,9 +76,9 @@ function Navbar() {
           <div className="flex-1">
             {/* Replace anchor tag with image tag for the logo */}
             <img
-              src="https://api.asm.skype.com/v1/objects/0-sa-d9-352eeffed2071b2609778285d7e8da5a/views/imgpsh_fullsize_anim" // Replace with the URL of your logo image
+              src="public\images\gift_card.png" // Replace with the URL of your logo image
               alt="Your Logo" // Add an appropriate alt text for accessibility
-              className="h-12" // Adjust height as needed
+              className="h-14" // Adjust height as needed
             />
           </div>
 

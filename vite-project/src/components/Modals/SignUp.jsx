@@ -60,6 +60,10 @@ const SignUp = ({ closeSignupModal, setShowSignupModal }) => {
         console.log("Response:", response.data);
         console.log('Signup successful');
         toast.success('Signup successful');
+
+        setTimeout(() => {
+          navigate('/');
+        }, 2000);
   
         const { name, email, token, _id, isAdmin ,isVerified} = response.data;
   
@@ -69,9 +73,7 @@ const SignUp = ({ closeSignupModal, setShowSignupModal }) => {
   
         dispatch(setCredentials(response.data));
   
-        setTimeout(() => {
-          navigate('/');
-        }, 2000);
+     
       } else {
         console.error('Signup failed');
         toast.error('Signup failed');

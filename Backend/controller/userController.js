@@ -2,6 +2,7 @@ import asyncHandler from "../middleware/asyncHandler.js";
 import User from "../models/userModel.js";
 // import Token from "../models/token.js";
 import sendVerificationEmail from "../utils/mailSender.js";
+import invoiceMailSender from "../utils/invoiceMailSender.js";
 import jwt from "jsonwebtoken";
 import KycVerification from "../models/kycModel.js";
 import OTP from "../models/otpModel.js";
@@ -10,8 +11,6 @@ import Order from "../models/orderModel.js";
 import crypto from "crypto";
 import twilio from 'twilio';
 import { validationResult } from "express-validator";
-
-
 import generateToken from "../utils/generateToken.js";
 
 import axios from "axios"
@@ -253,8 +252,13 @@ const checkout = async (req, res) => {
       totalPrice,
     });
 
+     // Send invoice email
+
+
     // Save the order to the database
     await order.save();
+    await invoiceMailSender(user.email, user.name, totalPrice, paymentMethod, orderItems);
+
 
     // Respond with success message
     res.status(200).json({ message: "Order placed successfully", orderId: order._id });
