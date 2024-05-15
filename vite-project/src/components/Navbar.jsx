@@ -23,6 +23,7 @@ function Navbar() {
     setShowSignupModal("signup");
   };
 
+  
   // const logoutModel = () => {
 
   //   toast.success("success");
