@@ -1,0 +1,11 @@
+{
+  "version": "1.0",
+  "apis": [
+    {
+      "identifier": "xoxoday",
+      "source": "@xoxoday/v1.0#1yvdxbi31ltrbfups",
+      "integrity": "sha512-oI+NWc4wQ/4CXaZuEnaIhLKtdoof0sgkLDx+FchIEGx5dxUT7WXACJQYsy+5ivCEAEDFz1QXAIjWDsTa8Hb3MQ==",
+      "installerVersion": "6.1.1"
+    }
+  ]
+}

@@ -62,7 +62,10 @@ function ProfileScreen() {
         const response = await axios.get('http://localhost:5002/api/users/get-orders', {
           headers: {
             Authorization: `Bearer ${authToken}` // Include the authorization token in the request headers
-          }
+          },
+          // params: {
+          //   userId: userInfo._id // Pass the user's ID as a query parameter
+          // }
         });
         setOrders(response.data);
       } catch (error) {

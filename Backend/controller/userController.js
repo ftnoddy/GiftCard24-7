@@ -48,6 +48,50 @@ const getXoxodayData = async (req, res, next) => {
 };
 
 
+const placeOrder = async (req, res) => {
+  try {
+    // Extract necessary data from the request body
+    const { productId, quantity, denomination, email, contact, poNumber } = req.body;
+
+    // Set up the options for the Axios request to the PlaceOrder API
+    const options = {
+      method: 'POST',
+      url: 'https://stagingaccount.xoxoday.com/chef/v1/oauth/api/',
+      headers: {
+        accept: 'application/json',
+        'content-type': 'application/json',
+        authorization: `Bearer ${bearerToken}` // Replace '==' with your actual bearer token
+      },
+      data: {
+        query: 'plumProAPI.mutation.placeOrder',
+        tag: 'plumProAPI',
+        variables: {
+          data: {
+            productId,
+            quantity,
+            denomination,
+            email,
+            contact,
+            poNumber,
+            notifyReceiverEmail: 1,
+            notifyAdminEmail: 0
+          }
+        }
+      }
+    };
+    // Make the request to the PlaceOrder API using Axios
+    const response = await axios.request(options);
+
+    // Respond with the data received from the API
+    res.status(200).json(response.data);
+  } catch (error) {
+    console.error('Error placing order:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+
+
 // import bcrypt from 'bcryptjs';
 
 const submitKycVerification = async (req, res) => {
@@ -135,6 +179,8 @@ const registerUser = async (req, res) => {
       password,
       emailToken, // Save email token to the user document
     });
+
+
 
     // Generate JWT token
     const token = jwt.sign({ email }, process.env.JWT_SECRET, {
@@ -268,7 +314,6 @@ const checkout = async (req, res) => {
   }
 };
 
-
 const getOrders = asyncHandler(async (req, res) => {
   try {
     const orders = await Order.find({}).lean();
@@ -281,6 +326,23 @@ const getOrders = asyncHandler(async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 });
+
+// const getOrdersById = asyncHandler(async (req, res) => {
+//   try {
+//     // Extract the user ID from the request parameters
+//     const userId = req.params.userId;
+//     console.log("userId",userId);
+
+//     // Find orders associated with the specified user ID
+//     const orders = await Order.find({ user: userId }).lean();
+
+//     // Respond with the fetched orders
+//     res.status(200).json(orders);
+//   } catch (error) {
+//     console.error("Error fetching orders:", error);
+//     res.status(500).json({ message: "Internal server error" });
+//   }
+// });
 
 
 
@@ -369,6 +431,7 @@ const getUsersByID = asyncHandler(async (req, res) => {
   }
 });
 
+
 // @desc    Delete users
 // @route   DELETE/ api/users/:id
 // @access  Private/Admin
@@ -394,11 +457,11 @@ const updateUsers = asyncHandler(async (req, res) => {
   const user = await User.findById(req.params.id);
 
   if (user) {
-    (user.name = req.body.name || user.name),
+    (user.name = req.body.name || user.name)  ,
       (user.email = req.body.email || user.email);
     user.isAdmin = Boolean(req.body.isAdmin);
 
-    const updatedUser = await user.save();
+    const updatedUser = await user.save();  
 
     res.status(200).json({
       _id: updatedUser._id,
@@ -428,5 +491,7 @@ export {
   verifyEmail ,
   sendOtp,
   checkout,
-  getOrders
+  getOrders,
+  placeOrder
+  
 };

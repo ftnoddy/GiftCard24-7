@@ -12,7 +12,9 @@ import {
   verifyEmail,
   sendOtp,
   checkout,
-  getOrders
+  getOrders,
+  placeOrder
+  
 } from "../controller/userController.js";
 import { protect, admin } from "../middleware/authMiddleware.js";
 
@@ -28,6 +30,8 @@ router.get("/getkyc-verification", getKycVerification);
 router.post("/email-verification", verifyEmail);
 router.post("/checkout", checkout);
 router.get("/get-orders", getOrders, protect);
+router.post("/place-orders", placeOrder);
+// router.get("/get-ordersById:userId", protect ,getOrdersById );
 
 router.post("/send-otp",sendOtp );
 router.route('/me').get(protect, async (req, res) => {
