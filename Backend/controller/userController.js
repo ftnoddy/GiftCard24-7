@@ -19,33 +19,48 @@ import dotenv from 'dotenv';
 dotenv.config();
 const bearerToken = process.env.BEARER_TOKEN;
 
-const getXoxodayData = async (req, res, next) => {
+
+const getVouchers = async () => {
   try {
-    const response = await axios.post(
-      'https://stagingaccount.xoxoday.com/chef/v1/oauth/api/',
-      {
+    // Ensure that bearerToken is defined
+    if (!bearerToken) {
+      throw new Error("Bearer token is not defined");
+    }
+
+    const options = {
+      method: 'POST',
+      url: 'https://stagingaccount.xoxoday.com/chef/v1/oauth/api/',
+      headers: {
+        accept: 'application/json',
+        'content-type': 'application/json',
+        authorization: `Bearer ${bearerToken}` 
+      },
+      data: {
         query: 'plumProAPI.mutation.getVouchers',
         tag: 'plumProAPI',
         variables: {
-          data: { limit: 10, page: 1, exchangeRate: 1, sort: { field: 'name', order: 'ASC' } }
-        }
-      },
-      {
-        headers: {
-          accept: 'application/json',
-          'content-type': 'application/json',
-          authorization: `Bearer ${bearerToken}`
+          data: {limit: 10, page: 1, exchangeRate: 1, sort: {field: 'name', order: 'ASC'}}
         }
       }
-    );
+    };
 
-    req.xoxodayData = response.data; // Save the Xoxoday data in the request object
-    console.log('Xoxoday Data:', response.data);
-    next();
+    const response = await axios.request(options);
+    const voucherArray = response.data;
+
+    console.log(voucherArray); // Log the entire response to inspect its structure
+
+    // Update the code based on the actual structure of the response
+    // For example:
+    // const voucherArray = response.data.getVouchers.data;
+
+    // Return the response data
+    return voucherArray;
   } catch (error) {
-    next(error);
+    // Rethrow the error to let the caller handle it
+    throw error;
   }
 };
+
 
 
 const placeOrder = async (req, res) => {
@@ -487,7 +502,7 @@ export {
   updateUsers,
   submitKycVerification,
   getKycVerification,
-  getXoxodayData ,
+  getVouchers ,
   verifyEmail ,
   sendOtp,
   checkout,
