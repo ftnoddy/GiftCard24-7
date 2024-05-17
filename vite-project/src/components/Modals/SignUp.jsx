@@ -29,7 +29,8 @@ const SignUp = ({ closeSignupModal, setShowSignupModal }) => {
     });
   };
 
-  const handleSendOTP = async () => {
+  const handleSendOTP = async (e) => {
+    e.preventDefault()
     if (!formData.mobile) {
       toast.error('Please enter a mobile number');
       return;

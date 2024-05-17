@@ -340,10 +340,10 @@ const getOrders = asyncHandler(async (req, res) => {
 const getOrderByUserId = asyncHandler(async (req, res) => {
   try {
     // Extract order ID from request parameters
-    const orderId = req.params.orderId;
+    const orderId = req.user._id
 
     // Query the database for the order by order ID
-    const order = await Order.findById(orderId).lean();
+    const order = await Order.find({user: orderId}).lean();
 
     // If order is found, respond with the order data
     if (order) {

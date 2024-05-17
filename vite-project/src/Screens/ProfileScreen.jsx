@@ -59,7 +59,7 @@ function ProfileScreen() {
     // Fetch orders when component mounts
     const fetchOrders = async () => {
       try {
-        const response = await axios.get('http://localhost:5002/api/users/get-orders', {
+        const response = await axios.get('http://localhost:5002/api/users/get-user-order', {
           headers: {
             Authorization: `Bearer ${authToken}` // Include the authorization token in the request headers
           },
@@ -67,6 +67,7 @@ function ProfileScreen() {
           //   userId: userInfo._id // Pass the user's ID as a query parameter
           // }
         });
+        console.log('+++++++',response.data)
         setOrders(response.data);
       } catch (error) {
         console.error('Error fetching orders:', error);
