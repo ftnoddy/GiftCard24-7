@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import asyncHandler from "./asyncHandler.js";
+import User from "../models/userModel.js";
 
 //Protect routes
 const protect = asyncHandler(async (req, res, next) => {
@@ -8,11 +9,12 @@ const protect = asyncHandler(async (req, res, next) => {
   console.log('token', token)
 
   if (token) {
-    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    jwt.verify(token, process.env.JWT_SECRET, async(err, user) => {
       if (err) {
           return res.status(401).json({ message: 'Unauthorized' });
       }
-      req.user = user;
+      const userInfo = await User.findOne({email: user.email})
+      req.user = userInfo;
       next();
   });
   } else {
