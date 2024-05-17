@@ -18,10 +18,11 @@ import axios from "axios"
 import dotenv from 'dotenv';
 dotenv.config();
 const bearerToken = process.env.BEARER_TOKEN;
+// console.log("token",bearerToken);
 
 
-const getVouchers = async () => {
-  try {
+const getVouchers = async (req,res) => {
+ 
     // Ensure that bearerToken is defined
     if (!bearerToken) {
       throw new Error("Bearer token is not defined");
@@ -44,29 +45,22 @@ const getVouchers = async () => {
       }
     };
 
-    const response = await axios.request(options);
-    const voucherArray = response.data;
-
-    console.log(voucherArray); // Log the entire response to inspect its structure
-
-    // Update the code based on the actual structure of the response
-    // For example:
-    // const voucherArray = response.data.getVouchers.data;
-
-    // Return the response data
-    return voucherArray;
-  } catch (error) {
-    // Rethrow the error to let the caller handle it
-    throw error;
+    const response =  axios
+    .request(options)
+    .then(function (response) {
+      console.log(response.data);
+      res.status(200).json(response.data)
+    })
+    .catch(function (error) {
+      console.error(error);
+    });
+  
   }
-};
-
-
 
 const placeOrder = async (req, res) => {
   try {
     // Extract necessary data from the request body
-    const { productId, quantity, denomination, email, contact, poNumber } = req.body;
+    const { productId, quantity, denomination, email, contact, poNumber  } = req.body;
 
     // Set up the options for the Axios request to the PlaceOrder API
     const options = {
@@ -342,22 +336,28 @@ const getOrders = asyncHandler(async (req, res) => {
   }
 });
 
-// const getOrdersById = asyncHandler(async (req, res) => {
-//   try {
-//     // Extract the user ID from the request parameters
-//     const userId = req.params.userId;
-//     console.log("userId",userId);
 
-//     // Find orders associated with the specified user ID
-//     const orders = await Order.find({ user: userId }).lean();
+const getOrderByUserId = asyncHandler(async (req, res) => {
+  try {
+    // Extract order ID from request parameters
+    const orderId = req.params.orderId;
 
-//     // Respond with the fetched orders
-//     res.status(200).json(orders);
-//   } catch (error) {
-//     console.error("Error fetching orders:", error);
-//     res.status(500).json({ message: "Internal server error" });
-//   }
-// });
+    // Query the database for the order by order ID
+    const order = await Order.findById(orderId).lean();
+
+    // If order is found, respond with the order data
+    if (order) {
+      res.status(200).json(order);
+    } else {
+      // If order is not found, respond with 404 Not Found
+      res.status(404).json({ message: "Order not found" });
+    }
+  } catch (error) {
+    console.error("Error fetching order by ID:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 
 
 
@@ -507,6 +507,7 @@ export {
   sendOtp,
   checkout,
   getOrders,
-  placeOrder
+  placeOrder,
+  getOrderByUserId
   
 };
