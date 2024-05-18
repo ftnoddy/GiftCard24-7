@@ -72,7 +72,7 @@ function Navbar() {
       )}
       {showKycModal && <KycVerification closeKycModal={closeKycModal} />}{" "}
       {/* Pass closeKycModal function as prop */}
-      <div>
+      <div className="hidden sm:block">
         <div className="navbar bg-base-100 border-b border-gray-300  shadow-lg fixed top-0 w-full z-10">
           <div className="flex-1">
             {/* Replace anchor tag with image tag for the logo */}
