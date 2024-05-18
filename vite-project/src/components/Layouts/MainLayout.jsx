@@ -7,7 +7,7 @@ const MainLayout = ({ children }) => {
     <>
       <div>
         <Navbar />
-            <div className="my-16">{children}</div>
+        <div className="min-h-screen h-full">{children}</div>
         <Footer />
       </div>
     </>
