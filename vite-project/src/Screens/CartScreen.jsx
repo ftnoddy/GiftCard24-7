@@ -8,25 +8,26 @@ const CartScreen = () => {
   const [totalAmount, setTotalAmount] = useState(0);
   const [itemNames, setItemNames] = useState([]);
   const cart = useSelector((state) => state.cart);
+  console.log("cart", cart);
 
   useEffect(() => {
     // Calculate total amount
-    const total = cart.reduce((acc, curr) => acc + parseFloat(curr.price), 0);
+    const total = cart?.reduce((acc, curr) => acc + parseFloat(curr.price), 0);
     setTotalAmount(total);
 
     // Extract item names
-    const names = cart.map((item) => item.product.name);
+    const names = cart?.map((item) => item.product.name);
     setItemNames(names);
   }, [cart]);
   console.log("total amount", typeof totalAmount)
 
   return (
     <>
-      {cart.length > 0 ? (
+      {cart?.length > 0 ? (
         <div className="min-h-[80vh] max-w-6xl mx-auto border border-gray-300 rounded-md p-4">
           <div className="grid md:grid-cols-2">
             <div className="flex flex-col justify-center items-between p-2">
-              {cart.map((item) => {
+              {cart?.map((item) => {
                 return <CartitemScreen key={item.productId} item={item} />; // assuming productId is unique
               })}
             </div>
@@ -45,7 +46,7 @@ const CartScreen = () => {
                 <span className="text-gray-700 font-semibold">
                   Total Items
                 </span>{" "}
-                : {cart.length}
+                : {cart?.length}
               </p>
               <p>
                 <span className="text-gray-700 font-semibold">

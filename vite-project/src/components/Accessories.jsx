@@ -14,7 +14,7 @@ function ProductCard({ product, addToCart, removeFromCart }) {
   return (
     <div
       key={product.productId}
-      className="card w-full bg-base-100 shadow-xl carousel-item transform transition duration-300 hover:scale-105 hover:shadow-md"
+      className="card w-full bg-base-100 shadow-xl carousel-item transform transition duration-300 hover:scale-105 hover:shadow-md mt-16"
     >
       <Link to={`/product/${product.productId}`}>
         <figure>
@@ -22,12 +22,12 @@ function ProductCard({ product, addToCart, removeFromCart }) {
         </figure>
       </Link>
       <div className="card-body">
-        <h2 className="card-title">
+        <h2 className="flex">
           {product.name}
-          <div className="badge badge-secondary">NEW</div>
+          <div className=" bg-gradient-to-tr to-orange-600 from-yellow-400 px-2 text-white rounded-full text-xs flex justify-center items-center ml-2">NEW</div>
         </h2>
 
-        <p>
+        <p className="text-sm">
           Price:{' '}
           <select
             value={selectedValue}
@@ -55,6 +55,7 @@ const Accessories = () => {
   const { enqueueSnackbar } = useSnackbar();
   const { user } = useContext(AuthContext);
   const [products, setProducts] = useState([]); // Use state to store products
+
 
   useEffect(() => {
     // Function to fetch data from the API

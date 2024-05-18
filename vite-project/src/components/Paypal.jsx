@@ -16,7 +16,7 @@ export default function Checkout({ amount }) {
     const style = {
         color: 'blue',
         disableMaxWidth: true,
-        label: 'checkout',
+        // label: 'checkout',
     };
 
     const [loading, setLoading] = useState(false);
@@ -25,10 +25,11 @@ export default function Checkout({ amount }) {
     const { enqueueSnackbar } = useSnackbar();
 
     const cart = useSelector((state) => state.cart);
-    const formattedCart = cart.map(item => ({
-        productId: item.product.productId,
-        name: item.product.name,
-        price: item.price
+    console.log("PAYPAL cart", cart[0]);
+    const formattedCart = cart?.map(item => ({
+        productId: item?.product.productId,
+        name: item?.product.name,
+        price: item?.price
         // Add other keys as needed
     }));
 

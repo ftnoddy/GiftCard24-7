@@ -16,29 +16,38 @@ const CartitemScreen = ({ item }) => {
   };
 
   return (
-    <div className="flex items-center p-5 justify-between bg-violet-200 mt-2 mb-2 rounded-xl">
-      <div className="flex p-3">
+    <div className="p-5 justify-between bg-violet-200 mt-2 mb-2 rounded-xl">
+      <div className="">
         {/* Check if item exists before accessing its properties */}
         {item && item.product && (
-          <>
+          <div>
             {/* Display item image */}
-            <img src={item.product.imageUrl} className="h-28 rounded-lg" alt={item.product.name} />
-            <div className="ml-10 self-start space-y-5">
+            <img
+              src={item.product.imageUrl}
+              className="w-full rounded-lg"
+              alt={item.product.name}
+            />
+            <div className=" mt-2 ">
               {/* Display item title */}
-              <h1 className="text-xl text-purple-700 font-semibold">
+              <h1 className="text-sm lg:text-base text-purple-700 font-semibold">
                 {item.product.name}
               </h1>
               {/* Display item price */}
-              <p>{item.product.currencyCode} {item.price}</p> {/* Assuming valueDenominations contains comma-separated values */}
+              <p className="text-sm">
+                {item.product.currencyCode} {item.price}
+              </p>{" "}
+              {/* Assuming valueDenominations contains comma-separated values */}
             </div>
-          </>
+          </div>
         )}
       </div>
-      <div
-        onClick={removeItemFromCart}
-        className="bg-purple-300 hover:bg-purple-400 transition-transform duration-300 cursor-pointer rounded-full p-3 mr-3"
-      >
-        <Delete className="text-gray-800" />
+      <div className="flex justify-end">
+        <div
+          onClick={removeItemFromCart}
+          className="bg-purple-300 w-fit hover:bg-purple-400 transition-transform duration-300 cursor-pointer rounded-full p-3 mr-3"
+        >
+          <Delete className="text-gray-800" />
+        </div>
       </div>
     </div>
   );
