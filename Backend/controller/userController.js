@@ -60,46 +60,51 @@ const getVouchers = async (req,res) => {
 
   const placeOrder = async (req, res) => {
     try {
-      // Extract necessary data from the request body
-      const { productId, quantity, denomination, email, contact, poNumber  } = req.body;
-  
-      // Set up the options for the Axios request to the PlaceOrder API
-      const options = {
-        method: 'POST',
-        url: 'https://stagingaccount.xoxoday.com/chef/v1/oauth/api/',
-        headers: {
-          accept: 'application/json',
-          'content-type': 'application/json',
-          authorization: `Bearer ${bearerToken}` // Replace '==' with your actual bearer token
-        },
-        data: {
-          query: 'plumProAPI.mutation.placeOrder',
-          tag: 'plumProAPI',
-          variables: {
-            data: {
-              productId,
-              quantity,
-              denomination,
-              email,
-              contact,
-              poNumber,
-              notifyReceiverEmail: 1,
-              notifyAdminEmail: 0
-            }
-          }
+        // Extract necessary data from the request body
+        const { productId, quantity, denomination, email, contact, poNumber } = req.body;
+
+        // Validate required fields
+        if (!productId || !quantity || !denomination || !email || !poNumber) {
+            return res.status(400).json({ message: 'Missing required fields' });
         }
-      };
-      // Make the request to the PlaceOrder API using Axios
-      const response = await axios.request(options);
-  
-      // Respond with the data received from the API
-      res.status(200).json(response.data);
+
+        // Set up the options for the Axios request to the PlaceOrder API
+        const options = {
+            method: 'POST',
+            url: 'https://stagingaccount.xoxoday.com/chef/v1/oauth/api/',
+            headers: {
+                accept: 'application/json',
+                'content-type': 'application/json',
+                authorization: `Bearer ${process.env.BEARER_TOKEN}`
+            },
+            data: {
+                query: 'plumProAPI.mutation.placeOrder',
+                tag: 'plumProAPI',
+                variables: {
+                    data: {
+                        productId,
+                        quantity,
+                        denomination,
+                        email,
+                        contact,
+                        poNumber,
+                        notifyReceiverEmail: 1,
+                        notifyAdminEmail: 0
+                    }
+                }
+            }
+        };
+
+        // Make the request to the PlaceOrder API using Axios
+        const response = await axios.request(options);
+
+        // Respond with the data received from the API
+        res.status(200).json(response.data);
     } catch (error) {
-      console.error('Error placing order:', error);
-      res.status(500).json({ message: 'Internal server error' });
+        console.error('Error placing order:', error.response ? error.response.data : error.message);
+        res.status(500).json({ message: 'Internal server error' });
     }
-  };
-  
+};
   
   
 
