@@ -21,10 +21,12 @@ import RefReturnPoliciesScreen from "./Screens/RefReturnPoliciesScreen.jsx";
 import ShippingPoliciesScreen from "./Screens/ShippingPoliciesScreen.jsx";
 import Contact from "./Screens/ContactUsScreen.jsx";
 import EmailVerificationScreen from "./Screens/EmailVerificationScreen.jsx";
-
+import OrderSuccessfull from "./components/Modals/orderSuccessfull.jsx";
+// import ErrorBoundary from "./components/ErrorBoundary.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
+    
     <Route path="/" element={<App />}>
       <Route path="/" index={true} element={<HomeScreen />} />
       <Route path="/about" element={<AboutScreen />} />
@@ -39,8 +41,10 @@ const router = createBrowserRouter(
       <Route path="/Shipping-policies" element={<ShippingPoliciesScreen />} />
       <Route path="/verify-email:email" element={<EmailVerificationScreen />} />
       <Route path="/contact-us" element={<Contact />} />
+      <Route path="/order-success" element={<OrderSuccessfull />} />
 
     </Route>
+    
   )
 );
 

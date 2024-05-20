@@ -8,6 +8,7 @@ import KycVerification from "../models/kycModel.js";
 import OTP from "../models/otpModel.js";
 import EmailVerification from "../models/emailModel.js";
 import Order from "../models/orderModel.js";
+// import Placeorder from "../models/placeOrder.js";
 import crypto from "crypto";
 import twilio from 'twilio';
 import { validationResult } from "express-validator";
@@ -57,47 +58,50 @@ const getVouchers = async (req,res) => {
   
   }
 
-const placeOrder = async (req, res) => {
-  try {
-    // Extract necessary data from the request body
-    const { productId, quantity, denomination, email, contact, poNumber  } = req.body;
-
-    // Set up the options for the Axios request to the PlaceOrder API
-    const options = {
-      method: 'POST',
-      url: 'https://stagingaccount.xoxoday.com/chef/v1/oauth/api/',
-      headers: {
-        accept: 'application/json',
-        'content-type': 'application/json',
-        authorization: `Bearer ${bearerToken}` // Replace '==' with your actual bearer token
-      },
-      data: {
-        query: 'plumProAPI.mutation.placeOrder',
-        tag: 'plumProAPI',
-        variables: {
-          data: {
-            productId,
-            quantity,
-            denomination,
-            email,
-            contact,
-            poNumber,
-            notifyReceiverEmail: 1,
-            notifyAdminEmail: 0
+  const placeOrder = async (req, res) => {
+    try {
+      // Extract necessary data from the request body
+      const { productId, quantity, denomination, email, contact, poNumber  } = req.body;
+  
+      // Set up the options for the Axios request to the PlaceOrder API
+      const options = {
+        method: 'POST',
+        url: 'https://stagingaccount.xoxoday.com/chef/v1/oauth/api/',
+        headers: {
+          accept: 'application/json',
+          'content-type': 'application/json',
+          authorization: `Bearer ${bearerToken}` // Replace '==' with your actual bearer token
+        },
+        data: {
+          query: 'plumProAPI.mutation.placeOrder',
+          tag: 'plumProAPI',
+          variables: {
+            data: {
+              productId,
+              quantity,
+              denomination,
+              email,
+              contact,
+              poNumber,
+              notifyReceiverEmail: 1,
+              notifyAdminEmail: 0
+            }
           }
         }
-      }
-    };
-    // Make the request to the PlaceOrder API using Axios
-    const response = await axios.request(options);
-
-    // Respond with the data received from the API
-    res.status(200).json(response.data);
-  } catch (error) {
-    console.error('Error placing order:', error);
-    res.status(500).json({ message: 'Internal server error' });
-  }
-};
+      };
+      // Make the request to the PlaceOrder API using Axios
+      const response = await axios.request(options);
+  
+      // Respond with the data received from the API
+      res.status(200).json(response.data);
+    } catch (error) {
+      console.error('Error placing order:', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  };
+  
+  
+  
 
 
 
