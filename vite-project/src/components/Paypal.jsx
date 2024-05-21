@@ -8,8 +8,8 @@ import { useNavigate } from "react-router-dom";
 
 export default function Checkout() {
     const initialOptions = {
-        clientId: import.meta.env.VITE_PAYPAL_CLIENT_ID,
-        currency: "USD", // Ensure the currency is specified
+        clientId: import.meta.env.PAYPAL_CLIENT_ID,
+        currency: "USD",
     };
 
     const style = {
@@ -28,10 +28,16 @@ export default function Checkout() {
         quantity: item?.quantity?.toString() || '1',
         denomination: parseFloat(item?.price).toFixed(2),
         email: user.email
-       
     }));
-    console.log("cart",cart)
-    console.log("formattedCart",formattedCart);
+
+    const handleOrderPlacement = async (orderId) => {
+        try {
+            const response = await axios.get(`http://localhost:5002/api/users/place-orders/${orderId}`);
+            console.log('Order details:', response.data);
+        } catch (error) {
+            console.error('Error getting order details:', error);
+        }
+    };
 
     const handleApprove = async (data, actions) => {
         setLoading(true);
@@ -44,14 +50,18 @@ export default function Checkout() {
             const orderId = details.id; // Extract the PayPal order ID to use as poNumber
 
             const response = await axios.post("http://localhost:5002/api/users/place-orders", {
-                productId: formattedCart[0].productId, // Assuming a single item order for simplicity
+                productId: formattedCart[0].productId,
                 quantity: formattedCart[0].quantity,
                 denomination: formattedCart[0].denomination,
                 email: formattedCart[0].email,
-                poNumber: orderId // Use the PayPal order ID as the unique poNumber
+                poNumber: orderId
             });
 
             console.log("Order details sent to backend:", response.data);
+
+            // Now get the order details dynamically using the orderId
+            await handleOrderPlacement(orderId);
+
             enqueueSnackbar("Order placed successfully!", { variant: "success" });
             navigate("/order-success");
         } catch (error) {
@@ -75,7 +85,7 @@ export default function Checkout() {
                 }
             },
             items: formattedCart.map(item => ({
-                name: item.productId, // Replace with the actual product name
+                name: item.productId,
                 unit_amount: { currency_code: 'USD', value: item.denomination },
                 quantity: item.quantity
             }))

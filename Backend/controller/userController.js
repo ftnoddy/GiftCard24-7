@@ -8,15 +8,15 @@ import KycVerification from "../models/kycModel.js";
 import OTP from "../models/otpModel.js";
 import EmailVerification from "../models/emailModel.js";
 import Order from "../models/orderModel.js";
-// import Placeorder from "../models/placeOrder.js";
+import PlaceOrder from "../models/placeOrders.js";
 import crypto from "crypto";
 import twilio from 'twilio';
 import { validationResult } from "express-validator";
 import generateToken from "../utils/generateToken.js";
-
 import axios from "axios"
-
 import dotenv from 'dotenv';
+
+
 dotenv.config();
 const bearerToken = process.env.BEARER_TOKEN;
 // console.log("token",bearerToken);
@@ -58,17 +58,15 @@ const getVouchers = async (req,res) => {
   
   }
 
+
   const placeOrder = async (req, res) => {
     try {
-        // Extract necessary data from the request body
         const { productId, quantity, denomination, email, contact, poNumber } = req.body;
 
-        // Validate required fields
         if (!productId || !quantity || !denomination || !email || !poNumber) {
             return res.status(400).json({ message: 'Missing required fields' });
         }
 
-        // Set up the options for the Axios request to the PlaceOrder API
         const options = {
             method: 'POST',
             url: 'https://stagingaccount.xoxoday.com/chef/v1/oauth/api/',
@@ -95,11 +93,73 @@ const getVouchers = async (req,res) => {
             }
         };
 
-        // Make the request to the PlaceOrder API using Axios
         const response = await axios.request(options);
 
-        // Respond with the data received from the API
-        res.status(200).json(response.data);
+        // Log the response data for debugging
+        console.log('API Response:', response.data);
+
+        const placeOrderResponse = response.data.data.placeOrder.data;
+
+        if (!placeOrderResponse) {
+            throw new Error('Invalid response from placeOrder API');
+        }
+
+        const {
+            orderId,
+            orderTotal,
+            orderDiscount,
+            discountPercent,
+            currencyCode,
+            currencyValue,
+            amountCharged,
+            orderStatus,
+            deliveryStatus,
+            tag,
+            quantity: responseQuantity,
+            vouchers = [],
+            voucherDetails = []
+        } = placeOrderResponse;
+
+        if (!orderId) {
+            throw new Error('Missing orderId in response');
+        }
+
+        const newOrder = new PlaceOrder({
+            orderId,
+            orderTotal,
+            orderDiscount,
+            discountPercent,
+            currencyCode,
+            currencyValue,
+            amountCharged,
+            orderStatus,
+            deliveryStatus,
+            tag,
+            quantity: responseQuantity,
+            vouchers: vouchers.map(voucher => ({
+                productId: voucher.productId,
+                orderId: voucher.orderId,
+                voucherCode: voucher.voucherCode,
+                pin: voucher.pin,
+                validity: voucher.validity,
+                amount: voucher.amount,
+                currency: voucher.currency,
+                country: voucher.country,
+                type: voucher.type,
+                currencyValue: voucher.currencyValue
+            })),
+            voucherDetails: voucherDetails.map(detail => ({
+                orderId: detail.orderId,
+                productId: detail.productId,
+                productName: detail.productName,
+                currencyCode: detail.currencyCode,
+                productStatus: detail.productStatus,
+                denomination: detail.denomination
+            }))
+        });
+
+        await newOrder.save();
+        res.status(200).json(newOrder);
     } catch (error) {
         console.error('Error placing order:', error.response ? error.response.data : error.message);
         res.status(500).json({ message: 'Internal server error' });
@@ -107,8 +167,55 @@ const getVouchers = async (req,res) => {
 };
   
   
+const getPlaceOrder = async (req, res) => {
+  try {
+      // Extract orderId from request params and convert it to a number
+      const orderIdParam = req.params.orderId;
+      const orderId = parseInt(orderIdParam, 10);
+      
+      console.log('Received orderId param:', orderIdParam);  // Debug log
+      console.log('Converted orderId to number:', orderId);  // Debug log
+
+      if (isNaN(orderId)) {
+          return res.status(400).json({ message: 'Invalid orderId' });
+      }
+
+      // Find the order by orderId
+      const order = await PlaceOrder.findOne({ orderId }).select(
+          'orderId voucherDetails.productId voucherDetails.productName voucherDetails.currencyCode deliveryStatus voucherDetails.denomination vouchers.voucherCode vouchers.validity vouchers.type'
+      );
+
+      if (!order) {
+          return res.status(404).json({ message: 'Order not found' });
+      }
+
+      // Map the response to include the required fields
+      const result = {
+          orderId: order.orderId,
+          productDetails: order.voucherDetails.map(detail => ({
+              productId: detail.productId,
+              productName: detail.productName,
+              currencyCode: detail.currencyCode,
+              denomination: detail.denomination,
+          })),
+          vouchers: order.vouchers.map(voucher => ({
+              voucherCode: voucher.voucherCode,
+              validity: voucher.validity,
+              type: voucher.type
+          })),
+          deliveryStatus: order.deliveryStatus
+      };
+
+      res.status(200).json(result);
+  } catch (error) {
+      console.error('Error getting place order:', error.message);
+      res.status(500).json({ message: 'Internal server error' });
+  }
+};
 
 
+
+// `Bearer ${process.env.BEARER_TOKEN}`
 
 // import bcrypt from 'bcryptjs';
 
@@ -517,6 +624,7 @@ export {
   checkout,
   getOrders,
   placeOrder,
-  getOrderByUserId
+  getOrderByUserId,
+  getPlaceOrder
   
 };
