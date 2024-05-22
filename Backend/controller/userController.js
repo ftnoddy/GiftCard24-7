@@ -28,7 +28,9 @@ const getVouchers = async (req,res) => {
     // Ensure that bearerToken is defined
     if (!bearerToken) {
       throw new Error("Bearer token is not defined");
+
     }
+    // ++++++
 
     const options = {
       method: 'POST',
