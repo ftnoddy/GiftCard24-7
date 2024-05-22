@@ -31,7 +31,7 @@ router.get("/getkyc-verification", getKycVerification);
 router.post("/email-verification", verifyEmail);
 router.post("/checkout", checkout);
 router.get("/get-orders", getOrders);
-router.get("/users/:orderId/orders", getPlaceOrderById);
+router.get("/place-orders/:userId", getPlaceOrderById);
 router.post("/place-orders", placeOrder);
 router.get("/get-data", getVouchers);
 

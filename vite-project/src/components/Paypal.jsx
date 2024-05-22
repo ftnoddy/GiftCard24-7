@@ -21,6 +21,7 @@ export default function Checkout() {
     const { user } = useContext(AuthContext);
     const { enqueueSnackbar } = useSnackbar();
     const navigate = useNavigate();
+    console.log("user",user);
 
     const cart = useSelector((state) => state.cart);
     const formattedCart = cart?.map(item => ({
@@ -54,7 +55,8 @@ export default function Checkout() {
                 quantity: formattedCart[0].quantity,
                 denomination: formattedCart[0].denomination,
                 email: formattedCart[0].email,
-                poNumber: orderId
+                poNumber: orderId,
+                userId: user._id
             });
 
             console.log("Order details sent to backend:", response.data);

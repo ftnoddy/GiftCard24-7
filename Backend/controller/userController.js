@@ -13,8 +13,9 @@ import crypto from "crypto";
 import twilio from 'twilio';
 import { validationResult } from "express-validator";
 import generateToken from "../utils/generateToken.js";
-import axios from "axios"
+import axios from "axios";
 import dotenv from 'dotenv';
+
 
 
 dotenv.config();
@@ -61,11 +62,12 @@ const getVouchers = async (req,res) => {
 
   const placeOrder = async (req, res) => {
     try {
-        const { productId, quantity, denomination, email, contact, poNumber } = req.body;
+        const { userId, productId, quantity, denomination, email, contact, poNumber } = req.body;
 
-        if (!productId || !quantity || !denomination || !email || !poNumber) {
+        if ( !userId || !productId || !quantity || !denomination || !email || !poNumber) {
             return res.status(400).json({ message: 'Missing required fields' });
         }
+console.log("user",userId);
 
         const options = {
             method: 'POST',
@@ -105,7 +107,7 @@ const getVouchers = async (req,res) => {
         }
 
         const {
-          userId,
+        
             orderId,
             orderTotal,
             orderDiscount,
@@ -172,18 +174,16 @@ const getVouchers = async (req,res) => {
 const getPlaceOrderById = async (req, res) => {
   try {
     // Extract orderId from request params and convert it to a number
-    const orderIdParam = req.params.orderId;
-    const orderId = parseInt(orderIdParam, 10);
-    
-    console.log('Received orderId param:', orderIdParam);  // Debug log
-    console.log('Converted orderId to number:', orderId);  // Debug log
 
-    if (isNaN(orderId)) {
-        return res.status(400).json({ message: 'Invalid orderId' });
-    }
+    const userId = req.params.userId
+    
+    // console.log('Received orderId param:', orderIdParam);  // Debug log
+    console.log('Converted orderId to number:', userId);  // Debug log
+
+   
 
     // Find the order by orderId
-    const order = await PlaceOrder.findOne({ orderId }).select(
+    const order = await PlaceOrder.find({ userId }).select(
         'orderId voucherDetails.productId voucherDetails.productName voucherDetails.currencyCode deliveryStatus voucherDetails.denomination vouchers.voucherCode vouchers.validity vouchers.type'
     );
 
@@ -192,22 +192,23 @@ const getPlaceOrderById = async (req, res) => {
     }
 
     // Map the response to include the required fields
-    const result = {
-        orderId: order.orderId,
-        productDetails: order.voucherDetails.map(detail => ({
-            productId: detail.productId,
-            productName: detail.productName,
-            currencyCode: detail.currencyCode,
-            denomination: detail.denomination,
-        })),
-        vouchers: order.vouchers.map(voucher => ({
-            voucherCode: voucher.voucherCode,
-            validity: voucher.validity,
-            type: voucher.type
-        })),
-        deliveryStatus: order.deliveryStatus
-    };
-
+    const result = order.map((order) => {return{
+      orderId: order.orderId,
+      productDetails: order.voucherDetails.map(detail => ({
+          productId: detail.productId,
+          productName: detail.productName,
+          currencyCode: detail.currencyCode,
+          denomination: detail.denomination,
+      })),
+      vouchers: order.vouchers.map(voucher => ({
+          voucherCode: voucher.voucherCode,
+          validity: voucher.validity,
+          type: voucher.type
+      })),
+      deliveryStatus: order.deliveryStatus
+  };
+  })
+    
     res.status(200).json(result);
 } catch (error) {
     console.error('Error getting place order:', error.message);

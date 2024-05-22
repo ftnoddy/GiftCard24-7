@@ -9,8 +9,8 @@ function ProfileScreen() {
   const { user: userInfo } = useContext(AuthContext);
   const [orders, setOrders] = useState([]);
   const authToken = userInfo.token || '';
-  const { orderId } = useParams();
-  // const userId = userInfo._id;  // Directly use userInfo._id
+  // const { orderId } = useParams();
+  const userId = userInfo._id;  // Directly use userInfo._id
 
   useEffect(() => {
     // Function to handle email verification
@@ -33,7 +33,7 @@ function ProfileScreen() {
     // Fetch user's order history when component mounts
     const fetchOrderHistory = async () => {
       try {
-        const response = await axios.get(`http://localhost:5002/api/users/users/${orderId}/orders`, {
+        const response = await axios.get(`http://localhost:5002/api/users/place-orders/${userId}`, {
           headers: {
             Authorization: `Bearer ${authToken}`, // Include the authorization token in the request headers
           },
@@ -47,7 +47,7 @@ function ProfileScreen() {
     };
 
     fetchOrderHistory(); // Call fetchOrderHistory function when component mounts
-  }, [authToken, orderId]);
+  }, [authToken, userId]);
 
   return (
     <div className="flex justify-center items-center h-screen bg-gray-100">
