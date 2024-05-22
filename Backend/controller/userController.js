@@ -105,6 +105,7 @@ const getVouchers = async (req,res) => {
         }
 
         const {
+          userId,
             orderId,
             orderTotal,
             orderDiscount,
@@ -125,6 +126,7 @@ const getVouchers = async (req,res) => {
         }
 
         const newOrder = new PlaceOrder({
+          userId,
             orderId,
             orderTotal,
             orderDiscount,
@@ -167,50 +169,50 @@ const getVouchers = async (req,res) => {
 };
   
   
-const getPlaceOrder = async (req, res) => {
+const getPlaceOrderById = async (req, res) => {
   try {
-      // Extract orderId from request params and convert it to a number
-      const orderIdParam = req.params.orderId;
-      const orderId = parseInt(orderIdParam, 10);
-      
-      console.log('Received orderId param:', orderIdParam);  // Debug log
-      console.log('Converted orderId to number:', orderId);  // Debug log
+    // Extract orderId from request params and convert it to a number
+    const orderIdParam = req.params.orderId;
+    const orderId = parseInt(orderIdParam, 10);
+    
+    console.log('Received orderId param:', orderIdParam);  // Debug log
+    console.log('Converted orderId to number:', orderId);  // Debug log
 
-      if (isNaN(orderId)) {
-          return res.status(400).json({ message: 'Invalid orderId' });
-      }
+    if (isNaN(orderId)) {
+        return res.status(400).json({ message: 'Invalid orderId' });
+    }
 
-      // Find the order by orderId
-      const order = await PlaceOrder.findOne({ orderId }).select(
-          'orderId voucherDetails.productId voucherDetails.productName voucherDetails.currencyCode deliveryStatus voucherDetails.denomination vouchers.voucherCode vouchers.validity vouchers.type'
-      );
+    // Find the order by orderId
+    const order = await PlaceOrder.findOne({ orderId }).select(
+        'orderId voucherDetails.productId voucherDetails.productName voucherDetails.currencyCode deliveryStatus voucherDetails.denomination vouchers.voucherCode vouchers.validity vouchers.type'
+    );
 
-      if (!order) {
-          return res.status(404).json({ message: 'Order not found' });
-      }
+    if (!order) {
+        return res.status(404).json({ message: 'Order not found' });
+    }
 
-      // Map the response to include the required fields
-      const result = {
-          orderId: order.orderId,
-          productDetails: order.voucherDetails.map(detail => ({
-              productId: detail.productId,
-              productName: detail.productName,
-              currencyCode: detail.currencyCode,
-              denomination: detail.denomination,
-          })),
-          vouchers: order.vouchers.map(voucher => ({
-              voucherCode: voucher.voucherCode,
-              validity: voucher.validity,
-              type: voucher.type
-          })),
-          deliveryStatus: order.deliveryStatus
-      };
+    // Map the response to include the required fields
+    const result = {
+        orderId: order.orderId,
+        productDetails: order.voucherDetails.map(detail => ({
+            productId: detail.productId,
+            productName: detail.productName,
+            currencyCode: detail.currencyCode,
+            denomination: detail.denomination,
+        })),
+        vouchers: order.vouchers.map(voucher => ({
+            voucherCode: voucher.voucherCode,
+            validity: voucher.validity,
+            type: voucher.type
+        })),
+        deliveryStatus: order.deliveryStatus
+    };
 
-      res.status(200).json(result);
-  } catch (error) {
-      console.error('Error getting place order:', error.message);
-      res.status(500).json({ message: 'Internal server error' });
-  }
+    res.status(200).json(result);
+} catch (error) {
+    console.error('Error getting place order:', error.message);
+    res.status(500).json({ message: 'Internal server error' });
+}
 };
 
 
@@ -625,6 +627,6 @@ export {
   getOrders,
   placeOrder,
   getOrderByUserId,
-  getPlaceOrder
+  getPlaceOrderById
   
 };

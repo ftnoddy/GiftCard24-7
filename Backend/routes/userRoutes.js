@@ -14,8 +14,7 @@ import {
   getOrders,
   placeOrder,
   getVouchers,
-  getOrderByUserId,
-  getPlaceOrder
+  getPlaceOrderById
   
 } from "../controller/userController.js";
 import { protect, admin } from "../middleware/authMiddleware.js";
@@ -32,10 +31,10 @@ router.get("/getkyc-verification", getKycVerification);
 router.post("/email-verification", verifyEmail);
 router.post("/checkout", checkout);
 router.get("/get-orders", getOrders);
-router.get("/get-user-order",protect, getOrderByUserId);
+router.get("/users/:orderId/orders", getPlaceOrderById);
 router.post("/place-orders", placeOrder);
 router.get("/get-data", getVouchers);
-router.get('/place-orders/:orderId', getPlaceOrder);
+
 // router.get("/get-ordersById:userId", protect ,getOrdersById );
 
 router.post("/send-otp",sendOtp );

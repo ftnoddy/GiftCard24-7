@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
-import { useLocation,useParams  } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import { Avatar, List, ListItem, ListItemText } from '@mui/material';
 import { AuthContext } from '../context/AuthContext';
 
@@ -9,8 +9,8 @@ function ProfileScreen() {
   const { user: userInfo } = useContext(AuthContext);
   const [orders, setOrders] = useState([]);
   const authToken = userInfo.token || '';
-  // const [orderId, setOrderId] = useState(null);  // State to store the orderId
-  const { orderId } = useParams()
+  const { orderId } = useParams();
+  // const userId = userInfo._id;  // Directly use userInfo._id
 
   useEffect(() => {
     // Function to handle email verification
@@ -30,41 +30,24 @@ function ProfileScreen() {
   }, [location.search]);
 
   useEffect(() => {
-    // Fetch orders when component mounts
-    const fetchOrderDetails = async () => {
-      if (!orderId) {
-        console.error('Order ID is missing');
-        return;
-      }
-
+    // Fetch user's order history when component mounts
+    const fetchOrderHistory = async () => {
       try {
-        const response = await axios.get(`http://localhost:5002/api/users/place-orders/${orderId}`, {
+        const response = await axios.get(`http://localhost:5002/api/users/users/${orderId}/orders`, {
           headers: {
-            Authorization: `Bearer ${authToken}` // Include the authorization token in the request headers
-          }
+            Authorization: `Bearer ${authToken}`, // Include the authorization token in the request headers
+          },
         });
 
         console.log('+++++++', response.data);
-        setOrders([response.data]); // Ensure the response is an array
+        setOrders(response.data);
       } catch (error) {
         console.error('Error fetching orders:', error);
       }
     };
 
-    fetchOrderDetails(); // Call fetchOrderDetails function when component mounts
+    fetchOrderHistory(); // Call fetchOrderHistory function when component mounts
   }, [authToken, orderId]);
-
-
-  // useEffect(() => {
-  //   // Fetch the order ID dynamically if necessary
-  //   const getOrderID = async () => {
-  //     // Placeholder for fetching order ID logic if needed
-  //     const fetchedOrderId = 123;  // Replace with actual logic to get orderId
-  //     setOrderId(fetchedOrderId);
-  //   };
-
-  //   getOrderID();
-  // }, []);
 
   return (
     <div className="flex justify-center items-center h-screen bg-gray-100">
@@ -99,7 +82,7 @@ function ProfileScreen() {
                       <p className="text-base mt-2 text-blue-700">Vouchers:</p>
                       <ul className="list-disc pl-6">
                         {order.vouchers.map((voucher, index) => (
-                          <li key={index} className="text-sm text-gray-700">{voucher.type}: {voucher.voucherCode} (valid until {voucher.validity})</li>
+                          <li key={index} className="text-sm text-gray-700">{voucher.type}: {voucher.voucherCode} (valid until {new Date(voucher.validity).toLocaleDateString()})</li>
                         ))}
                       </ul>
                     </>
