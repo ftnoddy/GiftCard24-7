@@ -1,8 +1,8 @@
 import asyncHandler from "../middleware/asyncHandler.js";
 import User from "../models/userModel.js";
-// import Token from "../models/token.js";
 import sendVerificationEmail from "../utils/mailSender.js";
 import invoiceMailSender from "../utils/invoiceMailSender.js";
+import sendContactUsEmail from "../utils/contactMailSender.js";
 import jwt from "jsonwebtoken";
 import KycVerification from "../models/kycModel.js";
 import OTP from "../models/otpModel.js";
@@ -64,12 +64,14 @@ const getVouchers = async (req,res) => {
 
   const placeOrder = async (req, res) => {
     try {
-        const { userId, productId, quantity, denomination, email, contact, poNumber } = req.body;
+        const { userId, productId, quantity, denomination, email, contact, poNumber, userName } = req.body;
 
-        if ( !userId || !productId || !quantity || !denomination || !email || !poNumber) {
+        if ( !userName|| !userId || !productId || !quantity || !denomination || !email || !poNumber) {
             return res.status(400).json({ message: 'Missing required fields' });
         }
-console.log("user",userId);
+
+        console.log("user", userId);
+        console.log("name",userName);
 
         const options = {
             method: 'POST',
@@ -99,7 +101,6 @@ console.log("user",userId);
 
         const response = await axios.request(options);
 
-        // Log the response data for debugging
         console.log('API Response:', response.data);
 
         const placeOrderResponse = response.data.data.placeOrder.data;
@@ -109,7 +110,6 @@ console.log("user",userId);
         }
 
         const {
-        
             orderId,
             orderTotal,
             orderDiscount,
@@ -130,7 +130,7 @@ console.log("user",userId);
         }
 
         const newOrder = new PlaceOrder({
-          userId,
+            userId,
             orderId,
             orderTotal,
             orderDiscount,
@@ -165,13 +165,34 @@ console.log("user",userId);
         });
 
         await newOrder.save();
+
+        // Send invoice email
+        const emailContent = {
+          email,
+          userName: userName || 'Customer',
+           purchaseAmount: denomination, // Use the provided user name or a default value
+          paymentMethod: 'Credit Card', // Or the actual payment method
+          orderItems: vouchers.map(voucher => {
+              const detail = voucherDetails.find(detail => detail.productId === voucher.productId);
+              return {
+                  name: detail?.productName || 'Unknown Product',
+                  productAmount: detail?.denomination,
+                  voucherCode: voucher.voucherCode,
+                  validity: voucher.validity
+              };
+          })
+      };
+
+      await invoiceMailSender(email, emailContent.userName, emailContent.purchaseAmount, emailContent.paymentMethod, emailContent.orderItems);
+
+
         res.status(200).json(newOrder);
     } catch (error) {
         console.error('Error placing order:', error.response ? error.response.data : error.message);
         res.status(500).json({ message: 'Internal server error' });
     }
 };
-  
+
   
 const getPlaceOrderById = async (req, res) => {
   try {
@@ -220,6 +241,7 @@ const getPlaceOrderById = async (req, res) => {
 
 
 
+
 // `Bearer ${process.env.BEARER_TOKEN}`
 
 // import bcrypt from 'bcryptjs';
@@ -254,6 +276,19 @@ const getKycVerification = asyncHandler(async (req, res) => {
   const kycData = await KycVerification.find({});
   res.json(kycData);
 });
+
+
+export const contactUs = async (req, res) => {
+  const { name, email, message } = req.body;
+
+  try {
+    await sendContactUsEmail(name, email, message);
+    res.status(200).json({ message: 'Email sent successfully' });
+  } catch (error) {
+    console.error('Error sending email:', error.message);
+    res.status(500).json({ message: 'Error sending email' });
+  }
+};
 
 // @desc    Auth user & get token
 // @route   POST/ api/users/login
@@ -433,7 +468,7 @@ const checkout = async (req, res) => {
 
     // Save the order to the database
     await order.save();
-    await invoiceMailSender(user.email, user.name, totalPrice, paymentMethod, orderItems);
+    // await invoiceMailSender(user.email, user.name, totalPrice, paymentMethod, orderItems);
 
 
     // Respond with success message
@@ -630,6 +665,6 @@ export {
   getOrders,
   placeOrder,
   getOrderByUserId,
-  getPlaceOrderById
+  getPlaceOrderById,
   
 };

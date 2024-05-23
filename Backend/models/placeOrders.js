@@ -23,7 +23,8 @@ const voucherDetailSchema = new Schema({
 }, { _id: false });
 
 const placeOrderSchema = new Schema({
-    userId: { type: Schema.Types.ObjectId, ref: 'User'}, 
+    userId: { type: Schema.Types.ObjectId, ref: 'User'},
+    userName: { type: String }, 
     orderId: { type: Number, required: true, unique: true },
     orderTotal: Number,
     orderDiscount: String,

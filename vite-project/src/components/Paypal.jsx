@@ -56,7 +56,8 @@ export default function Checkout() {
                 denomination: formattedCart[0].denomination,
                 email: formattedCart[0].email,
                 poNumber: orderId,
-                userId: user._id
+                userId: user._id,
+                userName: user.name
             });
 
             console.log("Order details sent to backend:", response.data);

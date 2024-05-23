@@ -1,3 +1,4 @@
+// src/screens/CartScreen.js
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import CartitemScreen from "./CartitemScreen";
@@ -54,14 +55,18 @@ const CartScreen = () => {
                 </span>{" "}
                 : ${totalAmount}
               </p>
-              <div className="self-end">
+              <div className="self-end space-y-3">
                 <Checkout amount={totalAmount} />
+                <Link to="/account-details">
+                  <button className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">
+                    Account Details
+                  </button>
+                </Link>
               </div>
             </div>
           </div>
         </div>
       ) : (
-         
         <>
           <div className="min-h-[80vh] flex flex-col items-center justify-center">
             <h1 className="text-gray-700 font-semibold text-xl mb-2">

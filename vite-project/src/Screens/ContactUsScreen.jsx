@@ -1,11 +1,17 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom"; // Assuming you're using react-router-dom for navigation
 import { FaPhone } from "react-icons/fa";
+import { useSnackbar } from 'notistack';
 import MainLayout from "../components/Layouts/MainLayout";
+import axios from 'axios';
 
 const Contact = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
+  const [status, setStatus] = useState("");
+  const { enqueueSnackbar } = useSnackbar();
+  const navigate = useNavigate();
 
   const handleNameChange = (event) => {
     setName(event.target.value);
@@ -19,9 +25,18 @@ const Contact = () => {
     setMessage(event.target.value);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    // Add your code to handle form submission
+    try {
+      const response = await axios.post('http://localhost:5002/api/users/contact-us', { name, email, message });
+      setStatus(response.data.message);
+      enqueueSnackbar('Email sent successfully!', { variant: 'success' });
+      navigate('/'); // Redirect to home page
+    } catch (error) {
+      console.error('Error sending email:', error);
+      setStatus('Error sending email');
+      enqueueSnackbar('Error sending email. Please try again later.', { variant: 'error' });
+    }
   };
 
   return (
@@ -61,6 +76,8 @@ const Contact = () => {
               Send
             </button>
           </form>
+
+          {status && <p className="mt-4 text-white">{status}</p>}
 
           <div className="get-in-touch mt-8">
             <h3 className="text-xl mb-2 text-pink-500">Get In Touch</h3>

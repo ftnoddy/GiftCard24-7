@@ -1,16 +1,17 @@
 import { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { Avatar, List, ListItem, ListItemText } from '@mui/material';
 import { AuthContext } from '../context/AuthContext';
+import { useSnackbar } from 'notistack';
 
 function ProfileScreen() {
   const location = useLocation();
   const { user: userInfo } = useContext(AuthContext);
   const [orders, setOrders] = useState([]);
   const authToken = userInfo.token || '';
-  // const { orderId } = useParams();
-  const userId = userInfo._id;  // Directly use userInfo._id
+  const userId = userInfo._id; // Directly use userInfo._id
+  const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
     // Function to handle email verification
@@ -23,11 +24,12 @@ function ProfileScreen() {
         }
       } catch (error) {
         console.error('Error verifying email:', error);
+        enqueueSnackbar('Error verifying email', { variant: 'error' });
       }
     };
 
     verifyEmail(); // Call verifyEmail function when component mounts
-  }, [location.search]);
+  }, [location.search, enqueueSnackbar]);
 
   useEffect(() => {
     // Fetch user's order history when component mounts
@@ -43,26 +45,32 @@ function ProfileScreen() {
         setOrders(response.data);
       } catch (error) {
         console.error('Error fetching orders:', error);
+        enqueueSnackbar('Error fetching orders', { variant: 'error' });
       }
     };
 
     fetchOrderHistory(); // Call fetchOrderHistory function when component mounts
-  }, [authToken, userId]);
+  }, [authToken, userId, enqueueSnackbar]);
 
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-md text-center border border-gray-400" style={{ width: '90%' }}>
-        <Avatar sx={{ width: 120, height: 120, fontSize: 56, backgroundColor: 'blue' }}>{userInfo.name[0]}</Avatar>
-        <h2 className="text-4xl font-bold mt-6 mb-4 text-blue-700">{userInfo.name}</h2>
-        <p className="text-lg text-gray-700">{userInfo.email}</p>
+    <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-purple-400 via-pink-500 to-red-500">
+      <div className="bg-white bg-opacity-20 backdrop-filter backdrop-blur-lg shadow-2xl rounded-3xl p-8 w-full max-w-4xl transform transition-all hover:scale-105">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-2xl font-bold text-center">Profile</h2>
+        </div>
+        <Avatar sx={{ width: 120, height: 120, fontSize: 56, backgroundColor: 'blue', margin: '0 auto' }}>
+          {userInfo.name[0]}
+        </Avatar>
+        <h2 className="text-2xl font-bold mt-6 mb-2 text-center text-blue-700">{userInfo.name}</h2>
+        <p className="text-lg text-center text-gray-700 mb-4">{userInfo.email}</p>
 
-        <h3 className="text-2xl font-bold mt-8 mb-4 text-blue-700">Order History</h3>
-        <div className="overflow-y-auto max-h-72">
+        <h3 className="text-xl font-bold mt-6 mb-4 text-center text-blue-700">Order History</h3>
+        <div className="overflow-y-auto max-h-72 px-4">
           <List>
             {orders.map(order => (
-              <ListItem key={order.orderId} className="mb-4 p-4 rounded-lg shadow-md border border-gray-300">
+              <ListItem key={order.orderId} className="mb-4 p-4 rounded-xl bg-gray-100 bg-opacity-30 shadow-md border border-gray-300 hover:bg-gray-200 hover:bg-opacity-40 transition-colors">
                 <ListItemText
-                  primary={`Order ID: ${order.orderId}`}
+                  primary={<span className="text-lg font-semibold text-blue-700">Order ID: {order.orderId}</span>}
                   secondary={
                     <>
                       <div className="flex justify-between">

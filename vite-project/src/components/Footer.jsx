@@ -44,8 +44,10 @@ function Footer() {
         </div>
       </div>
 
+      
+
       <aside className="text-center mt-8 pb-2">
-        <p className="text-xs">Copyright © 2024 - All right reserved by ACME Industries Ltd</p>
+        <p className="text-xs">Copyright © 2024 - All right reserved by  iWebGenics Pvt Ltd</p>
       </aside>
     </footer>
   );
