@@ -21,15 +21,23 @@ const sendInvoiceEmail = async (email, userName, purchaseAmount,paymentMethod,or
             to: email,
             subject: 'Invoice for Your Purchase',
             html: `
-                <div style="background-color: #f2f2f2; padding: 20px;">
+                <div style="background-color: #f2f2f2; padding: 20px; font-family: Arial, sans-serif;">
                     <p style="color: #333; font-size: 16px;">Hello ${userName || 'Customer'},</p>
                     <p style="color: #333; font-size: 16px;">Thank you for your purchase. Your order has been successfully placed.</p>
                     <p style="color: #333; font-size: 16px;">Purchase Amount: $${purchaseAmount || 0}</p>
                     <p style="color: #333; font-size: 16px;">Payment Method: ${paymentMethod || 'N/A'}</p>
                     <p style="color: #333; font-size: 16px;">Order Items:</p>
-                    <ul>
+                    <ul style="list-style-type: none; padding: 0;">
                         ${orderItems && orderItems.length > 0
-                            ? orderItems.map(item => `<li style="color: #333; font-size: 16px;">${item.name} - $${item.productAmount} - Voucher Code: ${item.voucherCode}</li>`).join('')
+                            ? orderItems.map(item => `
+                                <li style="color: #333; font-size: 16px; margin-bottom: 10px;">
+                                    <strong>Product Name:</strong> ${item.name}<br/>
+                                    <strong>Product Amount:</strong> $${item.productAmount}<br/>
+                                    <strong>Voucher Code:</strong> ${item.voucherCode}<br/>
+                                    <strong>Status:</strong> ${item.status}<br/>
+                                    <strong>Validity:</strong> ${new Date(item.validity).toLocaleDateString()}
+                                </li>
+                            `).join('')
                             : '<li style="color: #333; font-size: 16px;">No items purchased</li>'
                         }
                     </ul>

@@ -55,7 +55,7 @@ const Accessories = () => {
   const { enqueueSnackbar } = useSnackbar();
   const { user } = useContext(AuthContext);
   const [products, setProducts] = useState([]); // Use state to store products
-
+  const [searchQuery, setSearchQuery] = useState(''); // State for search query
 
   useEffect(() => {
     // Function to fetch data from the API
@@ -109,13 +109,27 @@ const Accessories = () => {
     });
   };
 
+  // Filter products based on search query
+  const filteredProducts = products.filter(product =>
+    product.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div className="p-4 md:p-8">
+      <div className="mb-4">
+        <input
+          type="text"
+          className="p-2 border border-gray-300 rounded-md w-full"
+          placeholder="Search for products..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+      </div>
       <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 justify-center w-full gap-4">
-        {products.length === 0 ? (
+        {filteredProducts.length === 0 ? (
           <p>No products available</p>
         ) : (
-          products.map((product) => (
+          filteredProducts.map((product) => (
             <ProductCard
               key={product.productId}
               product={product}

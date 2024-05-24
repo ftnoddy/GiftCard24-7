@@ -23,43 +23,46 @@ const bearerToken = process.env.BEARER_TOKEN;
 // console.log("token",bearerToken);
 
 
-const getVouchers = async (req,res) => {
- 
-    // Ensure that bearerToken is defined
-    if (!bearerToken) {
-      throw new Error("Bearer token is not defined");
+const getVouchers = async (req, res) => {
+  const searchQuery = req.query.query || ''; // Get search query from request parameters
 
-    }
-    // ++++++
+  // Ensure that bearerToken is defined
+  if (!bearerToken) {
+    return res.status(400).json({ error: "Bearer token is not defined" });
+  }
 
-    const options = {
-      method: 'POST',
-      url: 'https://stagingaccount.xoxoday.com/chef/v1/oauth/api/',
-      headers: {
-        accept: 'application/json',
-        'content-type': 'application/json',
-        authorization: `Bearer ${bearerToken}` 
-      },
-      data: {
-        query: 'plumProAPI.mutation.getVouchers',
-        tag: 'plumProAPI',
-        variables: {
-          data: {limit: 10, page: 1, exchangeRate: 1, sort: {field: 'name', order: 'ASC'}}
+  const options = {
+    method: 'POST',
+    url: 'https://accounts.xoxoday.com/chef/v1/oauth/api/',
+    headers: {
+      accept: 'application/json',
+      'content-type': 'application/json',
+      authorization: `Bearer ${bearerToken}` 
+    },
+    data: {
+      query: 'plumProAPI.mutation.getVouchers',
+      tag: 'plumProAPI',
+      variables: {
+        data: {
+          limit: 200,
+          page: 1,
+          exchangeRate: 1,
+          sort: { field: 'name', order: 'ASC' },
+          filters: searchQuery ? { name: { contains: searchQuery } } : {} // Include search filter
         }
       }
-    };
+    }
+  };
 
-    const response =  axios
-    .request(options)
-    .then(function (response) {
-      console.log(response.data);
-      res.status(200).json(response.data)
-    })
-    .catch(function (error) {
-      console.error(error);
-    });
-  
+  try {
+    const response = await axios.request(options);
+    console.log(response.data);
+    res.status(200).json(response.data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to fetch vouchers' });
   }
+};
 
 
   const placeOrder = async (req, res) => {
@@ -75,7 +78,7 @@ const getVouchers = async (req,res) => {
 
         const options = {
             method: 'POST',
-            url: 'https://stagingaccount.xoxoday.com/chef/v1/oauth/api/',
+            url: 'https://accounts.xoxoday.com/chef/v1/oauth/api/',
             headers: {
                 accept: 'application/json',
                 'content-type': 'application/json',
@@ -170,21 +173,22 @@ const getVouchers = async (req,res) => {
         const emailContent = {
           email,
           userName: userName || 'Customer',
-           purchaseAmount: denomination, // Use the provided user name or a default value
+          purchaseAmount: denomination, // Use the provided user name or a default value
           paymentMethod: 'Credit Card', // Or the actual payment method
           orderItems: vouchers.map(voucher => {
-              const detail = voucherDetails.find(detail => detail.productId === voucher.productId);
-              return {
-                  name: detail?.productName || 'Unknown Product',
-                  productAmount: detail?.denomination,
-                  voucherCode: voucher.voucherCode,
-                  validity: voucher.validity
-              };
+            const detail = voucherDetails.find(detail => detail.productId === voucher.productId);
+            return {
+              name: detail?.productName || 'Unknown Product',
+              productAmount: detail?.denomination,
+              status: detail?.productStatus,
+              voucherCode: voucher.voucherCode,
+              validity: voucher.validity
+            };
           })
-      };
-
-      await invoiceMailSender(email, emailContent.userName, emailContent.purchaseAmount, emailContent.paymentMethod, emailContent.orderItems);
-
+        };
+    
+        await invoiceMailSender(email, emailContent.userName, emailContent.purchaseAmount, emailContent.paymentMethod, emailContent.orderItems);
+    
 
         res.status(200).json(newOrder);
     } catch (error) {
@@ -250,6 +254,7 @@ const submitKycVerification = async (req, res) => {
   try {
     // Extract data from request body
     const { userName, dob, email, idProofType, idProofNo } = req.body;
+    const idProofImage = req.file.path;
 
     // Create a new KYC verification document
     const kycVerification = new KycVerification({
@@ -258,6 +263,7 @@ const submitKycVerification = async (req, res) => {
       email,
       idProofType,
       idProofNo,
+      idProofImage,
      
     });
 

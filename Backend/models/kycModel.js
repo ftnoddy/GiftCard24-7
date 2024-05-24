@@ -6,9 +6,9 @@ const kycVerificationSchema = new mongoose.Schema(
     dob: { type: Date, required: true },
     email: { type: String, required: true },
     idProofType: { type: String, required: true },
-    idProofNo: { type: String }, // Making it optional by removing 'required: true'
-    idProofImage: { type: String }
-    // Add any other fields specific to KYC verification
+    idProofNo: { type: String, required: true },
+    idProofImage: { type: String},
+    
   },
   {
     timestamps: true,

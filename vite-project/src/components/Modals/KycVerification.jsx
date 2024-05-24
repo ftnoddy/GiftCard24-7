@@ -1,11 +1,9 @@
 import React, { useState } from "react";
-import MainLayout from "../Layouts/MainLayout";
 import ModalLayout from "../Layouts/ModalLayout";
 import { X } from "lucide-react";
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useNavigate } from "react-router-dom";
-// import 'react-toastify/dist/ReactToastify.css';
 
 const KycVerification = ({ closeKycModal }) => {
   const [formData, setFormData] = useState({
@@ -14,8 +12,9 @@ const KycVerification = ({ closeKycModal }) => {
     idProofType: "",
     idProofNo: "",
     email: "",
-    
   });
+
+  const [idProofImage, setIdProofImage] = useState(null); // State for file
 
   const navigate = useNavigate();
 
@@ -26,16 +25,32 @@ const KycVerification = ({ closeKycModal }) => {
     });
   };
 
+  const handleFileChange = (e) => {
+    setIdProofImage(e.target.files[0]);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    const formDataObj = new FormData();
+    formDataObj.append('userName', formData.userName);
+    formDataObj.append('dob', formData.dob);
+    formDataObj.append('email', formData.email);
+    formDataObj.append('idProofType', formData.idProofType);
+    formDataObj.append('idProofNo', formData.idProofNo);
+    formDataObj.append('idProofImage', idProofImage); // Add the file
+
     try {
-      const response = await axios.post('http://localhost:5002/api/users/kyc-verification', formData);
+      const response = await axios.post('http://localhost:5002/api/users/kyc-verification', formDataObj, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
       console.log('Response:', response.data);
       toast.success('KYC verification successful');
       setTimeout(() => {
         navigate('/');
-      }, 2000)
+      }, 2000); // Redirect after 2 seconds
     } catch (error) {
       console.error('Error:', error);
       toast.error('Error occurred while verifying KYC');
@@ -119,6 +134,17 @@ const KycVerification = ({ closeKycModal }) => {
                 value={formData.idProofNo}
                 onChange={handleChange}
                 placeholder="Enter ID Proof Number"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+                required
+              />
+            </div>
+            <div className="mb-4">
+              <label htmlFor="idProofImage" className="block text-gray-700 font-semibold mb-2">ID Proof Image:</label>
+              <input
+                type="file"
+                id="idProofImage"
+                name="idProofImage"
+                onChange={handleFileChange}
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
                 required
               />
