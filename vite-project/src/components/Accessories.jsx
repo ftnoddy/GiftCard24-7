@@ -1,11 +1,11 @@
-import { useContext, useEffect, useState } from "react";
-import React from 'react';
+import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from 'axios';
-import { add, remove } from "../Redux/Slices/cartSlice";
 import { useDispatch } from "react-redux";
 import { useSnackbar } from "notistack";
 import { AuthContext } from "../context/AuthContext";
+import { add, remove } from "../Redux/Slices/cartSlice";
+import Navbar from "./Navbar";
 
 function ProductCard({ product, addToCart, removeFromCart }) {
   const Denominations = product.valueDenominations.split(',');
@@ -54,23 +54,15 @@ const Accessories = () => {
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
   const { user } = useContext(AuthContext);
-  const [products, setProducts] = useState([]); // Use state to store products
-  const [searchQuery, setSearchQuery] = useState(''); // State for search query
+  const [products, setProducts] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    // Function to fetch data from the API
     const fetchProducts = async () => {
       try {
-        console.log('Fetching products...');
-        const response = await axios.get('http://localhost:5002/api/users/get-data');
-        console.log('Response from API:', response);
-
-        // Debugging: Log the structure of the response
-        console.log('Response data structure:', response.data);
-
+        const response = await axios.get(`http://localhost:5002/api/users/get-vouchers?query=${searchQuery}`);
         if (response.data && response.data.data && response.data.data.getVouchers && response.data.data.getVouchers.data) {
-          console.log('Setting products:', response.data.data.getVouchers.data);
-          setProducts(response.data.data.getVouchers.data); // Update state with fetched data
+          setProducts(response.data.data.getVouchers.data);
         } else {
           console.log('Unexpected response structure:', response.data);
         }
@@ -79,12 +71,8 @@ const Accessories = () => {
       }
     };
 
-    fetchProducts(); // Fetch data when component mounts
-  }, []);
-
-  useEffect(() => {
-    console.log('Products state updated:', products);
-  }, [products]);
+    fetchProducts();
+  }, [searchQuery]);
 
   const addToCart = (product, price) => {
     if (user) {
@@ -109,22 +97,13 @@ const Accessories = () => {
     });
   };
 
-  // Filter products based on search query
   const filteredProducts = products.filter(product =>
     product.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
     <div className="p-4 md:p-8">
-      <div className="mb-4">
-        <input
-          type="text"
-          className="p-2 border border-gray-300 rounded-md w-full"
-          placeholder="Search for products..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
-      </div>
+      <Navbar onSearch={setSearchQuery} />
       <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 justify-center w-full gap-4">
         {filteredProducts.length === 0 ? (
           <p>No products available</p>

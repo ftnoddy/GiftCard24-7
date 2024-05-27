@@ -17,38 +17,34 @@ import axios from "axios";
 import dotenv from 'dotenv';
 
 
-
 dotenv.config();
-const bearerToken = process.env.BEARER_TOKEN;
-// console.log("token",bearerToken);
 
+const bearerToken = process.env.BEARER_TOKEN;
 
 const getVouchers = async (req, res) => {
-  const searchQuery = req.query.query || ''; // Get search query from request parameters
+  const searchQuery = req.query.query || '';
 
-  // Ensure that bearerToken is defined
   if (!bearerToken) {
     return res.status(400).json({ error: "Bearer token is not defined" });
   }
 
   const options = {
     method: 'POST',
-    url: 'https://accounts.xoxoday.com/chef/v1/oauth/api/',
+    url: 'https://accounts.xoxoday.com/chef/v1/oauth/api',
     headers: {
       accept: 'application/json',
       'content-type': 'application/json',
-      authorization: `Bearer ${bearerToken}` 
+      authorization: `Bearer ${bearerToken}`
     },
     data: {
       query: 'plumProAPI.mutation.getVouchers',
       tag: 'plumProAPI',
       variables: {
         data: {
-          limit: 200,
           page: 1,
           exchangeRate: 1,
           sort: { field: 'name', order: 'ASC' },
-          filters: searchQuery ? { name: { contains: searchQuery } } : {} // Include search filter
+          filters: searchQuery ? { name: { contains: searchQuery } } : {}
         }
       }
     }
@@ -56,13 +52,43 @@ const getVouchers = async (req, res) => {
 
   try {
     const response = await axios.request(options);
-    console.log(response.data);
+    console.log('Fetched Vouchers:', response.data);
     res.status(200).json(response.data);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Failed to fetch vouchers' });
   }
 };
+
+
+
+const getFilters = async () => {
+  const options = {
+    method: 'POST',
+    url: 'https://accounts.xoxoday.com/chef/v1/oauth/api',
+    headers: {
+      accept: 'application/json',
+      'content-type': 'application/json',
+      authorization: `Bearer ${bearerToken}`
+    },
+    data: {
+      query: 'plumProAPI.mutation.getFilters',
+      tag: 'plumProAPI',
+      variables: { data: {} } // No parameters to get all filters
+    }
+  };
+
+  try {
+    const response = await axios.request(options);
+    console.log('Available Filters:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Failed to fetch filters:', error);
+  }
+};
+
+// Call the function to fetch filters
+// getFilters();
 
 
   const placeOrder = async (req, res) => {
@@ -672,5 +698,6 @@ export {
   placeOrder,
   getOrderByUserId,
   getPlaceOrderById,
+  getFilters
   
 };

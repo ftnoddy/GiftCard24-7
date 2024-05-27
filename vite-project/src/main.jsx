@@ -23,13 +23,16 @@ import Contact from "./Screens/ContactUsScreen.jsx";
 import EmailVerificationScreen from "./Screens/EmailVerificationScreen.jsx";
 import OrderSuccessfull from "./components/Modals/orderSuccessfull.jsx";
 import AccountDetails from "./components/AccountDetails.jsx";
-import SearchScreen from "./Screens/SearchScreen.jsx";
+import SearchVouchers from "./Screens/SearchScreen.jsx";
+import Accessories from "./components/Accessories.jsx";
+import MainLayout from "./components/Layouts/MainLayout.jsx";
 // import ErrorBoundary from "./components/ErrorBoundary.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     
     <Route path="/" element={<App />}>
+     <Route element={<MainLayout />} />
       <Route path="/" index={true} element={<HomeScreen />} />
       <Route path="/about" element={<AboutScreen />} />
       {/* <Route path="/cartitem" element={<CartitemScreen />} /> */}
@@ -45,7 +48,7 @@ const router = createBrowserRouter(
       <Route path="/contact-us" element={<Contact />} />
       <Route path="/account-details" element={<AccountDetails />} />
       <Route path="/order-success" element={<OrderSuccessfull />} />
-      <Route path="/search" element={<SearchScreen />} />
+      <Route path="/search" element={<SearchVouchers />} />
 
 
     </Route>

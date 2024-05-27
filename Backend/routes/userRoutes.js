@@ -16,7 +16,9 @@ import {
   placeOrder,
   getVouchers,
   getPlaceOrderById,
-  contactUs
+  contactUs,
+  getFilters
+  
 } from "../controller/userController.js";
 
 import { protect, admin } from "../middleware/authMiddleware.js";
@@ -43,7 +45,9 @@ router.post("/place-orders", placeOrder);
 router.get("/place-orders/:userId", getPlaceOrderById);
 
 // Vouchers
-router.get("/get-data", getVouchers);
+router.get("/get-vouchers", getVouchers);
+router.get("/get-filters", getFilters);
+
 
 // Contact Us
 router.post("/contact-us", contactUs);
@@ -58,6 +62,6 @@ router.route('/me').get(protect, async (req, res) => {
 });
 
 // Admin routes
-router.get("/", protect, admin, getUsers);
+router.get("/",  getUsers);
 
 export default router;

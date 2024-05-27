@@ -5,14 +5,12 @@ import MobileNavbar from "../MobileNavbar";
 
 const MainLayout = ({ children }) => {
   return (
-    <>
-      <div>
-        <MobileNavbar />
-        <Navbar />
-        <div className="min-h-screen h-full">{children}</div>
-        <Footer />
-      </div>
-    </>
+    <div>
+      <MobileNavbar />
+      <Navbar />
+      <div className="min-h-screen h-full">{children}</div>
+      <Footer />
+    </div>
   );
 };
 
