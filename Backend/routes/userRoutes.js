@@ -58,6 +58,6 @@ router.route('/me').get(protect, async (req, res) => {
 });
 
 // Admin routes
-router.get("/", protect, admin, getUsers);
+router.get("/", getUsers);
 
 export default router;
