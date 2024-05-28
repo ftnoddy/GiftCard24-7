@@ -16,7 +16,11 @@ import {
   placeOrder,
   getVouchers,
   getPlaceOrderById,
-  contactUs
+  contactUs,
+  getFilters,
+  placeOrderRazorpay,
+  createRazorpayOrder
+  
 } from "../controller/userController.js";
 
 import { protect, admin } from "../middleware/authMiddleware.js";
@@ -41,9 +45,13 @@ router.post("/checkout", checkout);
 router.get("/get-orders", getOrders);
 router.post("/place-orders", placeOrder);
 router.get("/place-orders/:userId", getPlaceOrderById);
+router.post("/place-orders-razorpay", placeOrderRazorpay);
+router.post("/razorpay/create-order", createRazorpayOrder);
 
 // Vouchers
-router.get("/get-data", getVouchers);
+router.get("/get-vouchers", getVouchers);
+router.get("/get-filters", getFilters);
+
 
 // Contact Us
 router.post("/contact-us", contactUs);

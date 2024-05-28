@@ -10,13 +10,12 @@ import Login from "./Modals/Login";
 import KycVerification from "./Modals/KycVerification";
 import { AuthContext } from "../context/AuthContext";
 
-function Navbar() {
+function Navbar({ onSearch }) {
   const cart = useSelector((state) => state.cart);
   const { user, setUser } = useContext(AuthContext);
   const [showSignupModal, setShowSignupModal] = useState("");
   const [showKycModal, setShowKycModal] = useState(false);
-  const [searchQuery, setSearchQuery] = useState(""); // State for search query
-  const [searchResults, setSearchResults] = useState([]); // State for search results
+  const [searchQuery, setSearchQuery] = useState(''); // State for search query
   const navigate = useNavigate();
 
   const openSignupModal = () => {
@@ -48,29 +47,15 @@ function Navbar() {
     setShowKycModal(false);
   };
 
-  const handleSearchChange = async (e) => {
-    setSearchQuery(e.target.value);
-    if (e.target.value.length >= 3) {
-      try {
-        const response = await axios.get(`http://localhost:5002/api/users/get-data`, {
-          params: { query: e.target.value }
-        });
-        setSearchResults(response.data);
-      } catch (error) {
-        console.error('Error fetching search results:', error);
-      }
-    } else {
-      setSearchResults([]);
-    }
+  const handleSearchChange = (event) => {
+    const query = event.target.value;
+    setSearchQuery(query);
+    onSearch(query); // Update the search query in Accessories component
   };
 
-  const handleSearchSubmit = (e) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/search?query=${searchQuery}`);
-    } else {
-      toast.error("Please enter a search query");
-    }
+  const handleSearchSubmit = (event) => {
+    event.preventDefault();
+    onSearch(searchQuery); // Ensure the search query is updated on submit
   };
 
   return (
@@ -101,45 +86,45 @@ function Navbar() {
             </Link>
           </div>
 
-          <div className="flex-none">
-            <form onSubmit={handleSearchSubmit} className="mr-4">
+          <div className="flex-none flex items-center space-x-4">
+            <form onSubmit={handleSearchSubmit} className="flex items-center space-x-2">
               <input
                 type="text"
                 value={searchQuery}
                 onChange={handleSearchChange}
                 placeholder="Search products..."
-                className="input input-bordered w-full max-w-xs"
+                className="input input-bordered rounded-l-full w-full max-w-xs"
               />
-              <button type="submit" className="hidden"></button>
+              <button type="submit" className="btn btn-primary rounded-r-full">
+                Search
+              </button>
             </form>
             <Link
               to="/"
-              className="text-white bg-gradient-to-br from-pink-500 to-orange-400 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+              className="text-white bg-gradient-to-br from-pink-500 to-orange-400 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mb-2"
             >
               ACCESSORIES
             </Link>
             <Link
               to="/about"
-              className="text-white bg-gradient-to-br from-pink-500 to-orange-400 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+              className="text-white bg-gradient-to-br from-pink-500 to-orange-400 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mb-2"
             >
               ABOUT
             </Link>
             {user && user.isAdmin && (
               <Link
                 to="/admin"
-                className="text-white bg-gradient-to-br from-pink-500 to-orange-400 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+                className="text-white bg-gradient-to-br from-pink-500 to-orange-400 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mb-2"
               >
                 ADMIN
               </Link>
             )}
             <Link
               to="/contact-us"
-              className="text-white bg-gradient-to-br from-pink-500 to-orange-400 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+              className="text-white bg-gradient-to-br from-pink-500 to-orange-400 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mb-2"
             >
               CONTACT US
             </Link>
-          </div>
-          <div className="flex-none">
             <div className="dropdown dropdown-end">
               <div
                 tabIndex={0}

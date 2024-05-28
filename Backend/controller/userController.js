@@ -14,41 +14,38 @@ import twilio from 'twilio';
 import { validationResult } from "express-validator";
 import generateToken from "../utils/generateToken.js";
 import axios from "axios";
+import Razorpay from "razorpay";
+
 import dotenv from 'dotenv';
 
-
-
 dotenv.config();
-const bearerToken = process.env.BEARER_TOKEN;
-// console.log("token",bearerToken);
 
+const bearerToken = process.env.BEARER_TOKEN;
 
 const getVouchers = async (req, res) => {
-  const searchQuery = req.query.query || ''; // Get search query from request parameters
+  const searchQuery = req.query.query || '';
 
-  // Ensure that bearerToken is defined
   if (!bearerToken) {
     return res.status(400).json({ error: "Bearer token is not defined" });
   }
 
   const options = {
     method: 'POST',
-    url: 'https://accounts.xoxoday.com/chef/v1/oauth/api/',
+    url: 'https://stagingaccount.xoxoday.com/chef/v1/oauth/api',
     headers: {
       accept: 'application/json',
       'content-type': 'application/json',
-      authorization: `Bearer ${bearerToken}` 
+      authorization: `Bearer ${bearerToken}`
     },
     data: {
       query: 'plumProAPI.mutation.getVouchers',
       tag: 'plumProAPI',
       variables: {
         data: {
-          limit: 200,
           page: 1,
           exchangeRate: 1,
           sort: { field: 'name', order: 'ASC' },
-          filters: searchQuery ? { name: { contains: searchQuery } } : {} // Include search filter
+          filters: searchQuery ? { name: { contains: searchQuery } } : {}
         }
       }
     }
@@ -56,13 +53,43 @@ const getVouchers = async (req, res) => {
 
   try {
     const response = await axios.request(options);
-    console.log(response.data);
+    console.log('Fetched Vouchers:', response.data);
     res.status(200).json(response.data);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Failed to fetch vouchers' });
   }
 };
+
+
+
+const getFilters = async () => {
+  const options = {
+    method: 'POST',
+    url: 'https://accounts.xoxoday.com/chef/v1/oauth/api',
+    headers: {
+      accept: 'application/json',
+      'content-type': 'application/json',
+      authorization: `Bearer ${bearerToken}`
+    },
+    data: {
+      query: 'plumProAPI.mutation.getFilters',
+      tag: 'plumProAPI',
+      variables: { data: {} } // No parameters to get all filters
+    }
+  };
+
+  try {
+    const response = await axios.request(options);
+    console.log('Available Filters:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Failed to fetch filters:', error);
+  }
+};
+
+// Call the function to fetch filters
+// getFilters();
 
 
   const placeOrder = async (req, res) => {
@@ -78,7 +105,7 @@ const getVouchers = async (req, res) => {
 
         const options = {
             method: 'POST',
-            url: 'https://accounts.xoxoday.com/chef/v1/oauth/api/',
+            url: 'https://stagingaccount.xoxoday.com/chef/v1/oauth/api/',
             headers: {
                 accept: 'application/json',
                 'content-type': 'application/json',
@@ -243,6 +270,173 @@ const getPlaceOrderById = async (req, res) => {
 }
 };
 
+
+
+const razorpayInstance = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_KEY_SECRET
+});
+
+const placeOrderRazorpay = async (req, res) => {
+  try {
+      const { userId, productId, quantity, denomination, email, contact, poNumber, userName, razorpayPaymentId } = req.body;
+
+      if (!userName || !userId || !productId || !quantity || !denomination || !email || !poNumber || !razorpayPaymentId) {
+          return res.status(400).json({ message: 'Missing required fields' });
+      }
+
+      console.log("user", userId);
+      console.log("name", userName);
+
+      // Verify the payment using Razorpay API
+      const payment = await razorpayInstance.payments.fetch(razorpayPaymentId);
+      if (!payment || payment.status !== "captured") {
+          throw new Error('Payment not successful');
+      }
+
+      const options = {
+          method: 'POST',
+          url: 'https://stagingaccount.xoxoday.com/chef/v1/oauth/api/',
+          headers: {
+              accept: 'application/json',
+              'content-type': 'application/json',
+              authorization: `Bearer ${process.env.BEARER_TOKEN}`
+          },
+          data: {
+              query: 'plumProAPI.mutation.placeOrder',
+              tag: 'plumProAPI',
+              variables: {
+                  data: {
+                      productId,
+                      quantity,
+                      denomination,
+                      email,
+                      contact,
+                      poNumber,
+                      notifyReceiverEmail: 1,
+                      notifyAdminEmail: 0
+                  }
+              }
+          }
+      };
+
+      const response = await axios.request(options);
+
+      console.log('API Response:', response.data);
+
+      const placeOrderResponse = response.data.data.placeOrder.data;
+
+      if (!placeOrderResponse) {
+          throw new Error('Invalid response from placeOrder API');
+      }
+
+      const {
+          orderId,
+          orderTotal,
+          orderDiscount,
+          discountPercent,
+          currencyCode,
+          currencyValue,
+          amountCharged,
+          orderStatus,
+          deliveryStatus,
+          tag,
+          quantity: responseQuantity,
+          vouchers = [],
+          voucherDetails = []
+      } = placeOrderResponse;
+
+      if (!orderId) {
+          throw new Error('Missing orderId in response');
+      }
+
+      const newOrder = new PlaceOrder({
+          userId,
+          orderId,
+          orderTotal,
+          orderDiscount,
+          discountPercent,
+          currencyCode,
+          currencyValue,
+          amountCharged,
+          orderStatus,
+          deliveryStatus,
+          tag,
+          quantity: responseQuantity,
+          vouchers: vouchers.map(voucher => ({
+              productId: voucher.productId,
+              orderId: voucher.orderId,
+              voucherCode: voucher.voucherCode,
+              pin: voucher.pin,
+              validity: voucher.validity,
+              amount: voucher.amount,
+              currency: voucher.currency,
+              country: voucher.country,
+              type: voucher.type,
+              currencyValue: voucher.currencyValue
+          })),
+          voucherDetails: voucherDetails.map(detail => ({
+              orderId: detail.orderId,
+              productId: detail.productId,
+              productName: detail.productName,
+              currencyCode: detail.currencyCode,
+              productStatus: detail.productStatus,
+              denomination: detail.denomination
+          }))
+      });
+
+      await newOrder.save();
+
+      // Send invoice email
+      const emailContent = {
+          email,
+          userName: userName || 'Customer',
+          purchaseAmount: denomination, // Use the provided user name or a default value
+          paymentMethod: 'Razorpay', // Or the actual payment method
+          orderItems: vouchers.map(voucher => {
+              const detail = voucherDetails.find(detail => detail.productId === voucher.productId);
+              return {
+                  name: detail?.productName || 'Unknown Product',
+                  productAmount: detail?.denomination,
+                  status: detail?.productStatus,
+                  voucherCode: voucher.voucherCode,
+                  validity: voucher.validity
+              };
+          })
+      };
+
+      await invoiceMailSender(email, emailContent.userName, emailContent.purchaseAmount, emailContent.paymentMethod, emailContent.orderItems);
+
+      res.status(200).json(newOrder);
+  } catch (error) {
+      console.error('Error placing order:', error.response ? error.response.data : error.message);
+      res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+
+ const createRazorpayOrder = async (req, res) => {
+  try {
+      const { amount } = req.body;
+
+      const options = {
+          amount: amount,
+          currency: "USD",
+          receipt: "receipt_order_74394"
+      };
+
+      const order = await razorpayInstance.orders.create(options);
+
+      if (!order) {
+          return res.status(500).json({ message: "Some error occurred" });
+      }
+
+      res.status(200).json(order);
+  } catch (error) {
+      console.error('Error creating Razorpay order:', error);
+      res.status(500).json({ message: "Internal Server Error" });
+  }
+};
 
 
 
@@ -672,5 +866,8 @@ export {
   placeOrder,
   getOrderByUserId,
   getPlaceOrderById,
+  getFilters,
+  placeOrderRazorpay,
+  createRazorpayOrder
   
 };

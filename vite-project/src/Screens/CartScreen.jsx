@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import CartitemScreen from "./CartitemScreen";
 import { Link, useNavigate } from 'react-router-dom';
 import Checkout from '../components/Paypal';
+import RazorpayCheckout from "../components/Razorpay";
 
 const CartScreen = () => {
   const [totalAmount, setTotalAmount] = useState(0);
@@ -57,6 +58,10 @@ const CartScreen = () => {
               </p>
               <div className="self-end space-y-3">
                 <Checkout amount={totalAmount} />
+
+                <RazorpayCheckout amount={totalAmount} />
+
+
                 <Link to="/account-details">
                   <button className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">
                     Account Details
