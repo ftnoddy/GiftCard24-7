@@ -102,8 +102,10 @@ const Accessories = () => {
   );
 
   return (
+    <>
+    <Navbar onSearch={setSearchQuery} />
     <div className="p-4 md:p-8">
-      <Navbar onSearch={setSearchQuery} />
+      
       <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 justify-center w-full gap-4">
         {filteredProducts.length === 0 ? (
           <p>No products available</p>
@@ -119,6 +121,7 @@ const Accessories = () => {
         )}
       </div>
     </div>
+    </>
   );
 };
 
