@@ -1,4 +1,3 @@
-// src/screens/CartScreen.js
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import CartitemScreen from "./CartitemScreen";
@@ -57,16 +56,24 @@ const CartScreen = () => {
                 : ${totalAmount}
               </p>
               <div className="self-end space-y-3">
-                <Checkout amount={totalAmount} />
+                <div className="p-4 border border-gray-300 rounded-lg">
+                  <label className="block text-gray-700 font-semibold mb-2">Pay with PayPal</label>
+                  <Checkout amount={totalAmount} />
+                </div>
 
-                <RazorpayCheckout amount={totalAmount} />
+                <div className="p-4 border border-gray-300 rounded-lg">
+                  <label className="block text-gray-700 font-semibold mb-2">Pay with Razorpay</label>
+                  <RazorpayCheckout amount={totalAmount} />
+                </div>
 
-
-                <Link to="/account-details">
-                  <button className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">
-                    Account Details
-                  </button>
-                </Link>
+                <div className="p-4 border border-gray-300 rounded-lg">
+                  <label className="block text-gray-700 font-semibold mb-2">Account Details</label>
+                  <Link to="/account-details">
+                    <button className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">
+                      Account Details
+                    </button>
+                  </Link>
+                </div>
               </div>
             </div>
           </div>

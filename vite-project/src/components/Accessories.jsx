@@ -60,7 +60,7 @@ const Accessories = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get(`http://localhost:5002/api/users/get-vouchers?query=${searchQuery}`);
+        const response = await axios.get(`https://giftcards247.shop/api/users/get-vouchers?query=${searchQuery}`);
         if (response.data && response.data.data && response.data.data.getVouchers && response.data.data.getVouchers.data) {
           setProducts(response.data.data.getVouchers.data);
         } else {

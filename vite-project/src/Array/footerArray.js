@@ -38,16 +38,16 @@ export const socialArray = [
   {
     id: 1,
     logoUrl: Facebook,
-    route: "#",
+    route: "https://www.facebook.com/profile.php?id=61558049430949&mibextid=ZbWKwL",
   },
   {
     id: 2,
     logoUrl: Instagram,
-    route: "#",
+    route: "https://www.instagram.com/iwebgenics?igsh=YTgwMzB5Nm13YWxi",
   },
   {
     id: 3,
     logoUrl: LinkedIn,
-    route: "#",
+    route: "https://www.linkedin.com/company/iwebgenic/",
   },
 ];

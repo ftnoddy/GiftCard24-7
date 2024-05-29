@@ -14,7 +14,7 @@ import SignleProductScreen from "./Screens/SignleProductScreen.jsx";
 // import CartitemScreen from "./Screens/CartitemScreen.jsx";
 import CartScreen from "./Screens/CartScreen.jsx";
 import ProfileScreen from "./Screens/ProfileScreen.jsx";
-import PaymentMethodScreen from "./Screens/PaymentMethodScreen.jsx";
+// import PaymentMethodScreen from "./Screens/PaymentMethodScreen.jsx";
 import AdminPageScreen from "./Screens/AdminPageScreen.jsx";
 import TermsConditionsScreen from "./Screens/TermsConditionsScreen.jsx";
 import RefReturnPoliciesScreen from "./Screens/RefReturnPoliciesScreen.jsx";
@@ -39,7 +39,7 @@ const router = createBrowserRouter(
       <Route path="/cart" element={<CartScreen />} />
       <Route path="/product/:id" element={<SignleProductScreen />} />
       <Route path="/profile" element = {<ProfileScreen />} />
-      <Route path="/payment-method" element={<PaymentMethodScreen/>} />
+      {/* <Route path="/payment-method" element={<PaymentMethodScreen/>} /> */}
       <Route path="/admin" element={<AdminPageScreen/>} />
       <Route path="/Terms-Conditions" element={<TermsConditionsScreen />} />
       <Route path="/Refund-return" element={<RefReturnPoliciesScreen />} />

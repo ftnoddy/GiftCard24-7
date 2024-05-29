@@ -11,8 +11,6 @@ import {
   getKycVerification,
   verifyEmail,
   sendOtp,
-  checkout,
-  getOrders,
   placeOrder,
   getVouchers,
   getPlaceOrderById,
@@ -41,8 +39,6 @@ router.post("/email-verification", verifyEmail);
 router.post("/send-otp", sendOtp);
 
 // Checkout and Orders
-router.post("/checkout", checkout);
-router.get("/get-orders", getOrders);
 router.post("/place-orders", placeOrder);
 router.get("/place-orders/:userId", getPlaceOrderById);
 router.post("/place-orders-razorpay", placeOrderRazorpay);

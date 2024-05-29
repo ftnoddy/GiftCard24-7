@@ -34,7 +34,7 @@ export default function RazorpayCheckout() {
         try {
             const { razorpay_payment_id } = paymentResponse;
 
-            const orderDetails = await axios.post("http://localhost:5002/api/users/place-orders-razorpay", {
+            const orderDetails = await axios.post("https://giftcards247.shop/api/users/place-orders-razorpay", {
                 productId: formattedCart[0].productId,
                 quantity: formattedCart[0].quantity,
                 denomination: formattedCart[0].denomination,
@@ -67,14 +67,14 @@ export default function RazorpayCheckout() {
             const itemsPrice = formattedCart.reduce((total, item) => total + parseFloat(item.denomination) * parseInt(item.quantity), 0);
             const orderAmount = (itemsPrice + 10).toFixed(2) * 100; // Amount in paise for Razorpay
 
-            const order = await axios.post("http://localhost:5002/api/users/razorpay/create-order", { amount: orderAmount });
+            const order = await axios.post("https://giftcards247.shop/api/users/razorpay/create-order", { amount: orderAmount});
             const { id: order_id, currency } = order.data;
 
             const options = {
                 key: "rzp_test_FcdFhaiHwpR0XK",
                 amount: orderAmount,
                 currency: currency,
-                name: "Your Company Name",
+                name: "Giftcards247.shop",
                 description: "Test Transaction",
                 order_id: order_id,
                 handler: handlePaymentSuccess,

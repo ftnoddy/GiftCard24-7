@@ -31,7 +31,7 @@ const getVouchers = async (req, res) => {
 
   const options = {
     method: 'POST',
-    url: 'https://stagingaccount.xoxoday.com/chef/v1/oauth/api',
+    url: ' https://accounts.xoxoday.com/chef/v1/oauth/api',
     headers: {
       accept: 'application/json',
       'content-type': 'application/json',
@@ -105,7 +105,7 @@ const getFilters = async () => {
 
         const options = {
             method: 'POST',
-            url: 'https://stagingaccount.xoxoday.com/chef/v1/oauth/api/',
+            url: ' https://accounts.xoxoday.com/chef/v1/oauth/api/',
             headers: {
                 accept: 'application/json',
                 'content-type': 'application/json',
@@ -296,7 +296,7 @@ const placeOrderRazorpay = async (req, res) => {
 
       const options = {
           method: 'POST',
-          url: 'https://stagingaccount.xoxoday.com/chef/v1/oauth/api/',
+          url: ' https://accounts.xoxoday.com/chef/v1/oauth/api/',
           headers: {
               accept: 'application/json',
               'content-type': 'application/json',
@@ -417,11 +417,11 @@ const placeOrderRazorpay = async (req, res) => {
 
  const createRazorpayOrder = async (req, res) => {
   try {
-      const { amount } = req.body;
+      const { amount ,currency } = req.body;
 
       const options = {
           amount: amount,
-          currency: "USD",
+          currency: currency,
           receipt: "receipt_order_74394"
       };
 
@@ -479,10 +479,10 @@ const getKycVerification = asyncHandler(async (req, res) => {
 
 
 export const contactUs = async (req, res) => {
-  const { name, email, message } = req.body;
+  const { name, email, message, mobile } = req.body;
 
   try {
-    await sendContactUsEmail(name, email, message);
+    await sendContactUsEmail(name, email, message, mobile);
     res.status(200).json({ message: 'Email sent successfully' });
   } catch (error) {
     console.error('Error sending email:', error.message);
@@ -524,7 +524,7 @@ const authUser = asyncHandler(async (req, res) => {
 // @route   POST/ api/users
 // @access  Public
 const registerUser = async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password,contact } = req.body;
 
   try {
     // Check if the user already exists
@@ -542,6 +542,7 @@ const registerUser = async (req, res) => {
       name,
       email,
       password,
+      contact,
       emailToken, // Save email token to the user document
     });
 
@@ -560,6 +561,7 @@ const registerUser = async (req, res) => {
       _id: user._id,
       name: user.name,
       email: user.email,
+      contact:user.contact,
       token,
       isAdmin: user.isAdmin,
     });
@@ -641,78 +643,6 @@ const sendOtp = async (req, res) => {
   }
 };
 
-const checkout = async (req, res) => {
-  try {
-    // Extract order details from the request body
-    const { orderItems, paymentMethod, itemsPrice, taxPrice, totalPrice, user } = req.body;
-    console.log(req.body)
-
-    // Validate request body
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
-    // Create a new order object
-    const order = new Order({
-      user: user._id, // Assuming authenticated user's ID is stored in req.user
-      orderItems,
-      paymentMethod,
-      itemsPrice,
-      taxPrice,
-      totalPrice,
-    });
-
-     // Send invoice email
-
-
-    // Save the order to the database
-    await order.save();
-    // await invoiceMailSender(user.email, user.name, totalPrice, paymentMethod, orderItems);
-
-
-    // Respond with success message
-    res.status(200).json({ message: "Order placed successfully", orderId: order._id });
-  } catch (error) {
-    console.error("Error handling checkout:", error);
-    res.status(500).json({ message: "Internal server error" });
-  }
-};
-
-const getOrders = asyncHandler(async (req, res) => {
-  try {
-    const orders = await Order.find({}).lean();
-    // console.log("orders", orders);
-
-    // Respond with the fetched orders
-    res.status(200).json(orders);
-  } catch (error) {
-    console.error("Error fetching orders:", error);
-    res.status(500).json({ message: "Internal server error" });
-  }
-});
-
-
-const getOrderByUserId = asyncHandler(async (req, res) => {
-  try {
-    // Extract order ID from request parameters
-    const orderId = req.user._id
-
-    // Query the database for the order by order ID
-    const order = await Order.find({user: orderId}).lean();
-
-    // If order is found, respond with the order data
-    if (order) {
-      res.status(200).json(order);
-    } else {
-      // If order is not found, respond with 404 Not Found
-      res.status(404).json({ message: "Order not found" });
-    }
-  } catch (error) {
-    console.error("Error fetching order by ID:", error);
-    res.status(500).json({ message: "Internal server error" });
-  }
-});
 
 
 
@@ -861,10 +791,7 @@ export {
   getVouchers ,
   verifyEmail ,
   sendOtp,
-  checkout,
-  getOrders,
   placeOrder,
-  getOrderByUserId,
   getPlaceOrderById,
   getFilters,
   placeOrderRazorpay,
