@@ -33,7 +33,7 @@ const Contact = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5002/api/users/contact-us', { name, email, mobile, message });
+      const response = await axios.post('https://giftcards247.shop/api/users/contact-us', { name, email, mobile, message });
       setStatus(response.data.message);
       enqueueSnackbar('Email sent successfully!', { variant: 'success' });
       navigate('/'); // Redirect to home page
