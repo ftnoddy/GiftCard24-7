@@ -24,7 +24,7 @@ function Navbar({ onSearch }) {
 
   const logoutUsers = async () => {
     try {
-      await axios.post('http://localhost:5002/api/users/logout');
+      await axios.post('https://giftcards247.shop/api/users/logout');
       localStorage.removeItem('token');
       localStorage.removeItem('userInfo');
       toast.success("Logout successful");
