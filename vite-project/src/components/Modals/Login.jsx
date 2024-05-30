@@ -28,7 +28,7 @@ const Login = ({ closeSignupModal, setShowSignupModal }) => {
     e.preventDefault();
     
     try {
-      const response = await axios.post('http://localhost:5002/api/users/login', formData);
+      const response = await axios.post('https://giftcards247.shop/api/users/login', formData);
       
       // Check if login was successful
       if (response.status === 200) {
