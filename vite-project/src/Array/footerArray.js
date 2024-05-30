@@ -33,6 +33,11 @@ export const legalArray = [
     title: "Refund & return policies",
     route: "/Refund-return",
   },
+  {
+    id: 4,
+    title: "privacy and policy",
+    route: "/privacy-policy",
+  },
 ];
 export const socialArray = [
   {

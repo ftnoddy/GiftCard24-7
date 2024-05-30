@@ -98,7 +98,7 @@ const Contact = () => {
               <p className="text-sm text-white">If you have any questions, give us a call:</p>
               <a href="tel:+1234567890" className="phone-link flex items-center mt-2 text-white text-sm">
                 <FaPhone className="phone-icon mr-2" />
-                +1 (234) 567-890
+                +91 8502905200
               </a>
             </div>
           </div>

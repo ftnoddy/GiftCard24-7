@@ -26,6 +26,7 @@ import AccountDetails from "./components/AccountDetails.jsx";
 import SearchVouchers from "./Screens/SearchScreen.jsx";
 import Accessories from "./components/Accessories.jsx";
 import MainLayout from "./components/Layouts/MainLayout.jsx";
+import PrivacyPolicy from "./Screens/privacyApolicy.jsx";
 // import ErrorBoundary from "./components/ErrorBoundary.jsx";
 
 const router = createBrowserRouter(
@@ -44,6 +45,7 @@ const router = createBrowserRouter(
       <Route path="/Terms-Conditions" element={<TermsConditionsScreen />} />
       <Route path="/Refund-return" element={<RefReturnPoliciesScreen />} />
       <Route path="/Shipping-policies" element={<ShippingPoliciesScreen />} />
+      <Route path="/privacy-policy" element={<PrivacyPolicy />} />
       <Route path="/verify-email:email" element={<EmailVerificationScreen />} />
       <Route path="/contact-us" element={<Contact />} />
       <Route path="/account-details" element={<AccountDetails />} />
