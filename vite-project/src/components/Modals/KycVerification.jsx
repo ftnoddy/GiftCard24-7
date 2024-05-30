@@ -41,7 +41,7 @@ const KycVerification = ({ closeKycModal }) => {
     formDataObj.append('idProofImage', idProofImage); // Add the file
 
     try {
-      const response = await axios.post('https://giftcards247.shop/api/users/kyc-verification', formDataObj, {
+      const response = await axios.post('http://localhost:5002/api/users/kyc-verification', formDataObj, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

@@ -21,7 +21,7 @@ function ProfileScreen() {
       try {
         const token = new URLSearchParams(location.search).get('token'); // Get token from query parameters
         if (token) {
-          await axios.post('https://giftcards247.shop/email-verification', { token });
+          await axios.post('http://localhost:5002/email-verification', { token });
           window.location.href = '/profile';
         }
       } catch (error) {
@@ -37,7 +37,7 @@ function ProfileScreen() {
     // Fetch user's order history when component mounts
     const fetchOrderHistory = async () => {
       try {
-        const response = await axios.get(`https://giftcards247.shop/api/users/place-orders/${userId}`, {
+        const response = await axios.get(`http://localhost:5002/api/users/place-orders/${userId}`, {
           headers: {
             Authorization: `Bearer ${authToken}`, // Include the authorization token in the request headers
           },
