@@ -1,7 +1,7 @@
 // utils/sendContactUsEmail.js
 import nodemailer from "nodemailer";
 
-const sendContactUsEmail = async (name, email, message) => {
+const sendContactUsEmail = async (name, email, message,mobile) => {
     try {
         const transporter = nodemailer.createTransport({
             host: "smtp.gmail.com",
@@ -15,10 +15,10 @@ const sendContactUsEmail = async (name, email, message) => {
         });
 
         const mailOptions = {
-            from: "atindramohandas353@gmail.com", // Sender's email address
-            to: email, // Your email address to receive the contact messages
+            from: email, // Sender's email address
+            to: "atindramohandas353@gmail.com", // Your email address to receive the contact messages
             subject: "New Contact Form Submission",
-            text: `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
+            text: `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message} \nMobile:${mobile} `,
         };
 
         await transporter.sendMail(mailOptions);

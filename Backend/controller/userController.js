@@ -7,15 +7,14 @@ import jwt from "jsonwebtoken";
 import KycVerification from "../models/kycModel.js";
 import OTP from "../models/otpModel.js";
 import EmailVerification from "../models/emailModel.js";
-import Order from "../models/orderModel.js";
 import PlaceOrder from "../models/placeOrders.js";
 import crypto from "crypto";
 import twilio from 'twilio';
 import { validationResult } from "express-validator";
-import generateToken from "../utils/generateToken.js";
 import axios from "axios";
-import dotenv from 'dotenv';
+import Razorpay from "razorpay";
 
+import dotenv from 'dotenv';
 
 dotenv.config();
 
@@ -30,7 +29,7 @@ const getVouchers = async (req, res) => {
 
   const options = {
     method: 'POST',
-    url: 'https://accounts.xoxoday.com/chef/v1/oauth/api',
+    url: ' https://accounts.xoxoday.com/chef/v1/oauth/api',
     headers: {
       accept: 'application/json',
       'content-type': 'application/json',
@@ -104,7 +103,7 @@ const getFilters = async () => {
 
         const options = {
             method: 'POST',
-            url: 'https://accounts.xoxoday.com/chef/v1/oauth/api/',
+            url: ' https://accounts.xoxoday.com/chef/v1/oauth/api/',
             headers: {
                 accept: 'application/json',
                 'content-type': 'application/json',
@@ -271,6 +270,173 @@ const getPlaceOrderById = async (req, res) => {
 
 
 
+const razorpayInstance = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_KEY_SECRET
+});
+
+const placeOrderRazorpay = async (req, res) => {
+  try {
+      const { userId, productId, quantity, denomination, email, contact, poNumber, userName, razorpayPaymentId } = req.body;
+
+      if (!userName || !userId || !productId || !quantity || !denomination || !email || !poNumber || !razorpayPaymentId) {
+          return res.status(400).json({ message: 'Missing required fields' });
+      }
+
+      console.log("user", userId);
+      console.log("name", userName);
+
+      // Verify the payment using Razorpay API
+      const payment = await razorpayInstance.payments.fetch(razorpayPaymentId);
+      if (!payment || payment.status !== "captured") {
+          throw new Error('Payment not successful');
+      }
+
+      const options = {
+          method: 'POST',
+          url: ' https://accounts.xoxoday.com/chef/v1/oauth/api/',
+          headers: {
+              accept: 'application/json',
+              'content-type': 'application/json',
+              authorization: `Bearer ${process.env.BEARER_TOKEN}`
+          },
+          data: {
+              query: 'plumProAPI.mutation.placeOrder',
+              tag: 'plumProAPI',
+              variables: {
+                  data: {
+                      productId,
+                      quantity,
+                      denomination,
+                      email,
+                      contact,
+                      poNumber,
+                      notifyReceiverEmail: 1,
+                      notifyAdminEmail: 0
+                  }
+              }
+          }
+      };
+
+      const response = await axios.request(options);
+
+      console.log('API Response:', response.data);
+
+      const placeOrderResponse = response.data.data.placeOrder.data;
+
+      if (!placeOrderResponse) {
+          throw new Error('Invalid response from placeOrder API');
+      }
+
+      const {
+          orderId,
+          orderTotal,
+          orderDiscount,
+          discountPercent,
+          currencyCode,
+          currencyValue,
+          amountCharged,
+          orderStatus,
+          deliveryStatus,
+          tag,
+          quantity: responseQuantity,
+          vouchers = [],
+          voucherDetails = []
+      } = placeOrderResponse;
+
+      if (!orderId) {
+          throw new Error('Missing orderId in response');
+      }
+
+      const newOrder = new PlaceOrder({
+          userId,
+          orderId,
+          orderTotal,
+          orderDiscount,
+          discountPercent,
+          currencyCode,
+          currencyValue,
+          amountCharged,
+          orderStatus,
+          deliveryStatus,
+          tag,
+          quantity: responseQuantity,
+          vouchers: vouchers.map(voucher => ({
+              productId: voucher.productId,
+              orderId: voucher.orderId,
+              voucherCode: voucher.voucherCode,
+              pin: voucher.pin,
+              validity: voucher.validity,
+              amount: voucher.amount,
+              currency: voucher.currency,
+              country: voucher.country,
+              type: voucher.type,
+              currencyValue: voucher.currencyValue
+          })),
+          voucherDetails: voucherDetails.map(detail => ({
+              orderId: detail.orderId,
+              productId: detail.productId,
+              productName: detail.productName,
+              currencyCode: detail.currencyCode,
+              productStatus: detail.productStatus,
+              denomination: detail.denomination
+          }))
+      });
+
+      await newOrder.save();
+
+      // Send invoice email
+      const emailContent = {
+          email,
+          userName: userName || 'Customer',
+          purchaseAmount: denomination, // Use the provided user name or a default value
+          paymentMethod: 'Razorpay', // Or the actual payment method
+          orderItems: vouchers.map(voucher => {
+              const detail = voucherDetails.find(detail => detail.productId === voucher.productId);
+              return {
+                  name: detail?.productName || 'Unknown Product',
+                  productAmount: detail?.denomination,
+                  status: detail?.productStatus,
+                  voucherCode: voucher.voucherCode,
+                  validity: voucher.validity
+              };
+          })
+      };
+
+      await invoiceMailSender(email, emailContent.userName, emailContent.purchaseAmount, emailContent.paymentMethod, emailContent.orderItems);
+
+      res.status(200).json(newOrder);
+  } catch (error) {
+      console.error('Error placing order:', error.response ? error.response.data : error.message);
+      res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+
+ const createRazorpayOrder = async (req, res) => {
+  try {
+      const { amount ,currency } = req.body;
+
+      const options = {
+          amount: amount,
+          currency: currency,
+          receipt: "receipt_order_74394"
+      };
+
+      const order = await razorpayInstance.orders.create(options);
+
+      if (!order) {
+          return res.status(500).json({ message: "Some error occurred" });
+      }
+
+      res.status(200).json(order);
+  } catch (error) {
+      console.error('Error creating Razorpay order:', error);
+      res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+
 
 // `Bearer ${process.env.BEARER_TOKEN}`
 
@@ -311,10 +477,10 @@ const getKycVerification = asyncHandler(async (req, res) => {
 
 
 export const contactUs = async (req, res) => {
-  const { name, email, message } = req.body;
+  const { name, email, message, mobile } = req.body;
 
   try {
-    await sendContactUsEmail(name, email, message);
+    await sendContactUsEmail(name, email, message, mobile);
     res.status(200).json({ message: 'Email sent successfully' });
   } catch (error) {
     console.error('Error sending email:', error.message);
@@ -356,7 +522,7 @@ const authUser = asyncHandler(async (req, res) => {
 // @route   POST/ api/users
 // @access  Public
 const registerUser = async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password,contact } = req.body;
 
   try {
     // Check if the user already exists
@@ -374,6 +540,7 @@ const registerUser = async (req, res) => {
       name,
       email,
       password,
+      contact,
       emailToken, // Save email token to the user document
     });
 
@@ -392,6 +559,7 @@ const registerUser = async (req, res) => {
       _id: user._id,
       name: user.name,
       email: user.email,
+      contact:user.contact,
       token,
       isAdmin: user.isAdmin,
     });
@@ -473,78 +641,6 @@ const sendOtp = async (req, res) => {
   }
 };
 
-const checkout = async (req, res) => {
-  try {
-    // Extract order details from the request body
-    const { orderItems, paymentMethod, itemsPrice, taxPrice, totalPrice, user } = req.body;
-    console.log(req.body)
-
-    // Validate request body
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
-    // Create a new order object
-    const order = new Order({
-      user: user._id, // Assuming authenticated user's ID is stored in req.user
-      orderItems,
-      paymentMethod,
-      itemsPrice,
-      taxPrice,
-      totalPrice,
-    });
-
-     // Send invoice email
-
-
-    // Save the order to the database
-    await order.save();
-    // await invoiceMailSender(user.email, user.name, totalPrice, paymentMethod, orderItems);
-
-
-    // Respond with success message
-    res.status(200).json({ message: "Order placed successfully", orderId: order._id });
-  } catch (error) {
-    console.error("Error handling checkout:", error);
-    res.status(500).json({ message: "Internal server error" });
-  }
-};
-
-const getOrders = asyncHandler(async (req, res) => {
-  try {
-    const orders = await Order.find({}).lean();
-    // console.log("orders", orders);
-
-    // Respond with the fetched orders
-    res.status(200).json(orders);
-  } catch (error) {
-    console.error("Error fetching orders:", error);
-    res.status(500).json({ message: "Internal server error" });
-  }
-});
-
-
-const getOrderByUserId = asyncHandler(async (req, res) => {
-  try {
-    // Extract order ID from request parameters
-    const orderId = req.user._id
-
-    // Query the database for the order by order ID
-    const order = await Order.find({user: orderId}).lean();
-
-    // If order is found, respond with the order data
-    if (order) {
-      res.status(200).json(order);
-    } else {
-      // If order is not found, respond with 404 Not Found
-      res.status(404).json({ message: "Order not found" });
-    }
-  } catch (error) {
-    console.error("Error fetching order by ID:", error);
-    res.status(500).json({ message: "Internal server error" });
-  }
-});
 
 
 
@@ -693,11 +789,10 @@ export {
   getVouchers ,
   verifyEmail ,
   sendOtp,
-  checkout,
-  getOrders,
   placeOrder,
-  getOrderByUserId,
   getPlaceOrderById,
-  getFilters
+  getFilters,
+  placeOrderRazorpay,
+  createRazorpayOrder
   
 };

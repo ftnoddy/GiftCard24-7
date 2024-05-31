@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import MainLayout from "../Layouts/MainLayout";
 import ModalLayout from "../Layouts/ModalLayout";
-// import { useHistory } from "react-router-dom";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 import { X } from "lucide-react";
 import axios from 'axios';
@@ -9,15 +8,14 @@ import { toast } from "react-toastify";
 import { setCredentials } from "../../Redux/Slices/authSlice";
 import { useDispatch } from 'react-redux';
 
-
 const SignUp = ({ closeSignupModal, setShowSignupModal }) => {
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
-    mobile: "", // Add mobile field to formData
-    otp: "", // Add otp field to formData
+    contact: "", // Keep it consistent as contact
+    otp: "",
   });
 
   const navigate = useNavigate();
@@ -30,14 +28,14 @@ const SignUp = ({ closeSignupModal, setShowSignupModal }) => {
   };
 
   const handleSendOTP = async (e) => {
-    e.preventDefault()
-    if (!formData.mobile) {
+    e.preventDefault();
+    if (!formData.contact) {
       toast.error('Please enter a mobile number');
       return;
     }
 
     try {
-      const response = await axios.post('http://localhost:5002/api/users/send-otp', { mobile: formData.mobile });
+      const response = await axios.post('http://localhost:5002/api/users/send-otp', { mobile: formData.contact });
       
       if (response.status === 200) {
         toast.success('OTP sent successfully');
@@ -54,27 +52,22 @@ const SignUp = ({ closeSignupModal, setShowSignupModal }) => {
     e.preventDefault();
 
     try {
-      const response = await axios.post('http://localhost:5002/api/users', formData);
+      const response = await axios.post('https://giftcards247.shop/api/users', formData);
   
       if (response.status === 201) {
-        closeSignupModal();
         console.log("Response:", response.data);
         console.log('Signup successful');
         toast.success('Signup successful');
 
-        setTimeout(() => {
-          navigate('/');
-        }, 2000);
-  
-        const { name, email, token, _id, isAdmin ,isVerified} = response.data;
-  
-        localStorage.setItem('userInfo', JSON.stringify({ name, email, token, _id, isAdmin, isVerified }));
-  
-        navigate('/profile', { state: { userName: name, userEmail: email, userVerify: isVerified } });
-  
+        const { name, email, contact, token, _id, isAdmin, isVerified } = response.data;
+        localStorage.setItem('userInfo', JSON.stringify({ name, email, contact, token, _id, isAdmin, isVerified }));
+        
         dispatch(setCredentials(response.data));
-  
-     
+
+        setTimeout(() => {
+          closeSignupModal();
+          navigate('/profile', { state: { userName: name, userEmail: email, contact, userVerify: isVerified } });
+        }, 2000);
       } else {
         console.error('Signup failed');
         toast.error('Signup failed');
@@ -85,12 +78,10 @@ const SignUp = ({ closeSignupModal, setShowSignupModal }) => {
     }
   };
 
-
-
   return (
     <>
       <ModalLayout>
-        <div className=" p-4 md:p-8">
+        <div className="p-4 md:p-8">
           <div className="flex justify-between items-center">
             <h2 className="text-2xl font-bold mb-4">Sign Up</h2>
             <button onClick={closeSignupModal} className="w-8 h-8 bg-red-500 flex justify-center items-center rounded-full">
@@ -151,13 +142,13 @@ const SignUp = ({ closeSignupModal, setShowSignupModal }) => {
             </div>
 
             <div className="mb-4">
-              <label htmlFor="mobile" className="block text-gray-700 font-semibold mb-2">Mobile Number</label>
+              <label htmlFor="contact" className="block text-gray-700 font-semibold mb-2">Mobile Number</label>
               <div className="flex">
                 <input
                   type="text"
-                  id="mobile"
-                  name="mobile"
-                  value={formData.mobile}
+                  id="contact"
+                  name="contact"
+                  value={formData.contact}
                   onChange={handleChange}
                   placeholder="Your Mobile Number"
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
@@ -178,7 +169,7 @@ const SignUp = ({ closeSignupModal, setShowSignupModal }) => {
               />
             </div>
             
-            <div className=" flex flex-col items-center ">
+            <div className="flex flex-col items-center">
               <button
                 className="bg-blue-500 w-full text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-200"
                 type="submit"

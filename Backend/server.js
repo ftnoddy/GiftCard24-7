@@ -43,7 +43,9 @@ if (process.env.NODE_ENV === 'production') {
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
+  console.log("++++++");
   res.status(500).send("Internal Server Error");
+
 });
 
 app.use(notFound);
@@ -52,4 +54,5 @@ app.use(errorHandler);
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
+
 });

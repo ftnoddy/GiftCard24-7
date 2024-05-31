@@ -11,13 +11,13 @@ import {
   getKycVerification,
   verifyEmail,
   sendOtp,
-  checkout,
-  getOrders,
   placeOrder,
   getVouchers,
   getPlaceOrderById,
   contactUs,
-  getFilters
+  getFilters,
+  placeOrderRazorpay,
+  createRazorpayOrder
   
 } from "../controller/userController.js";
 
@@ -39,10 +39,10 @@ router.post("/email-verification", verifyEmail);
 router.post("/send-otp", sendOtp);
 
 // Checkout and Orders
-router.post("/checkout", checkout);
-router.get("/get-orders", getOrders);
 router.post("/place-orders", placeOrder);
 router.get("/place-orders/:userId", getPlaceOrderById);
+router.post("/place-orders-razorpay", placeOrderRazorpay);
+router.post("/razorpay/create-order", createRazorpayOrder);
 
 // Vouchers
 router.get("/get-vouchers", getVouchers);
@@ -62,6 +62,6 @@ router.route('/me').get(protect, async (req, res) => {
 });
 
 // Admin routes
-router.get("/",  getUsers);
+router.get("/", getUsers);
 
 export default router;
