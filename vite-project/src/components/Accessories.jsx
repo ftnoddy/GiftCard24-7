@@ -56,23 +56,37 @@ const Accessories = () => {
   const { user } = useContext(AuthContext);
   const [products, setProducts] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+
+  const fetchProducts = async (page) => {
+    setLoading(true);
+    try {
+      const response = await axios.get(`http://localhost:5002/api/users/get-vouchers`, {
+        params: { query: searchQuery, page, limit: 20 }
+      });
+      if (response.data && response.data.data && response.data.data.getVouchers && response.data.data.getVouchers.data) {
+        const fetchedProducts = response.data.data.getVouchers.data;
+        setProducts(prevProducts => [...prevProducts, ...fetchedProducts]);
+        setHasMore(fetchedProducts.length > 0);
+      } else {
+        console.log('Unexpected response structure:', response.data);
+      }
+    } catch (error) {
+      console.error('Error fetching products:', error);
+    }
+    setLoading(false);
+  };
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await axios.get(`https://giftcards247.shop/api/users/get-vouchers?query=${searchQuery}`);
-        if (response.data && response.data.data && response.data.data.getVouchers && response.data.data.getVouchers.data) {
-          setProducts(response.data.data.getVouchers.data);
-        } else {
-          console.log('Unexpected response structure:', response.data);
-        }
-      } catch (error) {
-        console.error('Error fetching products:', error);
-      }
-    };
-
-    fetchProducts();
+    setPage(1); // Reset page to 1 when searchQuery changes
+    setProducts([]); // Clear products when searchQuery changes
   }, [searchQuery]);
+
+  useEffect(() => {
+    fetchProducts(page);
+  }, [page]);
 
   const addToCart = (product, price) => {
     if (user) {
@@ -97,30 +111,41 @@ const Accessories = () => {
     });
   };
 
+  const handleScroll = () => {
+    if (window.innerHeight + document.documentElement.scrollTop < document.documentElement.offsetHeight || loading) return;
+    if (hasMore) setPage(prevPage => prevPage + 1);
+  };
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [loading, hasMore]);
+
   const filteredProducts = products.filter(product =>
     product.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
     <>
-    <Navbar onSearch={setSearchQuery} />
-    <div className="p-4 md:p-8">
-      
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 justify-center w-full gap-4">
-        {filteredProducts.length === 0 ? (
-          <p>No products available</p>
-        ) : (
-          filteredProducts.map((product) => (
-            <ProductCard
-              key={product.productId}
-              product={product}
-              addToCart={addToCart}
-              removeFromCart={removeFromCart}
-            />
-          ))
-        )}
+      <Navbar onSearch={setSearchQuery} />
+      <div className="p-4 md:p-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 justify-center w-full gap-4">
+          {filteredProducts.length === 0 ? (
+            <p>No products available</p>
+          ) : (
+            filteredProducts.map((product) => (
+              <ProductCard
+                key={product.productId}
+                product={product}
+                addToCart={addToCart}
+                removeFromCart={removeFromCart}
+              />
+            ))
+          )}
+        </div>
+        {loading && <p>Loading more products...</p>}
+        {!hasMore && <p>No more products to load.</p>}
       </div>
-    </div>
     </>
   );
 };
