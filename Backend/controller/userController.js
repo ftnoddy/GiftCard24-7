@@ -22,6 +22,8 @@ const bearerToken = process.env.BEARER_TOKEN;
 
 const getVouchers = async (req, res) => {
   const searchQuery = req.query.query || '';
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 20; // default to 20 if limit is not specified
 
   if (!bearerToken) {
     return res.status(400).json({ error: "Bearer token is not defined" });
@@ -29,7 +31,7 @@ const getVouchers = async (req, res) => {
 
   const options = {
     method: 'POST',
-    url: ' https://accounts.xoxoday.com/chef/v1/oauth/api',
+    url: 'https://accounts.xoxoday.com/chef/v1/oauth/api',
     headers: {
       accept: 'application/json',
       'content-type': 'application/json',
@@ -40,7 +42,7 @@ const getVouchers = async (req, res) => {
       tag: 'plumProAPI',
       variables: {
         data: {
-          page: 1,
+          page: page,
           exchangeRate: 1,
           sort: { field: 'name', order: 'ASC' },
           filters: searchQuery ? { name: { contains: searchQuery } } : {}
