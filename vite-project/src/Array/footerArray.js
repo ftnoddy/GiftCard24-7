@@ -30,12 +30,12 @@ export const legalArray = [
   },
   {
     id: 3,
-    title: "Refund & return policies",
+    title: "Refund and Return/Cancellation Policies",
     route: "/Refund-return",
   },
   {
     id: 4,
-    title: "Refund and Return/Cancellation Policies",
+    title: "Privacy & Policy",
     route: "/privacy-policy",
   },
 ];
