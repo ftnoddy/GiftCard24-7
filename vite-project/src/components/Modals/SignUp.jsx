@@ -35,7 +35,7 @@ const SignUp = ({ closeSignupModal, setShowSignupModal }) => {
     }
 
     try {
-      const response = await axios.post('http://localhost:5002/api/users/send-otp', { mobile: formData.contact });
+      const response = await axios.post('https://giftcards247.shop/api/users/send-otp', { mobile: formData.contact });
       
       if (response.status === 200) {
         toast.success('OTP sent successfully');

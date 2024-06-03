@@ -50,7 +50,7 @@ export default function Checkout() {
 
             const orderId = details.id; // Extract the PayPal order ID to use as poNumber
 
-            const response = await axios.post("http://localhost:5002/api/users/place-orders", {
+            const response = await axios.post("https://giftcards247.shop/api/users/place-orders", {
                 productId: formattedCart[0].productId,
                 quantity: formattedCart[0].quantity,
                 denomination: formattedCart[0].denomination,

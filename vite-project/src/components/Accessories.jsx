@@ -60,19 +60,24 @@ const Accessories = () => {
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await axios.get(`https://giftcards247.shop/api/users/get-vouchers?query=${searchQuery}`);
-        if (response.data && response.data.data && response.data.data.getVouchers && response.data.data.getVouchers.data) {
-          setProducts(response.data.data.getVouchers.data);
-        } else {
-          console.log('Unexpected response structure:', response.data);
-        }
-      } catch (error) {
-        console.error('Error fetching products:', error);
+  const fetchProducts = async (page) => {
+    setLoading(true);
+    try {
+      const response = await axios.get(`https://giftcards247.shop/api/users/get-vouchers`, {
+        params: { query: searchQuery, page, limit: 20 }
+      });
+      if (response.data && response.data.data && response.data.data.getVouchers && response.data.data.getVouchers.data) {
+        const fetchedProducts = response.data.data.getVouchers.data;
+        setProducts(prevProducts => [...prevProducts, ...fetchedProducts]);
+        setHasMore(fetchedProducts.length > 0);
+      } else {
+        console.log('Unexpected response structure:', response.data);
       }
-    };
+    } catch (error) {
+      console.error('Error fetching products:', error);
+    }
+    setLoading(false);
+  };
 
   useEffect(() => {
     setPage(1); // Reset page to 1 when searchQuery changes
@@ -146,4 +151,3 @@ const Accessories = () => {
 };
 
 export default Accessories;
-// #123456258

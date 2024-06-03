@@ -35,7 +35,7 @@ export const legalArray = [
   },
   {
     id: 4,
-    title: "privacy and policy",
+    title: "Refund and Return/Cancellation Policies",
     route: "/privacy-policy",
   },
 ];

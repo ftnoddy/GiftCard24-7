@@ -9,7 +9,7 @@ function Footer() {
         <div className="grid gap-12 sm:gap-8 grid-cols-1 md:grid-cols-3 lg:grid-cols-4 ">
           <div className="w-fit">
             <img
-              src="public\images\gift_card.png"
+              src="/images/gift_card.png"
               alt="Your Logo"
               width={150}
               height={40}
