@@ -17,7 +17,9 @@ import {
   contactUs,
   getFilters,
   placeOrderRazorpay,
-  createRazorpayOrder
+  createRazorpayOrder,
+  
+  sendOtpMail
   
 } from "../controller/userController.js";
 
@@ -37,6 +39,8 @@ router.post("/email-verification", verifyEmail);
 
 // OTP
 router.post("/send-otp", sendOtp);
+router.post("/send-otp-mail", sendOtpMail);
+
 
 // Checkout and Orders
 router.post("/place-orders", placeOrder);

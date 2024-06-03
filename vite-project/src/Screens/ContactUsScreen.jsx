@@ -105,7 +105,10 @@ const Contact = () => {
 
           <div className="w-full md:w-1/2 p-4">
             <h3 className="text-2xl font-bold mb-4 text-pink-500">Our Location</h3>
-            <div className="w-full h-64 md:h-full rounded-lg overflow-hidden shadow-lg">
+            <p className="text-sm text-white mb-4">
+              GN 34/1, GN Block, Sector V, Bidhannagar, BIDHANNAGAR, West Bengal 700091
+            </p>
+            <div className="w-full h-48 md:h-64 rounded-lg overflow-hidden shadow-lg">
               <iframe
                 src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d14736.20868280687!2d88.4277248!3d22.577151999999998!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sin!4v1716978600487!5m2!1sen!2sin"
                 width="100%"

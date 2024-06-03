@@ -3,13 +3,15 @@ import bcrypt from "bcryptjs";
 
 const userSchema = new mongoose.Schema(
   {
-    name: { type: String, required: true },
+    name: { type: String, },
     email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
-    contact: { type: Number, required: true },
+    password: { type: String, },
+    contact: { type: Number, },
+    otpCode: { type: String },
+    otpExpires: { type: Date },
     // confirmPassword: { type: String, required: true },
     isAdmin: { type: Boolean, required: true, default: false },
-    isVerified: { type: Boolean, default: false },
+    // isVerified: { type: Boolean, default: false },
   },
   {
     timestamps: true,
