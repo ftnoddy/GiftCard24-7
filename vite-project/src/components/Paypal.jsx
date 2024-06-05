@@ -33,7 +33,7 @@ export default function Checkout() {
 
     const handleOrderPlacement = async (orderId) => {
         try {
-            const response = await axios.get(`http://localhost:5002/api/users/place-orders/${orderId}`);
+            const response = await axios.get(`https://giftcards247.shop/api/users/place-orders/${orderId}`);
             console.log('Order details:', response.data);
         } catch (error) {
             console.error('Error getting order details:', error);
