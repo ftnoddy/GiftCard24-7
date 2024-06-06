@@ -21,13 +21,21 @@ dotenv.config();
 const bearerToken = process.env.BEARER_TOKEN;
 
 const getVouchers = async (req, res) => {
-  const searchQuery = req.query.query || '';
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 20; // default to 20 if limit is not specified
+  const { query: searchQuery = '', page = '1', limit = '20' } = req.query;
+
+  const pageNumber = parseInt(page, 10);
+  const limitNumber = parseInt(limit, 10);
 
   if (!bearerToken) {
     return res.status(400).json({ error: "Bearer token is not defined" });
   }
+
+  if (isNaN(pageNumber) || pageNumber <= 0 || isNaN(limitNumber) || limitNumber <= 0) {
+    return res.status(400).json({ error: "Invalid page or limit value" });
+  }
+
+  // Adjust the filter field based on API documentation.
+  const filters = searchQuery ? { name: { contains: searchQuery } } : {};
 
   const options = {
     method: 'POST',
@@ -42,10 +50,10 @@ const getVouchers = async (req, res) => {
       tag: 'plumProAPI',
       variables: {
         data: {
-          page: page,
+          page: pageNumber,
           exchangeRate: 1,
           sort: { field: 'name', order: 'ASC' },
-          filters: searchQuery ? { name: { contains: searchQuery } } : {}
+          filters
         }
       }
     }
@@ -56,10 +64,11 @@ const getVouchers = async (req, res) => {
     console.log('Fetched Vouchers:', response.data);
     res.status(200).json(response.data);
   } catch (error) {
-    console.error(error);
+    console.error('Error fetching vouchers:', error.response ? error.response.data : error.message);
     res.status(500).json({ error: 'Failed to fetch vouchers' });
   }
 };
+
 
 
 

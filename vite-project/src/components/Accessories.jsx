@@ -63,16 +63,22 @@ const Accessories = () => {
   const fetchProducts = async (page) => {
     setLoading(true);
     try {
-      const response = await axios.get(`https://giftcards247.shop/api/users/get-vouchers`, {
+      const response = await axios.get('https://giftcards247.shop/api/users/get-vouchers', {
         params: { query: searchQuery, page, limit: 20 }
       });
-      if (response.data && response.data.data && response.data.data.getVouchers && response.data.data.getVouchers.data) {
-        const fetchedProducts = response.data.data.getVouchers.data;
-        setProducts(prevProducts => [...prevProducts, ...fetchedProducts]);
-        setHasMore(fetchedProducts.length > 0);
+
+      // Ensure response data is an array
+      const fetchedProducts = Array.isArray(response.data.data.getVouchers.data)
+        ? response.data.data.getVouchers.data
+        : [];
+        
+      if (page === 1) {
+        setProducts(fetchedProducts);
       } else {
-        console.log('Unexpected response structure:', response.data);
+        setProducts(prevProducts => [...prevProducts, ...fetchedProducts]);
       }
+      
+      setHasMore(fetchedProducts.length > 0);
     } catch (error) {
       console.error('Error fetching products:', error);
     }
@@ -81,11 +87,13 @@ const Accessories = () => {
 
   useEffect(() => {
     setPage(1); // Reset page to 1 when searchQuery changes
-    setProducts([]); // Clear products when searchQuery changes
+    fetchProducts(1); // Fetch new products based on the new search query
   }, [searchQuery]);
 
   useEffect(() => {
-    fetchProducts(page);
+    if (page > 1) {
+      fetchProducts(page);
+    }
   }, [page]);
 
   const addToCart = (product, price) => {

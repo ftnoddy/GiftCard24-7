@@ -81,7 +81,7 @@ const SignUp = ({ closeSignupModal, setShowSignupModal }) => {
 
         setTimeout(() => {
           closeSignupModal();
-          navigate('/profile', { state: { userName: name, userEmail: email, contact, userVerify: isVerified } });
+          navigate('/', { state: { userName: name, userEmail: email, contact, userVerify: isVerified } });
         }, 2000);
       } else {
         toast.error('Signup failed');
@@ -199,4 +199,3 @@ const SignUp = ({ closeSignupModal, setShowSignupModal }) => {
   };
   
   export default SignUp;
-  

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaPhone } from "react-icons/fa";
+import { FaPhone, FaEnvelope } from "react-icons/fa";
 import { useSnackbar } from 'notistack';
 import MainLayout from "../components/Layouts/MainLayout";
 import axios from 'axios';
@@ -100,6 +100,12 @@ const Contact = () => {
                 <FaPhone className="phone-icon mr-2" />
                 +1 8502905200
               </a>
+
+              <a href="mailto:giftcards247.shop@gmail.com" className="email-link flex items-center mt-2 text-white text-sm">
+                <FaEnvelope className="email-icon mr-2" />
+                giftcards247.shop@gmail.com
+              </a>
+
             </div>
           </div>
 
