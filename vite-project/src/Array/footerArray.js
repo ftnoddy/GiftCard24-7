@@ -9,12 +9,12 @@ export const linksArray = [
   {
     id: 2,
     title: "Services",
-    route: "#",
+    route: "/services"
   },
   {
     id: 3,
     title: "Press release",
-    route: "#",
+    route: "/press-release",
   },
 ];
 export const legalArray = [

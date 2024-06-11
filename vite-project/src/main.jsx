@@ -27,6 +27,8 @@ import SearchVouchers from "./Screens/SearchScreen.jsx";
 import Accessories from "./components/Accessories.jsx";
 import MainLayout from "./components/Layouts/MainLayout.jsx";
 import PrivacyPolicy from "./Screens/privacyApolicy.jsx";
+import Services from "./Screens/Services.jsx";
+import PressRelease from "./Screens/PressRelease.jsx";
 // import ErrorBoundary from "./components/ErrorBoundary.jsx";
 
 const router = createBrowserRouter(
@@ -46,6 +48,8 @@ const router = createBrowserRouter(
       <Route path="/Refund-return" element={<RefReturnPoliciesScreen />} />
       <Route path="/Shipping-policies" element={<ShippingPoliciesScreen />} />
       <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+      <Route path="/services" element={<Services />} />
+      <Route path="/press-release" element={<PressRelease />} />
       <Route path="/verify-email:email" element={<EmailVerificationScreen />} />
       <Route path="/contact-us" element={<Contact />} />
       <Route path="/account-details" element={<AccountDetails />} />
