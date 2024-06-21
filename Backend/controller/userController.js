@@ -19,9 +19,8 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const bearerToken = process.env.BEARER_TOKEN;
-
 const getVouchers = async (req, res) => {
-  const { query: searchQuery = '', page = '1', limit = '20' } = req.query;
+  const { query: searchQuery = '', country = '', page = '1', limit = '20' } = req.query;
 
   const pageNumber = parseInt(page, 10);
   const limitNumber = parseInt(limit, 10);
@@ -34,8 +33,10 @@ const getVouchers = async (req, res) => {
     return res.status(400).json({ error: "Invalid page or limit value" });
   }
 
-  // Adjust the filter field based on API documentation.
-  const filters = searchQuery ? { name: { contains: searchQuery } } : {};
+  const filters = {
+    ...(searchQuery && { name: { contains: searchQuery } }),
+    ...(country && { country: country })
+  };
 
   const options = {
     method: 'POST',
@@ -69,10 +70,7 @@ const getVouchers = async (req, res) => {
   }
 };
 
-
-
-
-const getFilters = async () => {
+const getFilters = async (req, res) => {
   const options = {
     method: 'POST',
     url: 'https://accounts.xoxoday.com/chef/v1/oauth/api',
@@ -84,16 +82,19 @@ const getFilters = async () => {
     data: {
       query: 'plumProAPI.mutation.getFilters',
       tag: 'plumProAPI',
-      variables: { data: {} } // No parameters to get all filters
-    }
+      variables: {
+        data: { filterGroupCode: '' }, // Fetch all filter values
+      },
+    },
   };
 
   try {
     const response = await axios.request(options);
-    console.log('Available Filters:', response.data);
-    return response.data;
+    const filters = response.data.data; // Assuming the filters are returned here
+    res.status(200).json(filters);
   } catch (error) {
     console.error('Failed to fetch filters:', error);
+    res.status(500).json({ error: 'Failed to fetch filters' });
   }
 };
 

@@ -29,6 +29,7 @@ import MainLayout from "./components/Layouts/MainLayout.jsx";
 import PrivacyPolicy from "./Screens/privacyApolicy.jsx";
 import Services from "./Screens/Services.jsx";
 import PressRelease from "./Screens/PressRelease.jsx";
+import FilterComponent from "./components/FilterProducts.jsx";
 // import ErrorBoundary from "./components/ErrorBoundary.jsx";
 
 const router = createBrowserRouter(
@@ -55,6 +56,7 @@ const router = createBrowserRouter(
       <Route path="/account-details" element={<AccountDetails />} />
       <Route path="/order-success" element={<OrderSuccessfull />} />
       <Route path="/search" element={<SearchVouchers />} />
+      <Route path="/filter-products" element={<FilterComponent />} />
 
 
     </Route>

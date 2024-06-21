@@ -89,39 +89,37 @@ function Navbar({ onSearch }) {
                 placeholder="Search products..."
                 className="input input-bordered rounded-l-full w-full max-w-xs"
               />
-              <button
-                type="submit"
-                className="btn btn-primary rounded-r-full bg-gradient-to-r from-blue-400 to-blue-600 hover:from-blue-600 hover:to-blue-800 text-white transition duration-300"
-              >
-                Search
-              </button>
+              
             </form>
             <Link
               to="/"
-              className="text-white bg-gradient-to-r from-pink-500 to-orange-400 hover:from-pink-600 hover:to-orange-500 focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mb-2 transition duration-300 transform hover:scale-110"
+              className="text-gray-700 hover:text-gray-900 focus:ring-4 focus:outline-none font-medium text-sm px-4 py-2 transition duration-300 neon-border"
             >
               ACCESSORIES
             </Link>
             <Link
               to="/about"
-              className="text-white bg-gradient-to-r from-pink-500 to-orange-400 hover:from-pink-600 hover:to-orange-500 focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mb-2 transition duration-300 transform hover:scale-110"
+              className="text-gray-700 hover:text-gray-900 focus:ring-4 focus:outline-none font-medium text-sm px-4 py-2 transition duration-300 neon-border"
             >
               ABOUT
             </Link>
             {user && user.isAdmin && (
               <Link
                 to="/admin"
-                className="text-white bg-gradient-to-r from-pink-500 to-orange-400 hover:from-pink-600 hover:to-orange-500 focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mb-2 transition duration-300 transform hover:scale-110"
+                className="text-gray-700 hover:text-gray-900 focus:ring-4 focus:outline-none font-medium text-sm px-4 py-2 transition duration-300 neon-border"
               >
                 ADMIN
               </Link>
             )}
+            
             <Link
               to="/contact-us"
-              className="text-white bg-gradient-to-r from-pink-500 to-orange-400 hover:from-pink-600 hover:to-orange-500 focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mb-2 transition duration-300 transform hover:scale-110"
+              className="text-gray-700 hover:text-gray-900 focus:ring-4 focus:outline-none font-medium text-sm px-4 py-2 transition duration-300 neon-border"
             >
               CONTACT US
             </Link>
+            <Link to="/filter-products" className="text-gray-700 hover:text-gray-900 font-medium text-smpx-4 py-2 transition duration-300 neon-border">FILTER OPTIONS</Link>
+
             <div className="dropdown dropdown-end">
               <div
                 tabIndex={0}
@@ -171,6 +169,30 @@ function Navbar({ onSearch }) {
           </div>
         </div>
       </div>
+      <style jsx>{`
+        .neon-border {
+          position: relative;
+          display: inline-block;
+          padding-bottom: 2px;
+        }
+
+        .neon-border:after {
+          content: '';
+          position: absolute;
+          left: 0;
+          bottom: 0;
+          width: 100%;
+          height: 2px;
+          background: #0ff; /* Neon color */
+          box-shadow: 0 0 10px #0ff, 0 0 20px #0ff, 0 0 30px #0ff, 0 0 40px #0ff;
+          transition: opacity 0.3s ease;
+          opacity: 0;
+        }
+
+        .neon-border:hover:after {
+          opacity: 1;
+        }
+      `}</style>
     </>
   );
 }
