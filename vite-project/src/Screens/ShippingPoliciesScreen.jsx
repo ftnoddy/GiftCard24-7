@@ -10,6 +10,7 @@ function ShippingPoliciesScreen() {
         <ul className="text-white list-disc pl-6 text-lg">
           <li>Our online gift cards will be delivered to you electronically via emails.</li>
           <li>We will send you the gift card shortly after we receive the payment.</li>
+          <li>It will take minimum 5 minutes to get the gift cards delivered to your email once the payment is done. For in case of any technical errors or unwanted circumstances, our cards will be delivered to you by maximum 72 hrs.</li>
           <li>A minimal sum of money will be charged for shipping the cards to the customers electronically.</li>
           <li>You will receive confirmation from us via email and track and monitor your gift delivery.</li>
         </ul>

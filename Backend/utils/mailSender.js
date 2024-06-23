@@ -1,32 +1,31 @@
 import nodemailer from "nodemailer";
 
+const sendVerificationEmail = async (email, otpCode) => {
+  try {
+    const transporter = nodemailer.createTransport({
+      host: "smtp.gmail.com",
+      service: "gmail",
+      port: 587,
+      secure: true,
+      auth: {
+        user: "atindramohandas353@gmail.com",
+        pass: "pvmqweuhjferjjjk",
+      },
+    });
 
-const sendVerificationEmail = async (email, userId, emailToken) => {
-    try {
-        const verificationLink = `http://localhost:5173/verify-email:email?token=${emailToken}`;
+    const mailOptions = {
+      from: "atindramohandas353@gmail.com",
+      to: email,
+      subject: 'Your OTP Code',
+      text: `Your OTP code is ${otpCode}. It will expire in 10 minutes.`,
+    };
 
-        const transporter = nodemailer.createTransport({
-            host: "smtp.gmail.com",
-            service: "gmail",
-            port: 587,
-            secure: true,
-            auth: {
-                user: "atindramohandas353@gmail.com",
-                pass: "pvmqweuhjferjjjk",
-            },
-        });
-
-        await transporter.sendMail({
-            from: "atindramohandas353@gmail.com",
-            to: email,
-            subject: "Email Verification",
-            text: `Please click on the following link to verify your email: ${verificationLink}`,
-        });
-
-        console.log("Email sent successfully");
-    } catch (error) {
-        console.error("Email not sent:", error);
-        throw error;
-    }
+    await transporter.sendMail(mailOptions);
+    console.log(`OTP email sent to ${email}`);
+  } catch (error) {
+    console.error('Error sending OTP email:', error);
+    throw new Error('Failed to send OTP email');
+  }
 };
+
 export default sendVerificationEmail;

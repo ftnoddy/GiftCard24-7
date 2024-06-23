@@ -6,6 +6,7 @@ import { useSnackbar } from "notistack";
 import { AuthContext } from "../context/AuthContext";
 import { add, remove } from "../Redux/Slices/cartSlice";
 import Navbar from "./Navbar";
+import FilterComponent from "./FilterProducts";
 
 function ProductCard({ product, addToCart, removeFromCart }) {
   const Denominations = product.valueDenominations.split(',');
@@ -26,7 +27,6 @@ function ProductCard({ product, addToCart, removeFromCart }) {
           {product.name}
           <div className=" bg-gradient-to-tr to-orange-600 from-yellow-400 px-2 text-white rounded-full text-xs flex justify-center items-center ml-2">NEW</div>
         </h2>
-
         <p className="text-sm">
           Price:{' '}
           <select
@@ -63,16 +63,21 @@ const Accessories = () => {
   const fetchProducts = async (page) => {
     setLoading(true);
     try {
-      const response = await axios.get(`http://localhost:5002/api/users/get-vouchers`, {
+      const response = await axios.get('http://localhost:5002/api/users/get-vouchers', {
         params: { query: searchQuery, page, limit: 20 }
       });
-      if (response.data && response.data.data && response.data.data.getVouchers && response.data.data.getVouchers.data) {
-        const fetchedProducts = response.data.data.getVouchers.data;
-        setProducts(prevProducts => [...prevProducts, ...fetchedProducts]);
-        setHasMore(fetchedProducts.length > 0);
+
+      const fetchedProducts = Array.isArray(response.data.data.getVouchers.data)
+        ? response.data.data.getVouchers.data
+        : [];
+        
+      if (page === 1) {
+        setProducts(fetchedProducts);
       } else {
-        console.log('Unexpected response structure:', response.data);
+        setProducts(prevProducts => [...prevProducts, ...fetchedProducts]);
       }
+      
+      setHasMore(fetchedProducts.length > 0);
     } catch (error) {
       console.error('Error fetching products:', error);
     }
@@ -81,11 +86,13 @@ const Accessories = () => {
 
   useEffect(() => {
     setPage(1); // Reset page to 1 when searchQuery changes
-    setProducts([]); // Clear products when searchQuery changes
+    fetchProducts(1); // Fetch new products based on the new search query
   }, [searchQuery]);
 
   useEffect(() => {
-    fetchProducts(page);
+    if (page > 1) {
+      fetchProducts(page);
+    }
   }, [page]);
 
   const addToCart = (product, price) => {
@@ -128,7 +135,10 @@ const Accessories = () => {
   return (
     <>
       <Navbar onSearch={setSearchQuery} />
-      <div className="p-4 md:p-8">
+      <div className="pt-20 pb-4 px-4 md:px-8">
+        <div className="mb-5">
+          <FilterComponent />
+        </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 justify-center w-full gap-4">
           {filteredProducts.length === 0 ? (
             <p>No products available</p>
@@ -151,4 +161,3 @@ const Accessories = () => {
 };
 
 export default Accessories;
-// #123456258

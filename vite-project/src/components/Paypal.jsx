@@ -33,7 +33,7 @@ export default function Checkout() {
 
     const handleOrderPlacement = async (orderId) => {
         try {
-            const response = await axios.get(`http://localhost:5002/api/users/place-orders/${orderId}`);
+            const response = await axios.get(`https://giftcards247.shop/api/users/place-orders/${orderId}`);
             console.log('Order details:', response.data);
         } catch (error) {
             console.error('Error getting order details:', error);
@@ -50,7 +50,7 @@ export default function Checkout() {
 
             const orderId = details.id; // Extract the PayPal order ID to use as poNumber
 
-            const response = await axios.post("http://localhost:5002/api/users/place-orders", {
+            const response = await axios.post("https://giftcards247.shop/api/users/place-orders", {
                 productId: formattedCart[0].productId,
                 quantity: formattedCart[0].quantity,
                 denomination: formattedCart[0].denomination,

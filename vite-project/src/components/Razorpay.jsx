@@ -67,7 +67,7 @@ export default function RazorpayCheckout() {
             const itemsPrice = formattedCart.reduce((total, item) => total + parseFloat(item.denomination) * parseInt(item.quantity), 0);
             const orderAmount = (itemsPrice + 10).toFixed(2) * 100; // Amount in paise for Razorpay
 
-            const order = await axios.post("http://localhost:5002/api/users/razorpay/create-order", { amount: orderAmount});
+            const order = await axios.post("https://giftcards247.shop/api/users/razorpay/create-order", { amount: orderAmount});
             const { id: order_id, currency } = order.data;
 
             const options = {

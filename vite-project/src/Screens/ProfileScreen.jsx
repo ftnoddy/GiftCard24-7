@@ -22,7 +22,7 @@ function ProfileScreen() {
         const token = new URLSearchParams(location.search).get('token'); // Get token from query parameters
         if (token) {
           await axios.post('http://localhost:5002/email-verification', { token });
-          window.location.href = '/profile';
+          // window.location.href = '/profile';
         }
       } catch (error) {
         console.error('Error verifying email:', error);

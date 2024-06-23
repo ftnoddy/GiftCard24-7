@@ -17,15 +17,24 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const bearerToken = process.env.BEARER_TOKEN;
-
 const getVouchers = async (req, res) => {
-  const searchQuery = req.query.query || '';
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 20; // default to 20 if limit is not specified
+  const { query: searchQuery = '', country = '', page = '1', limit = '20' } = req.query;
+
+  const pageNumber = parseInt(page, 10);
+  const limitNumber = parseInt(limit, 10);
 
   if (!bearerToken) {
     return res.status(400).json({ error: "Bearer token is not defined" });
   }
+
+  if (isNaN(pageNumber) || pageNumber <= 0 || isNaN(limitNumber) || limitNumber <= 0) {
+    return res.status(400).json({ error: "Invalid page or limit value" });
+  }
+
+  const filters = {
+    ...(searchQuery && { name: { contains: searchQuery } }),
+    ...(country && { country: country })
+  };
 
   const options = {
     method: 'POST',
@@ -40,10 +49,10 @@ const getVouchers = async (req, res) => {
       tag: 'plumProAPI',
       variables: {
         data: {
-          page: page,
+          page: pageNumber,
           exchangeRate: 1,
           sort: { field: 'name', order: 'ASC' },
-          filters: searchQuery ? { name: { contains: searchQuery } } : {}
+          filters
         }
       }
     }
@@ -54,14 +63,12 @@ const getVouchers = async (req, res) => {
     console.log('Fetched Vouchers:', response.data);
     res.status(200).json(response.data);
   } catch (error) {
-    console.error(error);
+    console.error('Error fetching vouchers:', error.response ? error.response.data : error.message);
     res.status(500).json({ error: 'Failed to fetch vouchers' });
   }
 };
 
-
-
-const getFilters = async () => {
+const getFilters = async (req, res) => {
   const options = {
     method: 'POST',
     url: 'https://accounts.xoxoday.com/chef/v1/oauth/api',
@@ -73,16 +80,19 @@ const getFilters = async () => {
     data: {
       query: 'plumProAPI.mutation.getFilters',
       tag: 'plumProAPI',
-      variables: { data: {} } // No parameters to get all filters
-    }
+      variables: {
+        data: { filterGroupCode: '' }, // Fetch all filter values
+      },
+    },
   };
 
   try {
     const response = await axios.request(options);
-    console.log('Available Filters:', response.data);
-    return response.data;
+    const filters = response.data.data; // Assuming the filters are returned here
+    res.status(200).json(filters);
   } catch (error) {
     console.error('Failed to fetch filters:', error);
+    res.status(500).json({ error: 'Failed to fetch filters' });
   }
 };
 
@@ -518,48 +528,76 @@ const authUser = asyncHandler(async (req, res) => {
   }
 });
 
-// @desc    Register a user
-// @route   POST/ api/users
-// @access  Public
-const registerUser = async (req, res) => {
-  const { name, email, password,contact } = req.body;
+// sendOtpMail
+
+const sendOtpMail = async (req, res) => {
+  const { name, email } = req.body;
 
   try {
-    // Check if the user already exists
     const userExists = await User.findOne({ email });
 
     if (userExists) {
       return res.status(400).json({ message: "User already exists" });
     }
 
-    // Generate email token
-    const emailToken = crypto.randomBytes(32).toString("hex");
+    const otpCode = Math.floor(100000 + Math.random() * 900000);
+    const otpExpires = Date.now() + 10 * 60 * 1000;
 
-    // Create the user with email token
-    const user = await User.create({
+    const user = new User({
       name,
       email,
-      password,
-      contact,
-      emailToken, // Save email token to the user document
+      otpCode,
+      otpExpires,
+      isVerified: false
     });
 
+    await sendVerificationEmail(email, otpCode);
+    await user.save();
+
+    res.status(200).json({ message: "OTP sent successfully", userId: user._id });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
 
 
-    // Generate JWT token
-    const token = jwt.sign({ email }, process.env.JWT_SECRET, {
+
+
+// @desc    Register a user
+// @route   POST/ api/users
+// @access  Public
+const registerUser = async (req, res) => {
+  const { name, email, password, contact, otp } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(400).json({ message: "Invalid email or OTP" });
+    }
+
+    if (user.otpCode !== otp || user.otpExpires < Date.now()) {
+      return res.status(400).json({ message: "Invalid or expired OTP" });
+    }
+
+    user.otpCode = undefined;
+    user.otpExpires = undefined;
+    user.isVerified = true;
+    user.password = password;
+    user.contact = contact;
+
+    await user.save();
+
+    const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
 
-    // Send verification email
-    await sendVerificationEmail(email, user._id, emailToken);
-
-    // Respond with user data and token
     res.status(201).json({
       _id: user._id,
       name: user.name,
       email: user.email,
-      contact:user.contact,
+      contact: user.contact,
       token,
       isAdmin: user.isAdmin,
     });
@@ -568,6 +606,10 @@ const registerUser = async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 };
+
+
+
+
 
 const verifyEmail = async (req, res) => {
   try {
@@ -793,6 +835,7 @@ export {
   getPlaceOrderById,
   getFilters,
   placeOrderRazorpay,
-  createRazorpayOrder
+  createRazorpayOrder,
+  sendOtpMail
   
 };
