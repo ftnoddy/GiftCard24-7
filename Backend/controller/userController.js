@@ -6,11 +6,9 @@ import sendContactUsEmail from "../utils/contactMailSender.js";
 import jwt from "jsonwebtoken";
 import KycVerification from "../models/kycModel.js";
 import OTP from "../models/otpModel.js";
-import EmailVerification from "../models/emailModel.js";
 import PlaceOrder from "../models/placeOrders.js";
 import crypto from "crypto";
 import twilio from 'twilio';
-import { validationResult } from "express-validator";
 import axios from "axios";
 import Razorpay from "razorpay";
 
