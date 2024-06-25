@@ -1,32 +1,53 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
-export default function FilterComponent() {
-  const [filters, setFilters] = useState({
-    country: 'us',
-    priceRange: [100, 500],
-    voucherCategory: 'food',
-    productCategory: 'electronics',
-    currency: 'usd',
-  });
+export default function FilterComponent({ onApplyFilters }) {
+  const [country, setCountry] = useState('');
+  const [currencyCode, setCurrencyCode] = useState('');
+  const [price, setPrice] = useState('');
+  const [countryOptions, setCountryOptions] = useState([]);
+  const [currencyOptions, setCurrencyOptions] = useState([]);
+  const [priceOptions, setPriceOptions] = useState([]);
 
-  const handleSelectChange = (e) => {
-    const { id, value } = e.target;
-    setFilters({
-      ...filters,
-      [id]: value,
-    });
+  useEffect(() => {
+    const fetchFilters = async () => {
+      try {
+        const response = await axios.get('http://localhost:5002/api/users/get-filters');
+        const filtersData = response.data?.getFilters?.data;
+
+        if (filtersData) {
+          const countryFilters = filtersData.find(filter => filter.filterGroupCode === 'country')?.filters || [];
+          const currencyFilters = filtersData.find(filter => filter.filterGroupCode === 'currency')?.filters || [];
+          const priceFilters = filtersData.find(filter => filter.filterGroupCode === 'price')?.filters || [];
+
+          setCountryOptions(countryFilters);
+          setCurrencyOptions(currencyFilters);
+          setPriceOptions(priceFilters);
+        } else {
+          console.error('No filters data found');
+        }
+      } catch (error) {
+        console.error('Error fetching filters:', error);
+      }
+    };
+
+    fetchFilters();
+  }, []);
+
+  const handleCountryChange = (e) => {
+    setCountry(e.target.value);
   };
 
-  const handleSliderChange = (e) => {
-    const { value, id } = e.target;
-    setFilters({
-      ...filters,
-      [id]: value.split(',').map(Number),
-    });
+  const handleCurrencyChange = (e) => {
+    setCurrencyCode(e.target.value);
+  };
+
+  const handlePriceChange = (e) => {
+    setPrice(e.target.value);
   };
 
   const applyFilters = () => {
-    console.log('Applied Filters:', filters);
+    onApplyFilters({ country, currencyCode, price });
   };
 
   return (
@@ -36,78 +57,61 @@ export default function FilterComponent() {
           <label htmlFor="country" className="text-sm font-medium">
             Country
           </label>
-          <select id="country" value={filters.country} onChange={handleSelectChange} className="w-full p-2 border rounded-md">
-            <option value="us">United States</option>
-            <option value="ca">Canada</option>
-            <option value="gb">United Kingdom</option>
-            <option value="au">Australia</option>
-            <option value="de">Germany</option>
-            <option value="fr">France</option>
-            <option value="jp">Japan</option>
-            <option value="cn">China</option>
+          <select
+            id="country"
+            value={country}
+            onChange={handleCountryChange}
+            className="w-full p-2 border rounded-md"
+          >
+            <option value="">Select a country</option>
+            {countryOptions.map((option) => (
+              <option key={option.filterValueCode} value={option.filterValueCode}>
+                {option.filterValue}
+              </option>
+            ))}
           </select>
         </div>
         <div className="grid gap-2">
-          <label htmlFor="priceRange" className="text-sm font-medium">
-            Price Range
-          </label>
-          <input
-            type="range"
-            id="priceRange"
-            min="0"
-            max="1000"
-            step="10"
-            value={filters.priceRange.join(',')}
-            onChange={handleSliderChange}
-            className="w-full"
-            multiple
-          />
-          <div className="flex justify-between text-xs">
-            <span>${filters.priceRange[0]}</span>
-            <span>${filters.priceRange[1]}</span>
-          </div>
-        </div>
-        <div className="grid gap-2">
-          <label htmlFor="voucherCategory" className="text-sm font-medium">
-            Voucher Category
-          </label>
-          <select id="voucherCategory" value={filters.voucherCategory} onChange={handleSelectChange} className="w-full p-2 border rounded-md">
-            <option value="food">Food</option>
-            <option value="entertainment">Entertainment</option>
-            <option value="travel">Travel</option>
-            <option value="shopping">Shopping</option>
-            <option value="services">Services</option>
-          </select>
-        </div>
-        <div className="grid gap-2">
-          <label htmlFor="productCategory" className="text-sm font-medium">
-            Product Category
-          </label>
-          <select id="productCategory" value={filters.productCategory} onChange={handleSelectChange} className="w-full p-2 border rounded-md">
-            <option value="electronics">Electronics</option>
-            <option value="clothing">Clothing</option>
-            <option value="home">Home & Garden</option>
-            <option value="beauty">Beauty & Personal Care</option>
-            <option value="sports">Sports & Outdoors</option>
-          </select>
-        </div>
-        <div className="grid gap-2">
-          <label htmlFor="currency" className="text-sm font-medium">
+          <label htmlFor="currencyCode" className="text-sm font-medium">
             Currency
           </label>
-          <select id="currency" value={filters.currency} onChange={handleSelectChange} className="w-full p-2 border rounded-md">
-            <option value="usd">USD</option>
-            <option value="eur">EUR</option>
-            <option value="gbp">GBP</option>
-            <option value="jpy">JPY</option>
-            <option value="cad">CAD</option>
-            <option value="aud">AUD</option>
-            <option value="chf">CHF</option>
-            <option value="cny">CNY</option>
+          <select
+            id="currencyCode"
+            value={currencyCode}
+            onChange={handleCurrencyChange}
+            className="w-full p-2 border rounded-md"
+          >
+            <option value="">Select a currency</option>
+            {currencyOptions.map((option) => (
+              <option key={option.filterValueCode} value={option.filterValueCode}>
+                {option.filterValue}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="grid gap-2">
+          <label htmlFor="price" className="text-sm font-medium">
+            Price
+          </label>
+          <select
+            id="price"
+            value={price}
+            onChange={handlePriceChange}
+            className="w-full p-2 border rounded-md"
+          >
+            <option value="">Select a price range</option>
+            {priceOptions.map((option) => (
+              <option key={option.filterValueCode} value={option.filterValueCode}>
+                {option.filterValue}
+              </option>
+            ))}
           </select>
         </div>
         <div className="col-span-full flex justify-end">
-          <button onClick={applyFilters} className="px-4 py-2 bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-700">
+          <button
+            onClick={applyFilters}
+            className="px-4 py-2 bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-700"
+          >
             Apply
           </button>
         </div>

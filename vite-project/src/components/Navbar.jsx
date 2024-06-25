@@ -118,7 +118,7 @@ function Navbar({ onSearch }) {
             >
               CONTACT US
             </Link>
-            <Link to="/filter-products" className="text-gray-700 hover:text-gray-900 font-medium text-smpx-4 py-2 transition duration-300 neon-border">FILTER OPTIONS</Link>
+            {/* <Link to="/filter-products" className="text-gray-700 hover:text-gray-900 font-medium text-smpx-4 py-2 transition duration-300 neon-border">FILTER OPTIONS</Link> */}
 
             <div className="dropdown dropdown-end">
               <div

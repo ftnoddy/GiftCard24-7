@@ -17,8 +17,9 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const bearerToken = process.env.BEARER_TOKEN;
+
 const getVouchers = async (req, res) => {
-  const { query: searchQuery = '', country = '', page = '1', limit = '20' } = req.query;
+  const { query: searchQuery = '', country = '', price = '', currencyCode = '', page = '1', limit = '20' } = req.query;
 
   const pageNumber = parseInt(page, 10);
   const limitNumber = parseInt(limit, 10);
@@ -31,10 +32,16 @@ const getVouchers = async (req, res) => {
     return res.status(400).json({ error: "Invalid page or limit value" });
   }
 
-  const filters = {
-    ...(searchQuery && { name: { contains: searchQuery } }),
-    ...(country && { country: country })
-  };
+  let filters = [];
+  if (country) {
+    filters.push({ key: 'country', value: country });
+  }
+  if (price) {
+    filters.push({ key: 'price', value: price });
+  }
+  if (currencyCode) {
+    filters.push({ key: 'currencyCode', value: currencyCode });
+  }
 
   const options = {
     method: 'POST',
@@ -68,6 +75,7 @@ const getVouchers = async (req, res) => {
   }
 };
 
+
 const getFilters = async (req, res) => {
   const options = {
     method: 'POST',
@@ -95,7 +103,6 @@ const getFilters = async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch filters' });
   }
 };
-
 // Call the function to fetch filters
 // getFilters();
 

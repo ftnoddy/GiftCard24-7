@@ -59,24 +59,32 @@ const Accessories = () => {
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+  const [filters, setFilters] = useState({})
 
-  const fetchProducts = async (page) => {
+  const fetchProducts = async (filters, page) => {
     setLoading(true);
     try {
       const response = await axios.get('http://localhost:5002/api/users/get-vouchers', {
-        params: { query: searchQuery, page, limit: 20 }
+        params: {
+          query: searchQuery,
+          country: filters.country,
+          currencyCode: filters.currencyCode,
+          price: filters.price,
+          page,
+          limit: 20,  // Adjust limit as needed
+        },
       });
 
       const fetchedProducts = Array.isArray(response.data.data.getVouchers.data)
         ? response.data.data.getVouchers.data
         : [];
-        
+
       if (page === 1) {
         setProducts(fetchedProducts);
       } else {
         setProducts(prevProducts => [...prevProducts, ...fetchedProducts]);
       }
-      
+
       setHasMore(fetchedProducts.length > 0);
     } catch (error) {
       console.error('Error fetching products:', error);
@@ -85,13 +93,13 @@ const Accessories = () => {
   };
 
   useEffect(() => {
-    setPage(1); // Reset page to 1 when searchQuery changes
-    fetchProducts(1); // Fetch new products based on the new search query
-  }, [searchQuery]);
+    setPage(1);
+    fetchProducts(filters, 1);
+  }, [searchQuery, filters]);
 
   useEffect(() => {
     if (page > 1) {
-      fetchProducts(page);
+      fetchProducts(filters, page);
     }
   }, [page]);
 
@@ -137,7 +145,7 @@ const Accessories = () => {
       <Navbar onSearch={setSearchQuery} />
       <div className="pt-20 pb-4 px-4 md:px-8">
         <div className="mb-5">
-          <FilterComponent />
+          <FilterComponent onApplyFilters={setFilters} />
         </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 justify-center w-full gap-4">
           {filteredProducts.length === 0 ? (
