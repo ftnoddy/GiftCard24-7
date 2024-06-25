@@ -12,7 +12,7 @@ export default function FilterComponent({ onApplyFilters }) {
   useEffect(() => {
     const fetchFilters = async () => {
       try {
-        const response = await axios.get('http://localhost:5002/api/users/get-filters');
+        const response = await axios.get('https://giftcards247.shop/api/users/get-filters');
         const filtersData = response.data?.getFilters?.data;
 
         if (filtersData) {

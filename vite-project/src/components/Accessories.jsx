@@ -64,7 +64,7 @@ const Accessories = () => {
   const fetchProducts = async (filters, page) => {
     setLoading(true);
     try {
-      const response = await axios.get('http://localhost:5002/api/users/get-vouchers', {
+      const response = await axios.get('https://giftcards247.shop/api/users/get-vouchers', {
         params: {
           query: searchQuery,
           country: filters.country,
