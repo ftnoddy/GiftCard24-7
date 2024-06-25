@@ -30,6 +30,9 @@ import PrivacyPolicy from "./Screens/privacyApolicy.jsx";
 import Services from "./Screens/Services.jsx";
 import PressRelease from "./Screens/PressRelease.jsx";
 import FilterComponent from "./components/FilterProducts.jsx";
+import UserList from "./components/userList.jsx";
+import KycList from "./components/kycList.jsx";
+import AllOrders from "./components/allOrders.jsx";
 // import ErrorBoundary from "./components/ErrorBoundary.jsx";
 
 const router = createBrowserRouter(
@@ -57,6 +60,9 @@ const router = createBrowserRouter(
       <Route path="/order-success" element={<OrderSuccessfull />} />
       <Route path="/search" element={<SearchVouchers />} />
       <Route path="/filter-products" element={<FilterComponent />} />
+      <Route path="/all-orders" element={<AllOrders />} />
+      <Route path="/all-user-list" element={<UserList />} />
+      <Route path="/all-kyc-list" element={<KycList />} />
 
 
     </Route>

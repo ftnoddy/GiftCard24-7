@@ -3,7 +3,7 @@ import axios from 'axios';
 
 export default function FilterComponent({ onApplyFilters }) {
   const [country, setCountry] = useState('');
-  const [currencyCode, setCurrencyCode] = useState('');
+  const [currency, setCurrency] = useState('');
   const [price, setPrice] = useState('');
   const [countryOptions, setCountryOptions] = useState([]);
   const [currencyOptions, setCurrencyOptions] = useState([]);
@@ -39,7 +39,7 @@ export default function FilterComponent({ onApplyFilters }) {
   };
 
   const handleCurrencyChange = (e) => {
-    setCurrencyCode(e.target.value);
+    setCurrency(e.target.value);
   };
 
   const handlePriceChange = (e) => {
@@ -47,7 +47,7 @@ export default function FilterComponent({ onApplyFilters }) {
   };
 
   const applyFilters = () => {
-    onApplyFilters({ country, currencyCode, price });
+    onApplyFilters({ country, currency, price });
   };
 
   return (
@@ -77,7 +77,7 @@ export default function FilterComponent({ onApplyFilters }) {
           </label>
           <select
             id="currencyCode"
-            value={currencyCode}
+            value={currency}
             onChange={handleCurrencyChange}
             className="w-full p-2 border rounded-md"
           >

@@ -239,7 +239,21 @@ const getFilters = async (req, res) => {
     }
 };
 
-  
+
+  //getAllOrders @/get-all-orders
+const getAllOrders = async (req, res) => {
+  try {
+      const orders = await PlaceOrder.find().populate('userId', 'name email'); // Assuming userId references the User model
+
+      res.status(200).json(orders);
+  } catch (error) {
+      console.error('Error fetching orders:', error);
+      res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+
+
 const getPlaceOrderById = async (req, res) => {
   try {
     // Extract orderId from request params and convert it to a number
@@ -843,6 +857,7 @@ export {
   getFilters,
   placeOrderRazorpay,
   createRazorpayOrder,
-  sendOtpMail
+  sendOtpMail,
+  getAllOrders
   
 };

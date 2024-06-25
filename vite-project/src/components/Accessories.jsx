@@ -35,7 +35,7 @@ function ProductCard({ product, addToCart, removeFromCart }) {
           >
             {Denominations.map((value, index) => (
               <option key={index} value={value}>
-                {product.currencyCode} {value}
+                {product.currency} {value}
               </option>
             ))}
           </select>
