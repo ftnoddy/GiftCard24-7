@@ -37,7 +37,7 @@ const SignUp = ({ closeSignupModal, setShowSignupModal }) => {
     }
 
     try {
-      const response = await axios.post('https://giftcards247.shop/api/users/send-otp-mail', {
+      const response = await axios.post(' https://giftcards247.shop/api/users/send-otp-mail', {
         name: name,
         email: email,
       });
@@ -65,7 +65,7 @@ const SignUp = ({ closeSignupModal, setShowSignupModal }) => {
     }
 
     try {
-      const response = await axios.post('https://giftcards247.shop/api/users', {
+      const response = await axios.post(' https://giftcards247.shop/api/users', {
         name,
         email,
         password,

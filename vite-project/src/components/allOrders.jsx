@@ -9,7 +9,7 @@ const AllOrders = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await axios.get('http://localhost:5002/api/users/get-all-orders');
+        const response = await axios.get('https://giftcards247.shop/api/users/get-all-orders');
         setOrders(response.data);
       } catch (err) {
         setError(err.message);

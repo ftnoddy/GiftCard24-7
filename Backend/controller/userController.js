@@ -45,7 +45,7 @@ const getVouchers = async (req, res) => {
 
   const options = {
     method: 'POST',
-    url: 'https://accounts.xoxoday.com/chef/v1/oauth/api',
+    url: 'https://accounts.xoxoday.com/chef/v1/oauth/api/',
     headers: {
       accept: 'application/json',
       'content-type': 'application/json',
@@ -79,7 +79,7 @@ const getVouchers = async (req, res) => {
 const getFilters = async (req, res) => {
   const options = {
     method: 'POST',
-    url: 'https://accounts.xoxoday.com/chef/v1/oauth/api',
+    url: 'https://accounts.xoxoday.com/chef/v1/oauth/api/',
     headers: {
       accept: 'application/json',
       'content-type': 'application/json',
@@ -667,6 +667,8 @@ const verifyEmail = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+
 
 const sendOtp = async (req, res) => {
   const { mobile } = req.body;

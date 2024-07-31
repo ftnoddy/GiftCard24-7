@@ -8,7 +8,7 @@ const UserList = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get('http://localhost:5002/api/users');
+        const response = await axios.get('https://giftcards247.shop/api/users');
         setUsers(response.data);
       } catch (error) {
         console.error('Error fetching users:', error);
